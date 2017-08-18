@@ -2,8 +2,7 @@ package library.service.persistence.books
 
 import library.service.business.books.BookPersistenceService
 import library.service.business.books.domain.Book
-import library.service.business.books.domain.PersistedBook
-import library.service.business.books.domain.types.BorrowedState
+import library.service.business.books.domain.BookEntity
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
@@ -18,23 +17,23 @@ class MongoBookPersistenceService(
         private val repository: BookRepository
 ) : BookPersistenceService {
 
-    override fun create(book: Book): PersistedBook {
+    override fun create(book: Book): BookEntity {
         val document = BookDocument().apply {
             id = UUID.randomUUID()
             isbn = book.isbn.value
             title = book.title.value
         }
         val createdDocument = repository.save(document)
-        return toPersistedBook(createdDocument)
+        return toEntity(createdDocument)
     }
 
-    override fun update(persistedBook: PersistedBook): PersistedBook {
-        val book = persistedBook.book
+    override fun update(bookEntity: BookEntity): BookEntity {
+        val book = bookEntity.book
 
-        val document = repository.findOne(persistedBook.id)!!
+        val document = repository.findOne(bookEntity.id)!!
         document.isbn = book.isbn.value
         document.title = book.title.value
-        document.borrowed = persistedBook.borrowed?.let {
+        document.borrowed = bookEntity.borrowed?.let {
             BookDocument.Borrowed(
                     by = it.by.value,
                     on = it.on.toString()
@@ -42,34 +41,37 @@ class MongoBookPersistenceService(
         }
 
         val updatedDocument = repository.save(document)
-        return toPersistedBook(updatedDocument)
+        return toEntity(updatedDocument)
     }
 
-    override fun delete(persistedBook: PersistedBook) {
-        repository.delete(persistedBook.id)
+    override fun delete(bookEntity: BookEntity) {
+        repository.delete(bookEntity.id)
     }
 
-    override fun findById(id: UUID): PersistedBook? {
-        return repository.findOne(id)?.let(this::toPersistedBook)
+    override fun findById(id: UUID): BookEntity? {
+        return repository.findOne(id)?.let(this::toEntity)
     }
 
-    override fun findAll(): List<PersistedBook> {
-        return repository.findAll().map(this::toPersistedBook)
+    override fun findAll(): List<BookEntity> {
+        return repository.findAll().map(this::toEntity)
     }
 
-    private fun toPersistedBook(document: BookDocument): PersistedBook {
+    private fun toEntity(document: BookDocument): BookEntity {
         val id = document.id!!
-        val book = Book(Isbn13(document.isbn!!), Title(document.title!!))
-        val borrowedState = toBorrowedState(document.borrowed)
-        return PersistedBook(id, book, borrowedState)
-    }
 
-    private fun toBorrowedState(borrowed: BookDocument.Borrowed?): BorrowedState? {
-        return borrowed?.let {
+        val isbn = Isbn13(document.isbn!!)
+        val title = Title(document.title!!)
+        val book = Book(isbn, title)
+
+        val bookEntity = BookEntity(id, book)
+
+        document.borrowed?.let {
             val by = Borrower(it.by!!)
             val on = OffsetDateTime.parse(it.on!!)
-            BorrowedState(by, on)
+            bookEntity.borrow(by, on)
         }
+
+        return bookEntity
     }
 
 }

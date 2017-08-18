@@ -16,7 +16,7 @@ data class BookDocument(
 
 ) {
 
-    class Borrowed(
+    data class Borrowed(
             var by: String? = null,
             var on: String? = null
     )

@@ -1,19 +1,19 @@
 package library.service.business.books
 
 import library.service.business.books.domain.Book
-import library.service.business.books.domain.PersistedBook
+import library.service.business.books.domain.BookEntity
 import java.util.*
 
 interface BookPersistenceService {
 
-    fun create(book: Book): PersistedBook
+    fun create(book: Book): BookEntity
 
-    fun update(persistedBook: PersistedBook): PersistedBook
+    fun update(bookEntity: BookEntity): BookEntity
 
-    fun delete(persistedBook: PersistedBook)
+    fun delete(bookEntity: BookEntity)
 
-    fun findById(id: UUID): PersistedBook?
+    fun findById(id: UUID): BookEntity?
 
-    fun findAll(): List<PersistedBook>
+    fun findAll(): List<BookEntity>
 
 }

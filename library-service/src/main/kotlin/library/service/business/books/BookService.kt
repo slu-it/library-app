@@ -1,7 +1,7 @@
 package library.service.business.books
 
 import library.service.business.books.domain.Book
-import library.service.business.books.domain.PersistedBook
+import library.service.business.books.domain.BookEntity
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
@@ -19,16 +19,16 @@ class BookService(
         private val persistenceService: BookPersistenceService
 ) {
 
-    fun createBook(book: Book): PersistedBook {
+    fun createBook(book: Book): BookEntity {
         return persistenceService.create(book)
     }
 
     @Throws(BookNotFoundException::class)
-    fun getBook(id: UUID): PersistedBook {
+    fun getBook(id: UUID): BookEntity {
         return persistenceService.findById(id) ?: throw BookNotFoundException(id)
     }
 
-    fun getBooks(): List<PersistedBook> {
+    fun getBooks(): List<BookEntity> {
         return persistenceService.findAll()
     }
 
@@ -39,14 +39,14 @@ class BookService(
     }
 
     @Throws(BookNotFoundException::class, BookAlreadyBorrowedException::class)
-    fun borrowBook(id: UUID, borrower: Borrower): PersistedBook {
+    fun borrowBook(id: UUID, borrower: Borrower): BookEntity {
         val book = getBook(id)
         book.borrow(borrower, OffsetDateTime.now(clock))
         return persistenceService.update(book)
     }
 
     @Throws(BookNotFoundException::class, BookAlreadyReturnedException::class)
-    fun returnBook(id: UUID): PersistedBook {
+    fun returnBook(id: UUID): BookEntity {
         val book = getBook(id)
         book.`return`()
         return persistenceService.update(book)
