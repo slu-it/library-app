@@ -3,7 +3,7 @@ package library.service.api.books
 import library.service.api.books.payload.BorrowBookRequestBody
 import library.service.api.books.payload.CreateBookRequestBody
 import library.service.business.books.BookService
-import library.service.business.books.domain.Book
+import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title

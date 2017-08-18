@@ -1,6 +1,6 @@
 package library.service.business.books
 
-import library.service.business.books.domain.Book
+import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.BookEntity
 import java.util.*
 

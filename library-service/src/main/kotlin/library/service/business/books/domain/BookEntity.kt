@@ -1,6 +1,7 @@
 package library.service.business.books.domain
 
-import library.service.business.books.domain.types.BorrowedState
+import library.service.business.books.domain.states.Borrowed
+import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
@@ -12,14 +13,14 @@ class BookEntity(
         val book: Book
 ) {
 
-    var borrowed: BorrowedState? = null
+    var borrowed: Borrowed? = null
         private set
 
     fun borrow(by: Borrower, on: OffsetDateTime) {
         if (borrowed != null) {
             throw BookAlreadyBorrowedException(id)
         }
-        borrowed = BorrowedState(by, on)
+        borrowed = Borrowed(by, on)
     }
 
     fun `return`() {
