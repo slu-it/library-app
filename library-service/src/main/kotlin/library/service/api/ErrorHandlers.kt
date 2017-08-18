@@ -1,5 +1,6 @@
 package library.service.api
 
+import library.service.business.exceptions.MalformedValueException
 import library.service.business.exceptions.NotFoundException
 import library.service.business.exceptions.NotPossibleException
 import library.service.common.correlation.CorrelationIdHolder
@@ -33,6 +34,13 @@ class ErrorHandlers(
     @ExceptionHandler(NotPossibleException::class)
     fun handle(e: NotPossibleException): ErrorDescription {
         log.debug("received conflicting request:", e)
+        return errorDescription(e.message!!)
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MalformedValueException::class)
+    fun handle(e: MalformedValueException): ErrorDescription {
+        log.debug("received malformed request:", e)
         return errorDescription(e.message!!)
     }
 

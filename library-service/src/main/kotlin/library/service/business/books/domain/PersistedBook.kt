@@ -7,19 +7,14 @@ import library.service.business.books.exceptions.BookAlreadyReturnedException
 import java.time.OffsetDateTime
 import java.util.*
 
-class PersistedBook(
+data class PersistedBook(
         val id: UUID,
         val book: Book,
-        borrowedState: BorrowedState? = null
+        private var _borrowed: BorrowedState? = null
 ) {
 
     val borrowed: BorrowedState?
         get() = _borrowed
-    private var _borrowed: BorrowedState? = null
-
-    init {
-        _borrowed = borrowedState
-    }
 
     fun borrow(by: Borrower, on: OffsetDateTime) {
         if (_borrowed != null) {

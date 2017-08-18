@@ -5,7 +5,7 @@ import library.service.business.books.domain.Book
 import library.service.business.books.domain.PersistedBook
 import library.service.business.books.domain.types.BorrowedState
 import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn
+import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
 import library.service.common.logging.LogMethodEntryAndExit
 import org.springframework.stereotype.Service
@@ -59,7 +59,7 @@ class MongoBookPersistenceService(
 
     private fun toPersistedBook(document: BookDocument): PersistedBook {
         val id = document.id!!
-        val book = Book(Isbn(document.isbn!!), Title(document.title!!))
+        val book = Book(Isbn13(document.isbn!!), Title(document.title!!))
         val borrowedState = toBorrowedState(document.borrowed)
         return PersistedBook(id, book, borrowedState)
     }

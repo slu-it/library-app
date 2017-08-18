@@ -5,7 +5,7 @@ import library.service.api.books.payload.CreateBookRequestBody
 import library.service.business.books.BookService
 import library.service.business.books.domain.Book
 import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn
+import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
 import library.service.common.logging.LogMethodEntryAndExit
 import org.springframework.hateoas.Resources
@@ -37,7 +37,7 @@ class BooksController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun postBook(@Valid @RequestBody body: CreateBookRequestBody): BookResource {
-        val book = Book(Isbn(body.isbn!!), Title(body.title!!))
+        val book = Book(Isbn13.parse(body.isbn!!), Title(body.title!!))
         val persistedBook = service.createBook(book)
         return assembler.toResource(persistedBook)
     }
