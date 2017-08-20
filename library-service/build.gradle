@@ -1,13 +1,14 @@
 buildscript {
     ext {
         kotlinVersion = '1.1.4-2'
-        springBootVersion = '1.5.6.RELEASE'
+        springBootVersion = '2.0.0.M3'
         junitPlatformVersion = '1.0.0-RC2'
         junitJupiterVersion = '5.0.0-RC2'
         dockerPluginVersion = '1.2'
     }
     repositories {
         mavenCentral()
+        maven { url "https://repo.spring.io/milestone" }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -22,6 +23,7 @@ apply plugin: 'docker'
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-spring'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 
 sourceCompatibility = 1.8
 compileKotlin {
@@ -33,6 +35,8 @@ compileTestKotlin {
 
 repositories {
     mavenCentral()
+    maven { url "https://repo.spring.io/milestone" }
+    mavenLocal()
 }
 
 dependencies {
@@ -48,6 +52,7 @@ dependencies {
     testCompile("org.assertj:assertj-core:3.6.2")
     testCompile("org.mockito:mockito-core:2.7.22")
     testCompile("com.nhaarman:mockito-kotlin:1.4.0") { transitive = false }
+    testCompile("info.novatec.testit:testutils-logrecorder-logback:0.3-SNAPSHOT") // TODO change to release
 
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
     testCompile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")

@@ -1,0 +1,66 @@
+package library.service.common.logging
+
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.EnableAspectJAutoProxy
+import org.springframework.test.context.ContextConfiguration
+import org.testit.testutils.logrecorder.api.LogRecord
+import org.testit.testutils.logrecorder.assertj.LogRecorderAssertions.assertThat
+import org.testit.testutils.logrecorder.junit5.RecordLoggers
+import utils.SpringBootIntegrationTest
+
+@SpringBootIntegrationTest
+@ContextConfiguration(classes = arrayOf(LogMethodEntryAndExitAspectTest.TestConfiguration::class))
+internal class LogMethodEntryAndExitAspectTest {
+
+    @EnableAspectJAutoProxy
+    @ComponentScan(basePackageClasses = arrayOf(LogMethodEntryAndExitAspect::class))
+    class TestConfiguration {
+
+        @Bean fun exampleClass() = ExampleClass()
+        @Bean fun annotatedExampleClass() = AnnotatedExampleClass()
+
+    }
+
+    @Autowired lateinit var example: ExampleClass
+    @Autowired lateinit var annotatedExample: AnnotatedExampleClass
+
+    @RecordLoggers(LogMethodEntryAndExitAspect::class)
+    @Test fun `logging proxy is activated by annotation`(record: LogRecord) {
+        example.openPublicMethod()
+        annotatedExample.openPublicMethod()
+        assertThat(record).hasSize(2)
+    }
+
+    @RecordLoggers(LogMethodEntryAndExitAspect::class)
+    @Test fun `open public methods are logged`(record: LogRecord) {
+        annotatedExample.openPublicMethod()
+        val className = AnnotatedExampleClass::class.java.name
+        val expectedMessages = arrayOf(
+                "executing method: void $className.openPublicMethod()",
+                "successfully executed method: void $className.openPublicMethod()"
+        )
+        assertThat(record).messages().containsExactly(*expectedMessages)
+    }
+
+    @RecordLoggers(LogMethodEntryAndExitAspect::class)
+    @Test fun `only open public methods are not logged`(logRecord: LogRecord) {
+        annotatedExample.closedPublicMethod()
+        annotatedExample.internalMethod()
+        assertThat(logRecord).hasSize(0)
+    }
+
+    open class ExampleClass {
+        open fun openPublicMethod() {}
+    }
+
+    @LogMethodEntryAndExit
+    open class AnnotatedExampleClass {
+        open fun openPublicMethod() {}
+        fun closedPublicMethod() {}
+        internal fun internalMethod() {}
+    }
+
+}
