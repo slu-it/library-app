@@ -252,7 +252,7 @@ internal class ApplicationSystemTest {
 
     private fun returnBookExpecting(returnLink: Link, expectedStatus: Int) {
         // @formatter:off
-        val response = given()
+            given()
                 .header("Content-Type", "application/json")
             .`when`()
                 .post(toUrl(returnLink))
