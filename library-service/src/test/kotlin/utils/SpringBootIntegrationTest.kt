@@ -7,6 +7,13 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
+/**
+ * Qualifier for Integration Tests with Spring Boot:
+ *
+ * - [tagged][Tag] as `integration-test`
+ * - [test instance][TestInstance] generation: `PER_METHOD`
+ * - [spring boot test features][SpringBootTest] activated
+ */
 @Retention
 @Target(AnnotationTarget.CLASS)
 @SpringBootTest
