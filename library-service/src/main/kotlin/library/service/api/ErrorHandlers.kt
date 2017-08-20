@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import java.time.Clock
 import java.time.OffsetDateTime
 
@@ -44,6 +45,14 @@ class ErrorHandlers(
         return errorDescription(e.message!!)
     }
 
+    /** In case the request parameter has wrong type. */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    fun handle(e: MethodArgumentTypeMismatchException): ErrorDescription {
+        log.debug("received bad request:", e)
+        return errorDescription("The request's '${e.name}' parameter is malformed.")
+    }
+
     /** In case the request body is malformed or non existing. */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException::class)
@@ -58,11 +67,12 @@ class ErrorHandlers(
     fun handle(e: MethodArgumentNotValidException): ErrorDescription {
         log.debug("received bad request:", e)
 
-        val fieldDetails = e.bindingResult.fieldErrors.map { "The field \"${it.field}\" ${it.defaultMessage}." }
+        val fieldDetails = e.bindingResult.fieldErrors.map { "The field '${it.field}' ${it.defaultMessage}." }
         val globalDetails = e.bindingResult.globalErrors.map { it.defaultMessage }
         val details = fieldDetails + globalDetails
+        val sortedDetails = details.sorted()
 
-        return errorDescription("The request's body is invalid. See details...", details)
+        return errorDescription("The request's body is invalid. See details...", sortedDetails)
     }
 
     private fun errorDescription(description: String, details: List<String> = emptyList()): ErrorDescription {
