@@ -1,11 +1,13 @@
 package library.service.api.books
 
-import library.service.api.books.BookResource.Borrowed
+import library.service.api.books.BookResource.BorrowedState
 import library.service.business.books.domain.BookEntity
-import library.service.business.books.domain.states.BookState
+import library.service.business.books.domain.states.BookState.Available
+import library.service.business.books.domain.states.BookState.Borrowed
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class BookResourceAssembler
@@ -21,16 +23,21 @@ class BookResourceAssembler
         val resource = BookResource(isbn = book.isbn.value, title = book.title.value)
         resource.add(linkTo(booksController).slash(bookId).withSelfRel())
 
-        if (bookState is BookState.Borrowed) {
-            val by = bookState.by.value
-            val on = bookState.on.toString()
-            resource.borrowed = Borrowed(by, on)
-            resource.add(linkTo(booksController).slash(bookId).slash("return").withRel("return"))
-        } else {
-            resource.add(linkTo(booksController).slash(bookId).slash("borrow").withRel("borrow"))
+        when (bookState) {
+            is Borrowed -> handleBorrowedState(resource, bookId, bookState)
+            is Available -> handleAvailableState(resource, bookId)
         }
 
         return resource
+    }
+
+    private fun handleBorrowedState(resource: BookResource, bookId: UUID, bookState: Borrowed) {
+        resource.borrowed = BorrowedState(by = bookState.by.value, on = bookState.on.toString())
+        resource.add(linkTo(booksController).slash(bookId).slash("return").withRel("return"))
+    }
+
+    private fun handleAvailableState(resource: BookResource, bookId: UUID) {
+        resource.add(linkTo(booksController).slash(bookId).slash("borrow").withRel("borrow"))
     }
 
 }

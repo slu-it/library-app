@@ -8,10 +8,10 @@ import org.springframework.hateoas.ResourceSupport
 data class BookResource(
         var isbn: String,
         var title: String,
-        var borrowed: Borrowed? = null
+        var borrowed: BorrowedState? = null
 ) : ResourceSupport() {
 
-    data class Borrowed(
+    data class BorrowedState(
             var by: String,
             var on: String
     )

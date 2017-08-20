@@ -59,7 +59,7 @@ class ErrorHandlers(
         log.debug("received bad request:", e)
 
         val fieldDetails = e.bindingResult.fieldErrors.map { "The field \"${it.field}\" ${it.defaultMessage}." }
-        val globalDetails = e.bindingResult.globalErrors.map { "Global error: ${it.defaultMessage}." }
+        val globalDetails = e.bindingResult.globalErrors.map { it.defaultMessage }
         val details = fieldDetails + globalDetails
 
         return errorDescription("The request's body is invalid. See details...", details)

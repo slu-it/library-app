@@ -31,7 +31,8 @@ class BooksController(
     fun getBooks(): Resources<BookResource> {
         val allBooks = collection.getAllBooks()
         val selfLink = linkTo(methodOn(javaClass).getBooks()).withSelfRel()
-        return Resources(assembler.toResources(allBooks), selfLink)
+        val bookResources = assembler.toResources(allBooks)
+        return Resources(bookResources, selfLink)
     }
 
     @PostMapping
@@ -57,14 +58,14 @@ class BooksController(
 
     @PostMapping("/{id}/borrow")
     @ResponseStatus(HttpStatus.OK)
-    fun borrowBook(@PathVariable id: UUID, @Valid @RequestBody body: BorrowBookRequestBody): BookResource {
+    fun postBorrowBook(@PathVariable id: UUID, @Valid @RequestBody body: BorrowBookRequestBody): BookResource {
         val book = collection.borrowBook(id, Borrower(body.borrower!!))
         return assembler.toResource(book)
     }
 
     @PostMapping("/{id}/return")
     @ResponseStatus(HttpStatus.OK)
-    fun returnBook(@PathVariable id: UUID): BookResource {
+    fun postReturnBook(@PathVariable id: UUID): BookResource {
         val book = collection.returnBook(id)
         return assembler.toResource(book)
     }
