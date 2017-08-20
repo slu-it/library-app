@@ -1,12 +1,14 @@
 package library.service.persistence.books
 
 import library.service.business.books.BookPersistenceService
-import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.states.BookState
+import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
 import library.service.common.logging.LogMethodEntryAndExit
+import library.service.persistence.books.BookDocument.Borrowed
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 import java.util.*
@@ -29,15 +31,17 @@ class MongoBookPersistenceService(
 
     override fun update(bookEntity: BookEntity): BookEntity {
         val book = bookEntity.book
+        val bookId = bookEntity.id
+        val bookState = bookEntity.state
 
-        val document = repository.findOne(bookEntity.id)!!
+        val document = repository.findOne(bookId)!!
         document.isbn = book.isbn.value
         document.title = book.title.value
-        document.borrowed = bookEntity.borrowed?.let {
-            BookDocument.Borrowed(
-                    by = it.by.value,
-                    on = it.on.toString()
-            )
+
+        if (bookState is BookState.Borrowed) {
+            document.borrowed = Borrowed(by = bookState.by.value, on = bookState.on.toString())
+        } else {
+            document.borrowed = null
         }
 
         val updatedDocument = repository.save(document)
