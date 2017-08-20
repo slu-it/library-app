@@ -2,15 +2,17 @@ package library.service.persistence.books
 
 import library.service.business.books.BookDataStore
 import library.service.business.books.domain.BookEntity
-import library.service.business.books.domain.states.BookState
+import library.service.business.books.domain.states.BookState.Available
+import library.service.business.books.domain.states.BookState.Borrowed
 import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
 import library.service.common.logging.LogMethodEntryAndExit
-import library.service.persistence.books.BookDocument.Borrowed
+import library.service.persistence.books.BookDocument.BorrowedState
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 @Service
@@ -20,11 +22,11 @@ class MongoBookDataStore(
 ) : BookDataStore {
 
     override fun create(book: Book): BookEntity {
-        val document = BookDocument().apply {
-            id = UUID.randomUUID()
-            isbn = book.isbn.value
-            title = book.title.value
-        }
+        val document = BookDocument(
+                id = UUID.randomUUID(),
+                isbn = book.isbn.value,
+                title = book.title.value
+        )
         val createdDocument = repository.save(document)
         return toEntity(createdDocument)
     }
@@ -35,13 +37,16 @@ class MongoBookDataStore(
         val bookState = bookEntity.state
 
         val document = repository.findOne(bookId)!!
+
         document.isbn = book.isbn.value
         document.title = book.title.value
-
-        if (bookState is BookState.Borrowed) {
-            document.borrowed = Borrowed(by = bookState.by.value, on = bookState.on.toString())
-        } else {
-            document.borrowed = null
+        document.borrowed = when (bookState) {
+            is Borrowed -> {
+                val by = bookState.by.value
+                val on = bookState.on.withOffsetSameInstant(ZoneOffset.UTC).toString()
+                BorrowedState(by, on)
+            }
+            is Available -> null
         }
 
         val updatedDocument = repository.save(document)

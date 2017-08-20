@@ -12,11 +12,11 @@ data class BookDocument(
 
         var isbn: String? = null,
         var title: String? = null,
-        var borrowed: Borrowed? = null
+        var borrowed: BorrowedState? = null
 
 ) {
 
-    data class Borrowed(
+    data class BorrowedState(
             var by: String? = null,
             var on: String? = null
     )
