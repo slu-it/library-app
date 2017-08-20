@@ -6,14 +6,14 @@ import org.springframework.hateoas.ResourceSupport
 
 @JsonInclude(NON_EMPTY)
 data class BookResource(
-        var isbn: String,
-        var title: String,
+        var isbn: String? = null,
+        var title: String? = null,
         var borrowed: BorrowedState? = null
 ) : ResourceSupport() {
 
     data class BorrowedState(
-            var by: String,
-            var on: String
+            var by: String? = null,
+            var on: String? = null
     )
 
 }
