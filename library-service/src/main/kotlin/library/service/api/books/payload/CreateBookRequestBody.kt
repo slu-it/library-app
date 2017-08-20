@@ -10,7 +10,7 @@ class CreateBookRequestBody {
     @Size(min = 10, max = 13)
     var isbn: String? = null
 
-    @NotEmpty
+    @NotBlank
     @Size(min = 1, max = 256)
     var title: String? = null
 
