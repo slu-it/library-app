@@ -25,14 +25,13 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import utils.EndpointIntegrationTest
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.*
 
-@WebMvcTest
-@ExtendWith(SpringExtension::class)
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@EndpointIntegrationTest
 @ContextConfiguration(classes = arrayOf(BooksControllerIntTest.TestConfiguration::class))
 internal class BooksControllerIntTest {
 
@@ -44,7 +43,7 @@ internal class BooksControllerIntTest {
 
     val APPLICATION_JSON = "application/json;charset=UTF-8"
     val APPLICATION_HAL_JSON = "application/hal+json;charset=UTF-8"
-    val CORRELATION_ID = "5258adb3-c2f1-4649-87c7-49c9f2e1e90b"
+    val CORRELATION_ID = UUID.randomUUID().toString()
 
     @MockBean lateinit var bookDataStore: BookDataStore
     @Autowired lateinit var mockMvc: MockMvc
