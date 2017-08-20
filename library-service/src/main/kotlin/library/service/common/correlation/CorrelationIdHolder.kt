@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 @Component
 class CorrelationIdHolder {
 
-    private val correlationIdProperty = "correlationId"
+    internal val correlationIdProperty = "correlationId"
 
     fun remove() {
         MDC.remove(correlationIdProperty)
