@@ -2,7 +2,7 @@ package library.service.api.books
 
 import library.service.api.books.payload.BorrowBookRequestBody
 import library.service.api.books.payload.CreateBookRequestBody
-import library.service.business.books.BookService
+import library.service.business.books.BookCollection
 import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
@@ -22,14 +22,14 @@ import javax.validation.Valid
 @RequestMapping("/api/books")
 @LogMethodEntryAndExit
 class BooksController(
-        private val service: BookService,
+        private val collection: BookCollection,
         private val assembler: BookResourceAssembler
 ) {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     fun getBooks(): Resources<BookResource> {
-        val allBooks = service.getBooks()
+        val allBooks = collection.getAllBooks()
         val selfLink = linkTo(methodOn(javaClass).getBooks()).withSelfRel()
         return Resources(assembler.toResources(allBooks), selfLink)
     }
@@ -38,34 +38,34 @@ class BooksController(
     @ResponseStatus(HttpStatus.CREATED)
     fun postBook(@Valid @RequestBody body: CreateBookRequestBody): BookResource {
         val book = Book(Isbn13.parse(body.isbn!!), Title(body.title!!))
-        val persistedBook = service.createBook(book)
+        val persistedBook = collection.addBook(book)
         return assembler.toResource(persistedBook)
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun getBook(@PathVariable id: UUID): BookResource {
-        val book = service.getBook(id)
+        val book = collection.getBook(id)
         return assembler.toResource(book)
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteBook(@PathVariable id: UUID) {
-        service.deleteBook(id)
+        collection.removeBook(id)
     }
 
     @PostMapping("/{id}/borrow")
     @ResponseStatus(HttpStatus.OK)
     fun borrowBook(@PathVariable id: UUID, @Valid @RequestBody body: BorrowBookRequestBody): BookResource {
-        val book = service.borrowBook(id, Borrower(body.borrower!!))
+        val book = collection.borrowBook(id, Borrower(body.borrower!!))
         return assembler.toResource(book)
     }
 
     @PostMapping("/{id}/return")
     @ResponseStatus(HttpStatus.OK)
     fun returnBook(@PathVariable id: UUID): BookResource {
-        val book = service.returnBook(id)
+        val book = collection.returnBook(id)
         return assembler.toResource(book)
     }
 
