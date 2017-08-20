@@ -1,6 +1,6 @@
 package library.service.persistence.books
 
-import library.service.business.books.BookPersistenceService
+import library.service.business.books.BookDataStore
 import library.service.business.books.domain.BookEntity
 import library.service.business.books.domain.states.BookState
 import library.service.business.books.domain.types.Book
@@ -15,9 +15,9 @@ import java.util.*
 
 @Service
 @LogMethodEntryAndExit
-class MongoBookPersistenceService(
+class MongoBookDataStore(
         private val repository: BookRepository
-) : BookPersistenceService {
+) : BookDataStore {
 
     override fun create(book: Book): BookEntity {
         val document = BookDocument().apply {

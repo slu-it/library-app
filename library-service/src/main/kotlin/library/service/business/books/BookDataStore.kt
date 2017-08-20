@@ -4,7 +4,7 @@ import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.BookEntity
 import java.util.*
 
-interface BookPersistenceService {
+interface BookDataStore {
 
     fun create(book: Book): BookEntity
 
