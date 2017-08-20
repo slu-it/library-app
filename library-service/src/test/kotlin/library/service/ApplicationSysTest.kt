@@ -19,7 +19,7 @@ import utils.SystemTest
 import java.net.URL
 
 @SystemTest
-internal class ApplicationSystemTest {
+internal class ApplicationSysTest {
 
     val objectMapper = ObjectMapper().apply {
         registerModule(Jackson2HalModule())

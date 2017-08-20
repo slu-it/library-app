@@ -3,20 +3,20 @@ package utils
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 /**
- * Qualifier for System Tests:
+ * Qualifier for Integration Tests:
  *
- * - [tagged][Tag] as `system-test`
+ * - [tagged][Tag] as `integration-test`
  * - [test instance][TestInstance] generation: `PER_METHOD`
- * - [spring boot test features][SpringBootTest] activated with random port
+ * - [Mongo DB][DataMongoTest] test support
  */
 @Retention
 @Target(AnnotationTarget.CLASS)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Tag("system-test")
+@Tag("integration-test")
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@DataMongoTest
 @ExtendWith(SpringExtension::class)
-annotation class SystemTest
+annotation class DatabaseIntegrationTest
