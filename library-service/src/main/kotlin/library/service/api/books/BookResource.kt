@@ -3,8 +3,10 @@ package library.service.api.books
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY
 import org.springframework.hateoas.ResourceSupport
+import org.springframework.hateoas.core.Relation
 
 @JsonInclude(NON_EMPTY)
+@Relation(value = "book", collectionRelation = "books")
 data class BookResource(
         var isbn: String? = null,
         var title: String? = null,
