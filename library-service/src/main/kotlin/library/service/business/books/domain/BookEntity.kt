@@ -18,18 +18,20 @@ class BookEntity(
     var state: BookState = Available
         private set
 
-    fun borrow(by: Borrower, on: OffsetDateTime) {
+    fun borrow(by: Borrower, on: OffsetDateTime): BookEntity {
         if (state is Borrowed) {
             throw BookAlreadyBorrowedException(id)
         }
         state = Borrowed(by, on)
+        return this
     }
 
-    fun `return`() {
+    fun `return`(): BookEntity {
         if (state is Available) {
             throw BookAlreadyReturnedException(id)
         }
         state = Available
+        return this
     }
 
 }
