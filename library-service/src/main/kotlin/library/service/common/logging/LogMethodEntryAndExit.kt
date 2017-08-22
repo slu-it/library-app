@@ -2,7 +2,7 @@ package library.service.common.logging
 
 /**
  * Annotating a class with this annotation will trigger the logging of public
- * method entry and exit logs. Only non final classes and methods ('open) are
+ * method's entries and exits. Only non final classes and methods (`open`) are
  * considered.
  *
  * Note: In Kotlin all classes and methods are final by default! With the

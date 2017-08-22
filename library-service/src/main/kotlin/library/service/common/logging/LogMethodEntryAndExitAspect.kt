@@ -7,7 +7,11 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
-
+/**
+ * Aspect responsible for logging method's entries and exits if their declaring
+ * class is annotated with [LogMethodEntryAndExit]. And the methods are public
+ * and `open` for extension.
+ */
 @Aspect
 @Component
 class LogMethodEntryAndExitAspect {

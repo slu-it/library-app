@@ -47,6 +47,31 @@ internal class CorrelationIdSettingFilterTest {
         }
     }
 
+    @Test fun `custom correlation ID header is set on response`() {
+        given { request.getHeader("X-Correlation-ID") }.willReturn("abc-123")
+
+        cut.doFilter(request, response, filterChain)
+
+        with(inOrder(response, filterChain)) {
+            verify(response).setHeader("X-Correlation-ID", "abc-123")
+            verify(filterChain).doFilter(request, response)
+        }
+    }
+
+    @Test fun `generated correlation ID header is set on response`() {
+        given { request.getHeader("X-Correlation-ID") }.willReturn(null)
+
+        cut.doFilter(request, response, filterChain)
+
+        with(inOrder(response, filterChain)) {
+            verify(response).setHeader(eq("X-Correlation-ID"), check {
+                assertThat(it).isNotBlank()
+                assertThat(UUID.fromString(it)).isNotNull()
+            })
+            verify(filterChain).doFilter(request, response)
+        }
+    }
+
     @Test fun `correlation ID removed, even is case of an exception`() {
         given { filterChain.doFilter(any(), any()) }.willThrow(RuntimeException::class.java)
 

@@ -3,10 +3,18 @@ package library.service.common.correlation
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
 
+/**
+ * Component responsible for holding the currently set correlation ID.
+ *
+ * The correlation ID is a unique string marking logs, exceptions etc as
+ * belonging to the same request. It is usually set by the
+ * [CorrelationIdSettingFilter] as part of the service's HTTP request and
+ * response handling.
+ */
 @Component
 class CorrelationIdHolder {
 
-    internal val correlationIdProperty = "correlationId"
+    private val correlationIdProperty = "correlationId"
 
     fun remove() {
         MDC.remove(correlationIdProperty)

@@ -15,7 +15,7 @@ internal class CorrelationIdHolderTest {
     @BeforeEach
     @AfterEach
     fun clearMDC() {
-        MDC.remove(cut.correlationIdProperty)
+        MDC.remove("correlationId")
     }
 
     @Test fun `initially there is no correlation ID`() {
