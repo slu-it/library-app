@@ -96,7 +96,7 @@ asciidoctor {
             'backend': 'html5'
     ])
     setAttributes([
-            'snippets'       : snippetsDir,
+            'snippets'          : snippetsDir,
             'source-highlighter': 'coderay',
             'toc'               : 'left',
             'toclevels'         : '3',
