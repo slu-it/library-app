@@ -2,6 +2,8 @@ mongo-db:
   image: mongo:3.5
   ports:
     - "27017:27017"
+#  volumes:
+#    - /opt/mongodb/data:/data/db
 
 #library-service:
 #  image: caaqe/library-service:latest
