@@ -10,15 +10,20 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.hal.Jackson2HalModule
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.SystemTest
 import java.net.URL
 
 @SystemTest
+@ExtendWith(SpringExtension::class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 internal class ApplicationSysTest {
 
     val objectMapper = ObjectMapper().apply {
@@ -185,12 +190,12 @@ internal class ApplicationSysTest {
         val response = given()
                 .header("Content-Type", "application/json")
                 .body(requestBody)
-            .`when`()
+                .`when`()
                 .post("/api/books")
-            .then()
+                .then()
                 .statusCode(201)
                 .contentType("application/hal+json;charset=UTF-8")
-            .and()
+                .and()
                 .extract().body().asString()
         // @formatter:on
         return objectMapper.readValue(response, BookResource::class.java)
@@ -198,11 +203,11 @@ internal class ApplicationSysTest {
 
     private fun deleteBookExpecting(bookLink: Link, expectedStatus: Int) {
         // @formatter:off
-            given()
+        given()
                 .header("Content-Type", "application/json")
-            .`when`()
+                .`when`()
                 .delete(toUrl(bookLink))
-            .then()
+                .then()
                 .statusCode(expectedStatus)
         // @formatter:on
     }
@@ -212,12 +217,12 @@ internal class ApplicationSysTest {
         val response = given()
                 .header("Content-Type", "application/json")
                 .body(requestBody)
-            .`when`()
+                .`when`()
                 .post(toUrl(borrowLink))
-            .then()
+                .then()
                 .statusCode(200)
                 .contentType("application/hal+json;charset=UTF-8")
-            .and()
+                .and()
                 .extract().body().asString()
         // @formatter:on
         return objectMapper.readValue(response, BookResource::class.java)
@@ -225,12 +230,12 @@ internal class ApplicationSysTest {
 
     private fun borrowBookExpecting(borrowLink: Link, expectedStatus: Int) {
         // @formatter:off
-            given()
+        given()
                 .header("Content-Type", "application/json")
                 .body(""" { "borrower": "No One" }""")
-            .`when`()
+                .`when`()
                 .post(toUrl(borrowLink))
-            .then()
+                .then()
                 .statusCode(expectedStatus)
         // @formatter:on
     }
@@ -239,12 +244,12 @@ internal class ApplicationSysTest {
         // @formatter:off
         val response = given()
                 .header("Content-Type", "application/json")
-            .`when`()
+                .`when`()
                 .post(toUrl(returnLink))
-            .then()
+                .then()
                 .statusCode(200)
                 .contentType("application/hal+json;charset=UTF-8")
-            .and()
+                .and()
                 .extract().body().asString()
         // @formatter:on
         return objectMapper.readValue(response, BookResource::class.java)
@@ -252,11 +257,11 @@ internal class ApplicationSysTest {
 
     private fun returnBookExpecting(returnLink: Link, expectedStatus: Int) {
         // @formatter:off
-            given()
+        given()
                 .header("Content-Type", "application/json")
-            .`when`()
+                .`when`()
                 .post(toUrl(returnLink))
-            .then()
+                .then()
                 .statusCode(expectedStatus)
         // @formatter:on
     }
@@ -265,12 +270,12 @@ internal class ApplicationSysTest {
         // @formatter:off
         val response = given()
                 .header("Content-Type", "application/json")
-            .`when`()
+                .`when`()
                 .get("/api/books")
-            .then()
+                .then()
                 .statusCode(200)
                 .contentType("application/hal+json;charset=UTF-8")
-            .and()
+                .and()
                 .and().log().everything()
                 .extract().body().asString()
         // @formatter:on

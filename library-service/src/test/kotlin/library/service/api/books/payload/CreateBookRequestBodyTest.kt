@@ -8,7 +8,6 @@ import org.junit.jupiter.api.TestInstance
 import utils.UnitTest
 import javax.validation.Validation
 
-
 @UnitTest
 internal class CreateBookRequestBodyTest {
 

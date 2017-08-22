@@ -9,7 +9,7 @@ import java.time.Clock
 class Application {
 
     @Bean
-    fun clock(): Clock = Clock.systemDefaultZone()
+    fun clock(): Clock = Clock.systemUTC()
 
 }
 

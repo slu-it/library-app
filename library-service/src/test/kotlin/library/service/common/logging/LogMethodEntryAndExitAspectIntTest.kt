@@ -1,19 +1,24 @@
 package library.service.common.logging
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.assertj.LogRecorderAssertions.assertThat
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
-import utils.SpringBootIntegrationTest
+import utils.IntegrationTest
 
-@SpringBootIntegrationTest
-@ContextConfiguration(classes = arrayOf(LogMethodEntryAndExitAspectTest.TestConfiguration::class))
-internal class LogMethodEntryAndExitAspectTest {
+@SpringBootTest
+@IntegrationTest
+@ExtendWith(SpringExtension::class)
+@ContextConfiguration(classes = arrayOf(LogMethodEntryAndExitAspectIntTest.TestConfiguration::class))
+internal class LogMethodEntryAndExitAspectIntTest {
 
     @EnableAspectJAutoProxy
     @ComponentScan(basePackageClasses = arrayOf(LogMethodEntryAndExitAspect::class))

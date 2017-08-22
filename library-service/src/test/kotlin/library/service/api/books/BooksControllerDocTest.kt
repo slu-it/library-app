@@ -33,13 +33,14 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import utils.IntegrationTest
 import java.time.OffsetDateTime
 import java.util.*
 
 
-@TestInstance(PER_METHOD)
-@ExtendWith(SpringExtension::class)
+@IntegrationTest
 @WebMvcTest(BooksController::class)
+@ExtendWith(SpringExtension::class)
 @AutoConfigureRestDocs("build/generated-snippets/books")
 class BooksControllerDocTest {
 
