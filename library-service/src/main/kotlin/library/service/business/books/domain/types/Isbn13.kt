@@ -2,6 +2,12 @@ package library.service.business.books.domain.types
 
 import library.service.business.exceptions.MalformedValueException
 
+/**
+ * The unique 13 digit identification number of a [Book].
+ *
+ * This type cannot be instantiated with anything other than 13 digit numbers.
+ * Any attempt to do so will result in a [NotAnIsbnNumberException].
+ */
 data class Isbn13(val value: String) {
 
     init {
@@ -11,6 +17,19 @@ data class Isbn13(val value: String) {
 
     companion object {
 
+        /**
+         * Creates a new [Isbn13] from the given value.
+         *
+         * The value can either be a 10 or 13 digit ISBN number. Anything
+         * else will throw an exception. If the value is a 10 digit ISBN
+         * number, it will be prefixed with `978` to make it a valid 13
+         * digit ISBN.
+         *
+         * @param value the value to use
+         * @return the created [Isbn13]
+         * @throws NotAnIsbnNumberException in case the given value is not an
+         * ISBN number
+         */
         fun parse(value: String): Isbn13 {
             val isbnValue = when {
                 value.length == 10 -> "978$value"
