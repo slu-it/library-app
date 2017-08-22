@@ -9,6 +9,12 @@ import org.springframework.hateoas.mvc.ResourceAssemblerSupport
 import org.springframework.stereotype.Component
 import java.util.*
 
+/**
+ * Component responsible for converting a [BookEntity] into a [BookResource].
+ *
+ * This includes transforming the data from one class to another and adding the
+ * correct links depending on the [BookEntity] state.
+ */
 @Component
 class BookResourceAssembler
     : ResourceAssemblerSupport<BookEntity, BookResource>(BooksController::class.java, BookResource::class.java) {

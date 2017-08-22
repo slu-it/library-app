@@ -16,6 +16,19 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.time.Clock
 import java.time.OffsetDateTime
 
+/**
+ * Defines a number of commonly used exception handlers for REST endpoints.
+ *
+ * This includes basic handlers for common business exceptions like:
+ * - [NotFoundException]
+ * - [NotPossibleException]
+ * - [MalformedValueException]
+ *
+ * As well as a number of framework exceptions related to bad user input.
+ *
+ * This class should _not_ contain any domain specific exception handlers.
+ * Those need to be defined in the corresponding controller!
+ */
 @RestControllerAdvice
 class ErrorHandlers(
         private val clock: Clock,
