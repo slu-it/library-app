@@ -1,0 +1,9 @@
+<div class="card" style="width: 50rem;">
+  <div class="card-body">
+    <h4 class="card-title">{{book.isbn}}</h4>
+    <p class="card-text">{{book.title}}</p>
+    <p *ngIf="book.borrowed" class="card-text">Borrowed by: {{book.borrowed.by | uppercase}}</p>
+    <a *ngIf="book._links.borrow" href="#" class="btn btn-primary">Borrow</a>
+    <a *ngIf="book._links.return" href="#" class="btn btn-primary">Return</a>
+  </div>
+</div>
