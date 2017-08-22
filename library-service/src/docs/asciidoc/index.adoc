@@ -44,7 +44,7 @@ further information.
 | The requested resource did not exist.
 
 | `409 Conflict`
-| The requested action resource is not available in the for its current state.
+| The requested action resource is not available for the resource's current state.
 |===
 
 == Request Headers
@@ -102,7 +102,7 @@ If there are no books in the library the response would be:
 
 include::{snippets}/books/getAllBooks-0Books/http-response.adoc[]
 
-=== Getting a Book by its ID
+=== Getting a Book
 
 Existing books of the library's collection can be retrieved with a `GET`
 request on the book's `/api/books/{id}` resource:
@@ -121,7 +121,7 @@ If the requested book doesn't exist a `404 Not Found` is returned like this:
 
 include::{snippets}/books/getBookById-notFound/http-response.adoc[]
 
-=== Borrowing a Book by its ID
+=== Borrowing a Book
 
 In order to borrow a book it has to (1) exist and (2) not already be borrowed
 by someone else. A book can be borrowed by providing a `borrower` as part
@@ -142,7 +142,7 @@ If the book doesn't exist a `404 Not Found` is returned like this:
 
 include::{snippets}/books/borrowBookById-notFound/http-response.adoc[]
 
-=== Returning a Book by its ID
+=== Returning a Book
 
 In order to return a book it has to (1) exist and (2) be borrowed by someone.
 A book can be returned sending an empty `POST` request to the
@@ -163,7 +163,7 @@ If the book doesn't exist a `404 Not Found` is returned like this:
 
 include::{snippets}/books/returnBookById-notFound/http-response.adoc[]
 
-=== Deleting a Book by its ID
+=== Deleting a Book
 
 Existing books can be deleted with a `DELETE` request on the book's
 `/api/books/{id}` resource:

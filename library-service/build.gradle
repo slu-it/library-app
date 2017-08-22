@@ -100,8 +100,7 @@ asciidoctor {
             'source-highlighter': 'coderay',
             'toc'               : 'left',
             'toclevels'         : '3',
-            'sectlinks'         : 'true',
-            'sectnums'          : 'true'
+            'sectlinks'         : 'true'
     ])
 }
 
