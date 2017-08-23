@@ -9,12 +9,16 @@ import library.service.business.exceptions.MalformedValueException
  * This type cannot be instantiated with anything other than 13 digit numbers.
  * Any attempt to do so will result in a [NotAnIsbnNumberException].
  */
-data class Isbn13(val value: String) {
+data class Isbn13(
+        private val value: String
+) {
 
     init {
         if (!value.matches(Regex("[0-9]{13}")))
             throw NotAnIsbnNumberException(value)
     }
+
+    override fun toString(): String = value
 
     companion object {
 

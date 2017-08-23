@@ -68,7 +68,7 @@ internal class MongoBookDataStoreIntTest {
         val bookEntity2 = cut.create(Book(Isbn13("1234567890123"), Title("Hello World #2")))
         val bookEntity3 = cut.create(Book(Isbn13("2345678901234"), Title("Hello World #3")))
 
-        val allBooks = cut.findAll().sortedBy { it.book.isbn.value }
+        val allBooks = cut.findAll().sortedBy { it.book.isbn.toString() }
 
         assertThat(allBooks[0]).isEqualToComparingFieldByField(bookEntity1)
         assertThat(allBooks[1]).isEqualToComparingFieldByField(bookEntity2)

@@ -23,22 +23,26 @@ class BookResourceAssembler
 
     override fun toResource(bookEntity: BookEntity): BookResource {
         val book = bookEntity.book
+
+        val isbn = book.isbn.toString()
+        val title = book.title.toString()
+        val resource = BookResource(isbn, title)
+
         val bookId = bookEntity.id
         val bookState = bookEntity.state
-
-        val resource = BookResource(isbn = book.isbn.value, title = book.title.value)
-        resource.add(linkTo(booksController).slash(bookId).withSelfRel())
-
         when (bookState) {
             is Borrowed -> handleBorrowedState(resource, bookId, bookState)
             is Available -> handleAvailableState(resource, bookId)
         }
+        resource.add(linkTo(booksController).slash(bookId).withSelfRel())
 
         return resource
     }
 
     private fun handleBorrowedState(resource: BookResource, bookId: BookId, bookState: Borrowed) {
-        resource.borrowed = BorrowedState(by = bookState.by.value, on = bookState.on.toString())
+        val borrowedBy = bookState.by.toString()
+        val borrowedOn = bookState.on.toString()
+        resource.borrowed = BorrowedState(borrowedBy, borrowedOn)
         resource.add(linkTo(booksController).slash(bookId).slash("return").withRel("return"))
     }
 

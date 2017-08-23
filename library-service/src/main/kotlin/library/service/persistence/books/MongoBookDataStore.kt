@@ -21,8 +21,8 @@ class MongoBookDataStore(
     override fun create(book: Book): BookEntity {
         val document = BookDocument(
                 id = UUID.randomUUID(),
-                isbn = book.isbn.value,
-                title = book.title.value
+                isbn = book.isbn.toString(),
+                title = book.title.toString()
         )
         val createdDocument = repository.save(document)
         return toEntity(createdDocument)
@@ -35,11 +35,11 @@ class MongoBookDataStore(
 
         val document = repository.findById(bookId.value).get()
 
-        document.isbn = book.isbn.value
-        document.title = book.title.value
+        document.isbn = book.isbn.toString()
+        document.title = book.title.toString()
         document.borrowed = when (bookState) {
             is Borrowed -> {
-                val by = bookState.by.value
+                val by = bookState.by.toString()
                 val on = bookState.on.withOffsetSameInstant(ZoneOffset.UTC).toString()
                 BorrowedState(by, on)
             }
@@ -69,15 +69,14 @@ class MongoBookDataStore(
         val title = Title(document.title!!)
         val book = Book(isbn, title)
 
-        val bookEntity = BookEntity(id, book)
+        val borrowedState = document.borrowed
+        val state = if (borrowedState != null) Borrowed(borrowedState) else Available
 
-        document.borrowed?.let {
-            val by = Borrower(it.by!!)
-            val on = OffsetDateTime.parse(it.on!!)
-            bookEntity.borrow(by, on)
-        }
+        return BookEntity(id, book, state)
+    }
 
-        return bookEntity
+    private fun Borrowed(borrowed: BorrowedState): Borrowed {
+        return Borrowed(Borrower(borrowed.by!!), OffsetDateTime.parse(borrowed.on!!))
     }
 
 }

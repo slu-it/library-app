@@ -59,12 +59,12 @@ internal class Isbn13Test {
 
         @Test fun `10 digit ISBNs are converted to 13 digit ISBNs`() {
             val isbn = Isbn13.parse("0000000000")
-            assertThat(isbn.value).isEqualTo("9780000000000")
+            assertThat(isbn.toString()).isEqualTo("9780000000000")
         }
 
         @Test fun `13 digit ISBNs are used as they are`() {
             val isbn = Isbn13.parse("0000000000111")
-            assertThat(isbn.value).isEqualTo("0000000000111")
+            assertThat(isbn.toString()).isEqualTo("0000000000111")
         }
 
         @ValueSource(strings = arrayOf(

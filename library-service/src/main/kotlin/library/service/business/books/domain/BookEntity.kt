@@ -16,10 +16,11 @@ import java.util.*
  */
 class BookEntity(
         val id: BookId,
-        val book: Book
+        val book: Book,
+        initialState: BookState = Available
 ) {
 
-    var state: BookState = Available
+    var state: BookState = initialState
         private set
 
     /**

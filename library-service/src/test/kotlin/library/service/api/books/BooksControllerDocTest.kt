@@ -59,8 +59,8 @@ class BooksControllerDocTest {
                 .contentType("application/json")
                 .content("""
                     {
-                        "isbn": "${createdBook.book.isbn.value}",
-                        "title": "${createdBook.book.title.value}"
+                        "isbn": "${createdBook.book.isbn}",
+                        "title": "${createdBook.book.title}"
                     }
                 """)
         mvc.perform(request)
@@ -147,7 +147,7 @@ class BooksControllerDocTest {
 
         val request = post("/api/books/${book.id}/borrow")
                 .contentType("application/json")
-                .content(""" { "borrower": "${borrower.value}" } """)
+                .content(""" { "borrower": "$borrower" } """)
         mvc.perform(request)
                 .andExpect(status().isOk)
                 .andDo(document("borrowBookById-foundAvailable"))
@@ -160,7 +160,7 @@ class BooksControllerDocTest {
 
         val request = post("/api/books/$id/borrow")
                 .contentType("application/json")
-                .content(""" { "borrower": "${borrower.value}" } """)
+                .content(""" { "borrower": "$borrower" } """)
         mvc.perform(request)
                 .andExpect(status().isConflict)
                 .andDo(document("borrowBookById-foundAlreadyBorrowed"))
@@ -173,7 +173,7 @@ class BooksControllerDocTest {
 
         val request = post("/api/books/$id/borrow")
                 .contentType("application/json")
-                .content(""" { "borrower": "${borrower.value}" } """)
+                .content(""" { "borrower": "$borrower" } """)
         mvc.perform(request)
                 .andExpect(status().isNotFound)
                 .andDo(document("borrowBookById-notFound"))
