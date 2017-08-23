@@ -19,6 +19,7 @@ import javax.validation.Valid
 
 @Validated
 @RestController
+@CrossOrigin
 @RequestMapping("/api/books")
 @LogMethodEntryAndExit
 class BooksController(
