@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import utils.UnitTest
 import javax.validation.Validation
+import javax.validation.Validator
 
 @UnitTest
 internal class BorrowBookRequestBodyTest {
@@ -18,7 +19,7 @@ internal class BorrowBookRequestBodyTest {
 
     @Nested inner class `bean validation for 'borrower'` {
 
-        val validator = Validation.buildDefaultValidatorFactory().validator
+        val validator: Validator = Validation.buildDefaultValidatorFactory().validator
 
         @Test fun `null is not allowed`() {
             val cut = BorrowBookRequestBody().apply { borrower = null }

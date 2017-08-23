@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import utils.UnitTest
 import javax.validation.Validation
+import javax.validation.Validator
 
 @UnitTest
 internal class CreateBookRequestBodyTest {
@@ -21,7 +22,7 @@ internal class CreateBookRequestBodyTest {
     @TestInstance(TestInstance.Lifecycle.PER_METHOD)
     @Nested inner class `bean validation` {
 
-        val validator = Validation.buildDefaultValidatorFactory().validator
+        val validator: Validator = Validation.buildDefaultValidatorFactory().validator
         val validInstance = CreateBookRequestBody().apply {
             isbn = "01234567890"
             title = "Hello World"

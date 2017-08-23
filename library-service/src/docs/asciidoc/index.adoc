@@ -93,7 +93,7 @@ request on the `/api/books` resource:
 
 include::{snippets}/books/getAllBooks-2Books/http-request.adoc[]
 
-If there are any books in the library the response would look something llike
+If there are any books in the library the response would look something like
 this:
 
 include::{snippets}/books/getAllBooks-2Books/http-response.adoc[]
@@ -170,7 +170,7 @@ Existing books can be deleted with a `DELETE` request on the book's
 
 include::{snippets}/books/deleteBookById-found/http-request.adoc[]
 
-Successful deletion is indeicated with a response like this:
+Successful deletion is indicated with a response like this:
 
 include::{snippets}/books/deleteBookById-found/http-response.adoc[]
 

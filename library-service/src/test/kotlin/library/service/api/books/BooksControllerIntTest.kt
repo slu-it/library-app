@@ -35,7 +35,7 @@ internal class BooksControllerIntTest {
 
     @ComponentScan("library.service.api.books", "library.service.business.books", "library.service.common")
     class TestConfiguration {
-        @Bean fun clock() = Clock.fixed(OffsetDateTime.parse("2017-08-20T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
+        @Bean fun clock(): Clock = Clock.fixed(OffsetDateTime.parse("2017-08-20T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
         @Bean fun errorHandlers(clock: Clock, correlationIdHolder: CorrelationIdHolder) = ErrorHandlers(clock, correlationIdHolder)
     }
 
