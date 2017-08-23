@@ -1,7 +1,8 @@
 package library.service.business.books
 
-import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.types.Book
+import library.service.business.books.domain.types.BookId
 import java.util.*
 
 /**
@@ -47,7 +48,7 @@ interface BookDataStore {
      * @param id the book's [UUID]
      * @return the found [BookEntity] - might be `null`!
      */
-    fun findById(id: UUID): BookEntity?
+    fun findById(id: BookId): BookEntity?
 
     /**
      * Finds all [BookEntity] currently present in the data store and returns

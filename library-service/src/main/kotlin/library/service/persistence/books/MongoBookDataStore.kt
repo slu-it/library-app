@@ -4,10 +4,7 @@ import library.service.business.books.BookDataStore
 import library.service.business.books.domain.BookEntity
 import library.service.business.books.domain.states.BookState.Available
 import library.service.business.books.domain.states.BookState.Borrowed
-import library.service.business.books.domain.types.Book
-import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
+import library.service.business.books.domain.types.*
 import library.service.common.logging.LogMethodEntryAndExit
 import library.service.persistence.books.BookDocument.BorrowedState
 import org.springframework.stereotype.Service
@@ -36,7 +33,7 @@ class MongoBookDataStore(
         val bookId = bookEntity.id
         val bookState = bookEntity.state
 
-        val document = repository.findById(bookId).get()
+        val document = repository.findById(bookId.value).get()
 
         document.isbn = book.isbn.value
         document.title = book.title.value
@@ -54,11 +51,11 @@ class MongoBookDataStore(
     }
 
     override fun delete(bookEntity: BookEntity) {
-        repository.deleteById(bookEntity.id)
+        repository.deleteById(bookEntity.id.value)
     }
 
-    override fun findById(id: UUID): BookEntity? {
-        return repository.findById(id).map(this::toEntity).orElse(null)
+    override fun findById(id: BookId): BookEntity? {
+        return repository.findById(id.value).map(this::toEntity).orElse(null)
     }
 
     override fun findAll(): List<BookEntity> {
@@ -66,7 +63,7 @@ class MongoBookDataStore(
     }
 
     private fun toEntity(document: BookDocument): BookEntity {
-        val id = document.id!!
+        val id = BookId(document.id!!)
 
         val isbn = Isbn13(document.isbn!!)
         val title = Title(document.title!!)

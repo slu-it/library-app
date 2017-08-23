@@ -1,6 +1,8 @@
 package library.service.business.books.domain.states
 
 import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.states.BookState.Available
+import library.service.business.books.domain.states.BookState.Borrowed
 import library.service.business.books.domain.types.Borrower
 import java.time.OffsetDateTime
 

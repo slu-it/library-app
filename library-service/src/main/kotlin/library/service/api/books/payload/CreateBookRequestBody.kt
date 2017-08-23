@@ -1,7 +1,6 @@
 package library.service.api.books.payload
 
 import org.hibernate.validator.constraints.NotBlank
-import org.hibernate.validator.constraints.NotEmpty
 import javax.validation.constraints.Size
 
 /** Request body used when creating a book. */

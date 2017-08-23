@@ -5,10 +5,7 @@ import com.nhaarman.mockito_kotlin.given
 import library.service.api.ErrorHandlers
 import library.service.business.books.BookDataStore
 import library.service.business.books.domain.BookEntity
-import library.service.business.books.domain.types.Book
-import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
+import library.service.business.books.domain.types.*
 import library.service.common.correlation.CorrelationIdHolder
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -134,7 +131,7 @@ internal class BooksControllerIntTest {
     @Nested inner class `post book` {
 
         @Test fun `returns response containing created book`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val idValue = id.toString()
             given { bookDataStore.create(any()) }.willAnswer {
                 val book = it.arguments[0] as Book
@@ -237,7 +234,7 @@ internal class BooksControllerIntTest {
     @Nested inner class `get book by ID` {
 
         @Test fun `returns response containing available book`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val idValue = id.toString()
             val availableBook = availableBook(
                     id = idValue,
@@ -268,7 +265,7 @@ internal class BooksControllerIntTest {
         }
 
         @Test fun `returns response containing borrowed book`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val idValue = id.toString()
             val borrowedBook = borrowedBook(
                     id = idValue,
@@ -305,7 +302,7 @@ internal class BooksControllerIntTest {
         }
 
         @Test fun `returns error response (404) if book was not found`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val idValue = id.toString()
             given { bookDataStore.findById(id) }.willReturn(null)
 
@@ -346,7 +343,7 @@ internal class BooksControllerIntTest {
     @Nested inner class `delete book by ID` {
 
         @Test fun `returns empty response if book was found`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val idValue = id.toString()
             val book = availableBook(
                     id = idValue,
@@ -360,7 +357,7 @@ internal class BooksControllerIntTest {
         }
 
         @Test fun `returns error response (404) if book was not found`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val idValue = id.toString()
             given { bookDataStore.findById(id) }.willReturn(null)
 
@@ -401,7 +398,7 @@ internal class BooksControllerIntTest {
     @Nested inner class `borrow book by ID` {
 
         @Test fun `returns response containing updated book if book was found`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val idValue = id.toString()
             val book = availableBook(
                     id = idValue,
@@ -439,7 +436,7 @@ internal class BooksControllerIntTest {
         }
 
         @Test fun `returns error response (409) if book already borrowed`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val idValue = id.toString()
             val borrowedBook = borrowedBook(
                     id = idValue,
@@ -468,7 +465,7 @@ internal class BooksControllerIntTest {
         }
 
         @Test fun `returns error response (404) if book was not found`() {
-            val idValue = UUID.randomUUID().toString()
+            val idValue = BookId.generate().toString()
             val request = post("/api/books/$idValue/borrow")
                     .header("X-Correlation-ID", CORRELATION_ID)
                     .contentType(APPLICATION_JSON)
@@ -487,7 +484,7 @@ internal class BooksControllerIntTest {
         }
 
         @Test fun `returns error response (400) if request content invalid`() {
-            val idValue = UUID.randomUUID().toString()
+            val idValue = BookId.generate().toString()
             val request = post("/api/books/$idValue/borrow")
                     .header("X-Correlation-ID", CORRELATION_ID)
                     .contentType(APPLICATION_JSON)
@@ -507,7 +504,7 @@ internal class BooksControllerIntTest {
         }
 
         @Test fun `returns error response (400) if request malformed`() {
-            val idValue = UUID.randomUUID().toString()
+            val idValue = BookId.generate().toString()
             val request = post("/api/books/$idValue/borrow")
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
@@ -545,7 +542,7 @@ internal class BooksControllerIntTest {
     @Nested inner class `return book by ID` {
 
         @Test fun `returns response containing updated book if book was found`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val idValue = id.toString()
             val book = borrowedBook(
                     id = idValue,
@@ -579,7 +576,7 @@ internal class BooksControllerIntTest {
         }
 
         @Test fun `returns error response (409) if book already returned`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val idValue = id.toString()
             val availableBook = availableBook(
                     id = idValue,
@@ -604,7 +601,7 @@ internal class BooksControllerIntTest {
         }
 
         @Test fun `returns error response (404) if book was not found`() {
-            val idValue = UUID.randomUUID().toString()
+            val idValue = BookId.generate().toString()
             val request = post("/api/books/$idValue/return")
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
@@ -646,7 +643,7 @@ internal class BooksControllerIntTest {
     }
 
     private fun availableBook(id: String, isbn: String, title: String): BookEntity {
-        return BookEntity(UUID.fromString(id), Book(Isbn13(isbn), Title(title)))
+        return BookEntity(BookId.from(id), Book(Isbn13(isbn), Title(title)))
     }
 
 }

@@ -1,7 +1,7 @@
 package library.service.business.books.exceptions
 
+import library.service.business.books.domain.types.BookId
 import library.service.business.exceptions.NotPossibleException
-import java.util.*
 
-class BookAlreadyBorrowedException(id: UUID)
+class BookAlreadyBorrowedException(id: BookId)
     : NotPossibleException("The book with ID: $id is already borrowed!")

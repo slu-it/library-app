@@ -2,10 +2,7 @@ package library.service.persistence.books
 
 import library.service.business.books.domain.states.BookState.Available
 import library.service.business.books.domain.states.BookState.Borrowed
-import library.service.business.books.domain.types.Book
-import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
+import library.service.business.books.domain.types.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -17,7 +14,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.IntegrationTest
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import java.util.*
 
 @DataMongoTest
 @IntegrationTest
@@ -53,7 +49,7 @@ internal class MongoBookDataStoreIntTest {
     }
 
     @Test fun `books looked up by their ID might not exist`() {
-        val foundBook = cut.findById(UUID.randomUUID())
+        val foundBook = cut.findById(BookId.generate())
         assertThat(foundBook).isNull()
     }
 

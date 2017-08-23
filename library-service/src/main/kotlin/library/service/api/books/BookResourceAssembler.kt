@@ -4,10 +4,10 @@ import library.service.api.books.BookResource.BorrowedState
 import library.service.business.books.domain.BookEntity
 import library.service.business.books.domain.states.BookState.Available
 import library.service.business.books.domain.states.BookState.Borrowed
+import library.service.business.books.domain.types.BookId
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport
 import org.springframework.stereotype.Component
-import java.util.*
 
 /**
  * Component responsible for converting a [BookEntity] into a [BookResource].
@@ -37,12 +37,12 @@ class BookResourceAssembler
         return resource
     }
 
-    private fun handleBorrowedState(resource: BookResource, bookId: UUID, bookState: Borrowed) {
+    private fun handleBorrowedState(resource: BookResource, bookId: BookId, bookState: Borrowed) {
         resource.borrowed = BorrowedState(by = bookState.by.value, on = bookState.on.toString())
         resource.add(linkTo(booksController).slash(bookId).slash("return").withRel("return"))
     }
 
-    private fun handleAvailableState(resource: BookResource, bookId: UUID) {
+    private fun handleAvailableState(resource: BookResource, bookId: BookId) {
         resource.add(linkTo(booksController).slash(bookId).slash("borrow").withRel("borrow"))
     }
 

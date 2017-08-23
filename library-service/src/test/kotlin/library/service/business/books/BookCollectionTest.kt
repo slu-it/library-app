@@ -6,10 +6,7 @@ import com.nhaarman.mockito_kotlin.verify
 import library.service.business.books.domain.BookEntity
 import library.service.business.books.domain.states.BookState.Available
 import library.service.business.books.domain.states.BookState.Borrowed
-import library.service.business.books.domain.types.Book
-import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
+import library.service.business.books.domain.types.*
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
@@ -20,7 +17,6 @@ import org.junit.jupiter.api.Test
 import utils.UnitTest
 import java.time.Clock
 import java.time.OffsetDateTime
-import java.util.*
 
 @UnitTest
 internal class BookCollectionTest {
@@ -33,7 +29,7 @@ internal class BookCollectionTest {
 
         @Test fun `delegates directly to data store`() {
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-            val bookEntity = BookEntity(UUID.randomUUID(), book)
+            val bookEntity = BookEntity(BookId.generate(), book)
             given { dataStore.create(book) }.willReturn(bookEntity)
 
             val addedBook = cut.addBook(book)
@@ -46,7 +42,7 @@ internal class BookCollectionTest {
     @Nested inner class `getting a book` {
 
         @Test fun `returns it if it was found in data store`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
             val bookEntity = BookEntity(id, book)
             given { dataStore.findById(id) }.willReturn(bookEntity)
@@ -57,7 +53,7 @@ internal class BookCollectionTest {
         }
 
         @Test fun `throws exception if it was not found in data store`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             given { dataStore.findById(id) }.willReturn(null)
 
             assertThrows(BookNotFoundException::class.java, {
@@ -70,8 +66,8 @@ internal class BookCollectionTest {
     @Nested inner class `getting all books` {
 
         @Test fun `delegates directly to data store`() {
-            val bookEntity1 = BookEntity(UUID.randomUUID(), Book(Isbn13("0123456789012"), Title("Hello World #1")))
-            val bookEntity2 = BookEntity(UUID.randomUUID(), Book(Isbn13("1234567890123"), Title("Hello World #2")))
+            val bookEntity1 = BookEntity(BookId.generate(), Book(Isbn13("0123456789012"), Title("Hello World #1")))
+            val bookEntity2 = BookEntity(BookId.generate(), Book(Isbn13("1234567890123"), Title("Hello World #2")))
             given { dataStore.findAll() }.willReturn(listOf(bookEntity1, bookEntity2))
 
             val allBooks = cut.getAllBooks()
@@ -84,7 +80,7 @@ internal class BookCollectionTest {
     @Nested inner class `removing a book` {
 
         @Test fun `deletes it from the data store if found`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
             val bookEntity = BookEntity(id, book)
             given { dataStore.findById(id) }.willReturn(bookEntity)
@@ -95,7 +91,7 @@ internal class BookCollectionTest {
         }
 
         @Test fun `throws exception if it was not found in data store`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             given { dataStore.findById(id) }.willReturn(null)
 
             assertThrows(BookNotFoundException::class.java, {
@@ -108,7 +104,7 @@ internal class BookCollectionTest {
     @Nested inner class `borrowing a book` {
 
         @Test fun `changes its state and updates it in the data store`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
             val bookEntity = BookEntity(id, book)
             given { dataStore.findById(id) }.willReturn(bookEntity)
@@ -121,7 +117,7 @@ internal class BookCollectionTest {
         }
 
         @Test fun `throws exception if it was not found in data store`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             given { dataStore.findById(id) }.willReturn(null)
 
             assertThrows(BookNotFoundException::class.java, {
@@ -130,7 +126,7 @@ internal class BookCollectionTest {
         }
 
         @Test fun `throws exception if it is already 'borrowed'`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
             val bookEntity = BookEntity(id, book)
             bookEntity.borrow(Borrower("Someone"), OffsetDateTime.now())
@@ -146,7 +142,7 @@ internal class BookCollectionTest {
     @Nested inner class `returning a book` {
 
         @Test fun `changes its state and updates it in the data store`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
             val bookEntity = BookEntity(id, book)
             bookEntity.borrow(Borrower("Someone"), OffsetDateTime.now())
@@ -159,7 +155,7 @@ internal class BookCollectionTest {
         }
 
         @Test fun `throws exception if it was not found in data store`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             given { dataStore.findById(id) }.willReturn(null)
 
             assertThrows(BookNotFoundException::class.java, {
@@ -168,7 +164,7 @@ internal class BookCollectionTest {
         }
 
         @Test fun `throws exception if it is already 'returning'`() {
-            val id = UUID.randomUUID()
+            val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
             val bookEntity = BookEntity(id, book)
             given { dataStore.findById(id) }.willReturn(bookEntity)

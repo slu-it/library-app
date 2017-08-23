@@ -1,15 +1,11 @@
 package library.service.api.books
 
 import library.service.business.books.domain.BookEntity
-import library.service.business.books.domain.types.Book
-import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
+import library.service.business.books.domain.types.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import utils.UnitTest
 import java.time.OffsetDateTime
-import java.util.*
 
 @UnitTest
 internal class BookResourceAssemblerTest {
@@ -17,7 +13,7 @@ internal class BookResourceAssemblerTest {
     val cut = BookResourceAssembler()
 
     @Test fun `book with 'available' state is assembled correctly`() {
-        val id = UUID.randomUUID()
+        val id = BookId.generate()
         val book = Book(Isbn13("0123456789012"), Title("Hello World"))
         val bookEntity = BookEntity(id, book)
 
@@ -33,7 +29,7 @@ internal class BookResourceAssemblerTest {
     }
 
     @Test fun `book with 'borrowed' state is assembled correctly`() {
-        val id = UUID.randomUUID()
+        val id = BookId.generate()
         val book = Book(Isbn13("0123456789012"), Title("Hello World"))
         val bookEntity = BookEntity(id, book)
 

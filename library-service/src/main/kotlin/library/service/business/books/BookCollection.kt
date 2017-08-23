@@ -2,6 +2,7 @@ package library.service.business.books
 
 import library.service.business.books.domain.BookEntity
 import library.service.business.books.domain.types.Book
+import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
@@ -10,7 +11,6 @@ import library.service.common.logging.LogMethodEntryAndExit
 import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.OffsetDateTime
-import java.util.*
 
 /**
  * This represents the book collection of this library application instance.
@@ -53,7 +53,7 @@ class BookCollection(
      * @return the [BookEntity] for the given ID
      * @throws BookNotFoundException in case there is no book for the given ID
      */
-    fun getBook(id: UUID): BookEntity {
+    fun getBook(id: BookId): BookEntity {
         return dataStore.findById(id) ?: throw BookNotFoundException(id)
     }
 
@@ -78,7 +78,7 @@ class BookCollection(
      * @param id the unique ID of the book to delete
      * @throws BookNotFoundException in case there is no book for the given ID
      */
-    fun removeBook(id: UUID) {
+    fun removeBook(id: BookId) {
         val book = getBook(id)
         dataStore.delete(book)
     }
@@ -97,7 +97,7 @@ class BookCollection(
      * @throws BookNotFoundException in case there is no book for the given ID
      * @throws BookAlreadyBorrowedException in case the book is already borrowed
      */
-    fun borrowBook(id: UUID, borrower: Borrower): BookEntity {
+    fun borrowBook(id: BookId, borrower: Borrower): BookEntity {
         val book = getBook(id)
         book.borrow(borrower, OffsetDateTime.now(clock))
         return dataStore.update(book)
@@ -115,7 +115,7 @@ class BookCollection(
      * @throws BookNotFoundException in case there is no book for the given ID
      * @throws BookAlreadyReturnedException in case the book is already returned
      */
-    fun returnBook(id: UUID): BookEntity {
+    fun returnBook(id: BookId): BookEntity {
         val book = getBook(id)
         book.`return`()
         return dataStore.update(book)

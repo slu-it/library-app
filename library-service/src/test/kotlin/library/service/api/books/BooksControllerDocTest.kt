@@ -6,18 +6,13 @@ import com.nhaarman.mockito_kotlin.given
 import library.service.business.books.BookCollection
 import library.service.business.books.domain.BookEntity
 import library.service.business.books.domain.states.BookState
-import library.service.business.books.domain.types.Book
-import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
+import library.service.business.books.domain.types.*
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
 import library.service.common.correlation.CorrelationIdHolder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
@@ -35,7 +30,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import utils.IntegrationTest
 import java.time.OffsetDateTime
-import java.util.*
 
 
 @IntegrationTest
@@ -120,7 +114,7 @@ class BooksControllerDocTest {
     }
 
     @Test fun `getting book by ID - not found`() {
-        val id = UUID.randomUUID()
+        val id = BookId.generate()
         given { bookCollection.getBook(id) }.willThrow(BookNotFoundException(id))
         mvc.perform(get("/api/books/$id"))
                 .andExpect(status().isNotFound)
@@ -130,14 +124,14 @@ class BooksControllerDocTest {
     // DELETE on /api/books/{id}
 
     @Test fun `deleting book by ID - found`() {
-        val id = UUID.randomUUID()
+        val id = BookId.generate()
         mvc.perform(delete("/api/books/$id"))
                 .andExpect(status().isNoContent)
                 .andDo(document("deleteBookById-found"))
     }
 
     @Test fun `deleting book by ID - not found`() {
-        val id = UUID.randomUUID()
+        val id = BookId.generate()
         given { bookCollection.removeBook(id) }.willThrow(BookNotFoundException(id))
         mvc.perform(delete("/api/books/$id"))
                 .andExpect(status().isNotFound)
@@ -160,7 +154,7 @@ class BooksControllerDocTest {
     }
 
     @Test fun `borrowing book by ID - found already borrowed`() {
-        val id = UUID.randomUUID()
+        val id = BookId.generate()
         val borrower = borrower()
         given { bookCollection.borrowBook(id, borrower) }.willThrow(BookAlreadyBorrowedException(id))
 
@@ -173,7 +167,7 @@ class BooksControllerDocTest {
     }
 
     @Test fun `borrowing book by ID - not found`() {
-        val id = UUID.randomUUID()
+        val id = BookId.generate()
         val borrower = borrower()
         given { bookCollection.borrowBook(id, borrower) }.willThrow(BookNotFoundException(id))
 
@@ -197,7 +191,7 @@ class BooksControllerDocTest {
     }
 
     @Test fun `returning book by ID - found already borrowed`() {
-        val id = UUID.randomUUID()
+        val id = BookId.generate()
         given { bookCollection.returnBook(id) }.willThrow(BookAlreadyReturnedException(id))
 
         mvc.perform(post("/api/books/$id/return"))
@@ -206,7 +200,7 @@ class BooksControllerDocTest {
     }
 
     @Test fun `returning book by ID - not found`() {
-        val id = UUID.randomUUID()
+        val id = BookId.generate()
         given { bookCollection.returnBook(id) }.willThrow(BookNotFoundException(id))
 
         mvc.perform(post("/api/books/$id/return"))
@@ -216,7 +210,7 @@ class BooksControllerDocTest {
 
     // utility methods
 
-    private fun borrowedBook(id: UUID = UUID.randomUUID()): BookEntity {
+    private fun borrowedBook(id: BookId = BookId.generate()): BookEntity {
         val borrowedBy = borrower()
         val borrowedOn = OffsetDateTime.parse("2017-08-21T12:34:56.789Z")
         return availableBook(id).borrow(borrowedBy, borrowedOn)
@@ -224,7 +218,7 @@ class BooksControllerDocTest {
 
     private fun borrower() = Borrower("slu")
 
-    private fun availableBook(id: UUID = UUID.randomUUID()): BookEntity {
+    private fun availableBook(id: BookId = BookId.generate()): BookEntity {
         val isbn = Isbn13("9780132350882")
         val title = Title("Clean Code: A Handbook of Agile Software Craftsmanship")
         val book = Book(isbn, title)

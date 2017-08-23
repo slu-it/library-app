@@ -1,5 +1,6 @@
 package library.service.business.books.domain.types
 
+import library.service.business.books.domain.types.Isbn13.NotAnIsbnNumberException
 import library.service.business.exceptions.MalformedValueException
 
 /**
