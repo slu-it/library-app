@@ -1,0 +1,34 @@
+<div class="container">
+  <h1>Add new book</h1>
+  <form (ngSubmit)="onSubmit()" #bookForm="ngForm">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input type="text" class="form-control" id="title" required [(ngModel)]="book.title" name="title" #title="ngModel">
+    </div>
+
+    <div class="form-group">
+      <label for="isbn">ISBN</label>
+      <input type="text" class="form-control" id="isbn" required minlength="10" maxlength="13"
+             [(ngModel)]="book.isbn" name="isbn" #isbn="ngModel">
+    </div>
+
+    <div [hidden]="title.valid || title.pristine"
+         class="alert alert-danger">
+      Book title is required
+    </div>
+
+    <div [hidden]="isbn.valid || isbn.pristine"
+         class="alert alert-danger">
+      Book ISBN is required (between 10 and 13 characters)
+    </div>
+
+    <button id="save" type="submit" class="btn btn-success" [disabled]="!bookForm.form.valid">Save</button>
+    <button id="reset" type="reset" (click)="onReset()" class="btn btn-secondary">Reset</button>
+    <button id="cancel" type="button" (click)="onCancel()" class="btn btn-secondary">Cancel</button>
+
+    <div *ngIf="error.error">
+      {{error.message}}
+    </div>
+
+  </form>
+</div>

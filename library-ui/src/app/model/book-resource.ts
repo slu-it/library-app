@@ -2,6 +2,7 @@ import {ResourceLink} from "./resource-link";
 
 
 export class BookResource {
+  public id: string;
   public isbn: string;
   public title: string;
   public borrowed?: BorrowedResource;

@@ -2,8 +2,40 @@
   <div class="card-body">
     <h4 class="card-title">{{book.isbn}}</h4>
     <p class="card-text">{{book.title}}</p>
-    <p *ngIf="book.borrowed" class="card-text">Borrowed by {{book.borrowed.by | uppercase}} on {{book.borrowed.on | date}}</p>
-    <a *ngIf="book._links.borrow" href="#" class="btn btn-primary">Borrow</a>
-    <a *ngIf="book._links.return" href="#" class="btn btn-primary">Return</a>
+    <p *ngIf="book.borrowed"
+       class="card-text">Borrowed by {{book.borrowed.by | uppercase}} on {{book.borrowed.on | date: "dd.MM.yyyy HH:mm"}}</p>
+    <a id="borrow" *ngIf="book._links.borrow" href="#" class="btn btn-primary" (click)="onBorrow()">Borrow</a>
+    <a id="return" *ngIf="book._links.return" href="#" class="btn btn-primary" (click)="onReturn()">Return</a>
+    <a id="delete" href="#" class="btn btn-primary" (click)="onDelete()">Delete</a>
+
+    <div class="container" *ngIf="borrowActive">
+      <hr>
+      <h4>Borrow the book</h4>
+      <form (ngSubmit)="borrowBook()" #borrowForm="ngForm">
+        <div class="form-group">
+          <label for="name">Borrower initials</label>
+          <input type="text" class="form-control" id="name"
+                 required pattern="[a-zA-Z]{1,10}" maxlength="10" [(ngModel)]="borrower.name" name="name" #name="ngModel">
+        </div>
+
+        <div [hidden]="name.valid || name.pristine"
+             class="alert alert-danger">
+          Initials of borrower are required (between 1 and 10 characters)
+        </div>
+
+        <button id="borrowBook" type="submit" class="btn btn-success" [disabled]="!borrowForm.form.valid">Do borrow</button>
+        <button id="cancelBorrow" type="button" (click)="onBorrow()" class="btn btn-secondary">Cancel</button>
+      </form>
+    </div>
+
+    <div class="container" *ngIf="returnActive">
+      <hr>
+      <h4>Return the book</h4>
+      <form (ngSubmit)="returnBook()" #returnForm="ngForm">
+        <button id="returnBook" type="submit" class="btn btn-success">Do return</button>
+        <button id="cancelReturn" type="button" (click)="onReturn()" class="btn btn-secondary">Cancel</button>
+      </form>
+    </div>
   </div>
+
 </div>

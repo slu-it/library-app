@@ -15,8 +15,16 @@ export class BookListComponent implements OnInit {
   constructor(private _bookService: BookService) { }
 
   ngOnInit() {
+    this.loadList();
+  }
+
+  refreshList(update: boolean) {
+    this.loadList();
+  }
+
+  private loadList() {
     this._bookService.findAllBooks().subscribe(
-      bl => this.books = bl._embedded.books,
+      bl => { if (bl._embedded) { this.books = bl._embedded.books } else { this.books = []; } },
       (err: HttpErrorResponse) => console.log('Error when getting books ' + err.message)
     );
   }
