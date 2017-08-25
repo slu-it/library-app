@@ -30,10 +30,10 @@ class MongoBookDataStore(
 
     override fun update(bookEntity: BookEntity): BookEntity {
         val book = bookEntity.book
-        val bookId = bookEntity.id
+        val bookId = bookEntity.id.toUuid()
         val bookState = bookEntity.state
 
-        val document = repository.findById(bookId.value).get()
+        val document = repository.findById(bookId).get()
 
         document.isbn = book.isbn.toString()
         document.title = book.title.toString()
@@ -51,15 +51,20 @@ class MongoBookDataStore(
     }
 
     override fun delete(bookEntity: BookEntity) {
-        repository.deleteById(bookEntity.id.value)
+        val bookId = bookEntity.id.toUuid()
+        repository.deleteById(bookId)
     }
 
     override fun findById(id: BookId): BookEntity? {
-        return repository.findById(id.value).map(this::toEntity).orElse(null)
+        val bookId = id.toUuid()
+        return repository.findById(bookId)
+                .map(this::toEntity)
+                .orElse(null)
     }
 
     override fun findAll(): List<BookEntity> {
-        return repository.findAll().map(this::toEntity)
+        return repository.findAll()
+                .map(this::toEntity)
     }
 
     private fun toEntity(document: BookDocument): BookEntity {

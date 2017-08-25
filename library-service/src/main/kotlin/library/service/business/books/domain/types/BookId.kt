@@ -5,12 +5,11 @@ import java.util.*
 
 /** The unique ID of a [BookEntity]. */
 class BookId(
-        val value: UUID
+        private val value: UUID
 ) {
 
-    override fun toString(): String {
-        return value.toString()
-    }
+    fun toUuid(): UUID = value
+    override fun toString(): String = value.toString()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
