@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import utils.UnitTest
 
 @UnitTest
-internal class TitleTest : ValueTypeContract<Title> {
+internal class TitleTest : ValueTypeContract<Title>() {
 
     override fun newExampleInstanceOne() = Title("Title #1")
     override fun newExampleInstanceTwo() = Title("Title #2")

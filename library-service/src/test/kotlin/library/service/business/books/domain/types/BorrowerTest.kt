@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import utils.UnitTest
 
 @UnitTest
-internal class BorrowerTest : ValueTypeContract<Borrower> {
+internal class BorrowerTest : ValueTypeContract<Borrower>() {
 
     override fun newExampleInstanceOne() = Borrower("Rob Stark")
     override fun newExampleInstanceTwo() = Borrower("Ned Stark")

@@ -9,7 +9,7 @@ import utils.UnitTest
 import java.util.*
 
 @UnitTest
-internal class BookIdTest : ValueTypeContract<BookId> {
+internal class BookIdTest : ValueTypeContract<BookId>() {
 
     override fun newExampleInstanceOne() = BookId.from("d19eafd1-c77c-45a3-bcc1-96cd288910b2")
     override fun newExampleInstanceTwo() = BookId.from("40335985-97bc-42d2-9fdb-e48ae3c94ea6")

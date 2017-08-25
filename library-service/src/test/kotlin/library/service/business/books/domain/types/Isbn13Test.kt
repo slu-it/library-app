@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource
 import utils.UnitTest
 
 @UnitTest
-internal class Isbn13Test : ValueTypeContract<Isbn13> {
+internal class Isbn13Test : ValueTypeContract<Isbn13>() {
 
     override fun newExampleInstanceOne() = Isbn13("0123456789012")
     override fun newExampleInstanceTwo() = Isbn13("1234567890123")
