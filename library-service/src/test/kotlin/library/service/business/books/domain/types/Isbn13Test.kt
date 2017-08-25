@@ -1,5 +1,6 @@
 package library.service.business.books.domain.types
 
+import contracts.ValueTypeContract
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested
@@ -9,7 +10,10 @@ import org.junit.jupiter.params.provider.ValueSource
 import utils.UnitTest
 
 @UnitTest
-internal class Isbn13Test {
+internal class Isbn13Test : ValueTypeContract<Isbn13> {
+
+    override fun newExampleInstanceOne() = Isbn13("0123456789012")
+    override fun newExampleInstanceTwo() = Isbn13("1234567890123")
 
     @Test fun `toString() returns ISBN's value as a String`() {
         val isbn = Isbn13("1234567890123")
