@@ -51,7 +51,7 @@ internal class LogMethodEntryAndExitAspectIntTest {
     }
 
     @RecordLoggers(LogMethodEntryAndExitAspect::class)
-    @Test fun `only open public methods are not logged`(logRecord: LogRecord) {
+    @Test fun `only open public methods are logged`(logRecord: LogRecord) {
         annotatedExample.closedPublicMethod()
         annotatedExample.internalMethod()
         assertThat(logRecord).hasSize(0)

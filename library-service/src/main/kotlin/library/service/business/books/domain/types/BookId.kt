@@ -1,6 +1,7 @@
 package library.service.business.books.domain.types
 
 import library.service.business.books.domain.BookEntity
+import library.service.business.exceptions.MalformedValueException
 import java.util.*
 
 /** The unique ID of a [BookEntity]. */
@@ -19,10 +20,17 @@ data class BookId(
         }
 
         fun from(value: String): BookId {
-            val uuid = UUID.fromString(value)
-            return BookId(uuid)
+            try {
+                val uuid = UUID.fromString(value)
+                return BookId(uuid)
+            } catch (e: IllegalArgumentException) {
+                throw NotAnUuidException(value)
+            }
         }
 
     }
+
+    class NotAnUuidException(value: String)
+        : MalformedValueException("This is not a valid UUID: $value")
 
 }

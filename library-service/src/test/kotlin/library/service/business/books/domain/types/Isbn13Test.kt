@@ -11,6 +11,11 @@ import utils.UnitTest
 @UnitTest
 internal class Isbn13Test {
 
+    @Test fun `toString() returns ISBN's value as a String`() {
+        val isbn = Isbn13("1234567890123")
+        assertThat(isbn.toString()).isEqualTo("1234567890123")
+    }
+
     @Nested inner class `during construction` {
 
         @ValueSource(strings = arrayOf(
