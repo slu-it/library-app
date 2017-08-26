@@ -16,17 +16,13 @@ abstract class ValueTypeContract<out T : Any> {
             @Test fun `instances with different values are not equal`() {
                 val instanceOne = newExampleInstanceOne()
                 val instanceTwo = newExampleInstanceTwo()
-
                 assertThat(instanceOne).isNotEqualTo(instanceTwo)
-                assertThat(instanceOne.hashCode()).isNotEqualTo(instanceTwo.hashCode())
             }
 
             @Test fun `instances with equal values are equal`() {
                 val instanceOne = newExampleInstanceOne()
                 val instanceTwo = newExampleInstanceOne()
-
                 assertThat(instanceOne).isEqualTo(instanceTwo)
-                assertThat(instanceOne.hashCode()).isEqualTo(instanceTwo.hashCode())
             }
 
         }
