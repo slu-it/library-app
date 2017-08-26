@@ -11,8 +11,8 @@ import java.util.*
 @UnitTest
 internal class BookIdTest : ValueTypeContract<BookId>() {
 
-    override fun newExampleInstanceOne() = BookId.from("d19eafd1-c77c-45a3-bcc1-96cd288910b2")
-    override fun newExampleInstanceTwo() = BookId.from("40335985-97bc-42d2-9fdb-e48ae3c94ea6")
+    override fun instanceExampleOne() = BookId.from("d19eafd1-c77c-45a3-bcc1-96cd288910b2")
+    override fun instanceExampleTwo() = BookId.from("40335985-97bc-42d2-9fdb-e48ae3c94ea6")
 
     val uuid = UUID.fromString("4b13ce6b-4546-4b89-9356-dd7bbf67c40d")
 

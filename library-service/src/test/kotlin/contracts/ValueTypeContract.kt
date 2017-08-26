@@ -6,23 +6,23 @@ import org.junit.jupiter.api.Test
 
 abstract class ValueTypeContract<out T : Any> {
 
-    abstract fun newExampleInstanceOne(): T
-    abstract fun newExampleInstanceTwo(): T
+    abstract fun instanceExampleOne(): T
+    abstract fun instanceExampleTwo(): T
 
     @Nested inner class `is a value type` {
 
+        val exampleOfTypeOne = instanceExampleOne()
+        val anotherExampleOfTypeOne = instanceExampleOne()
+        val exampleOfTypeTwo = instanceExampleTwo()
+
         @Nested inner class `equality` {
 
-            @Test fun `instances with different values are not equal`() {
-                val instanceOne = newExampleInstanceOne()
-                val instanceTwo = newExampleInstanceTwo()
-                assertThat(instanceOne).isNotEqualTo(instanceTwo)
+            @Test fun `instances with different values are not considered equal`() {
+                assertThat(exampleOfTypeOne).isNotEqualTo(exampleOfTypeTwo)
             }
 
-            @Test fun `instances with equal values are equal`() {
-                val instanceOne = newExampleInstanceOne()
-                val instanceTwo = newExampleInstanceOne()
-                assertThat(instanceOne).isEqualTo(instanceTwo)
+            @Test fun `instances with equal values are considered equal`() {
+                assertThat(exampleOfTypeOne).isEqualTo(anotherExampleOfTypeOne)
             }
 
         }
@@ -30,15 +30,11 @@ abstract class ValueTypeContract<out T : Any> {
         @Nested inner class `hash codes` {
 
             @Test fun `instances with different values have different hash codes`() {
-                val instanceOne = newExampleInstanceOne()
-                val instanceTwo = newExampleInstanceTwo()
-                assertThat(instanceOne.hashCode()).isNotEqualTo(instanceTwo.hashCode())
+                assertThat(exampleOfTypeOne.hashCode()).isNotEqualTo(exampleOfTypeTwo.hashCode())
             }
 
             @Test fun `instances with equal values share the same hash code`() {
-                val instanceOne = newExampleInstanceOne()
-                val instanceTwo = newExampleInstanceOne()
-                assertThat(instanceOne.hashCode()).isEqualTo(instanceTwo.hashCode())
+                assertThat(exampleOfTypeOne.hashCode()).isEqualTo(anotherExampleOfTypeOne.hashCode())
             }
 
         }

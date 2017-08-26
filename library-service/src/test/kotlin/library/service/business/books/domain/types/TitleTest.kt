@@ -8,8 +8,8 @@ import utils.UnitTest
 @UnitTest
 internal class TitleTest : ValueTypeContract<Title>() {
 
-    override fun newExampleInstanceOne() = Title("Title #1")
-    override fun newExampleInstanceTwo() = Title("Title #2")
+    override fun instanceExampleOne() = Title("Title #1")
+    override fun instanceExampleTwo() = Title("Title #2")
 
     @Test fun `toString() returns Title's value as a String`() {
         val title = Title("My Title")

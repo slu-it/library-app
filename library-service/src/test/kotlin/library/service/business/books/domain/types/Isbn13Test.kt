@@ -12,8 +12,8 @@ import utils.UnitTest
 @UnitTest
 internal class Isbn13Test : ValueTypeContract<Isbn13>() {
 
-    override fun newExampleInstanceOne() = Isbn13("0123456789012")
-    override fun newExampleInstanceTwo() = Isbn13("1234567890123")
+    override fun instanceExampleOne() = Isbn13("0123456789012")
+    override fun instanceExampleTwo() = Isbn13("1234567890123")
 
     @Test fun `toString() returns ISBN's value as a String`() {
         val isbn = Isbn13("1234567890123")

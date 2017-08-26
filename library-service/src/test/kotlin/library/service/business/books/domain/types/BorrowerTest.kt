@@ -8,8 +8,8 @@ import utils.UnitTest
 @UnitTest
 internal class BorrowerTest : ValueTypeContract<Borrower>() {
 
-    override fun newExampleInstanceOne() = Borrower("Rob Stark")
-    override fun newExampleInstanceTwo() = Borrower("Ned Stark")
+    override fun instanceExampleOne() = Borrower("Rob Stark")
+    override fun instanceExampleTwo() = Borrower("Ned Stark")
 
     @Test fun `toString() returns Borrower's value as a String`() {
         val borrower = Borrower("slu")
