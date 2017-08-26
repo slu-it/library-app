@@ -8,7 +8,6 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD
  * Qualifier for Integration Tests:
  *
  * - [tagged][Tag] as `integration-test`
- * - [test instance][TestInstance] generation: `PER_METHOD`
  *
  * An integration test is a test integrating one or more components of a
  * system. A component can be a module, a set of classes, a framework or
@@ -22,5 +21,4 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD
 @Retention
 @Target(AnnotationTarget.CLASS)
 @Tag("integration-test")
-@TestInstance(PER_METHOD)
 annotation class IntegrationTest

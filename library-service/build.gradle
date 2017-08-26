@@ -2,9 +2,9 @@ buildscript {
     ext {
         kotlinVersion = '1.1.4-2'
         springBootVersion = '2.0.0.M3'
-        junitPlatformVersion = '1.0.0-RC2'
-        junitJupiterVersion = '5.0.0-RC2'
-        junitVintageVersion = '4.12.0-RC2'
+        junitPlatformVersion = '1.0.0-RC3'
+        junitJupiterVersion = '5.0.0-RC3'
+        junitVintageVersion = '4.12.0-RC3'
         dockerPluginVersion = '1.2'
         asciidoctorVersion = '1.5.3'
         springRestDocsVersion = '1.2.1.RELEASE'
