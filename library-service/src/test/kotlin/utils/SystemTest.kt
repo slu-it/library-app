@@ -9,6 +9,17 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD
  *
  * - [tagged][Tag] as `system-test`
  * - [test instance][TestInstance] generation: `PER_METHOD`
+ *
+ * A system test is a test against a running instance of the application
+ * without faking (mocking / stubbing etc.) _any_ part of it. In addition
+ * any interaction with the application should be done through official
+ * interfaces like the API.
+ *
+ * For this application this means starting the Spring Boot application
+ * context within the same JVM as the tests and using a dynamically created
+ * (embedded) MongoDB instance. Using this version of MongoDB does not violate
+ * the above constraints, because it is an actual MongoDB set up fresh for
+ * each test run.
  */
 @Retention
 @Target(AnnotationTarget.CLASS)
