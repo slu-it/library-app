@@ -187,15 +187,16 @@ internal class ApplicationSysTest {
 
     private fun createBook(requestBody: String): BookResource {
         // @formatter:off
-        val response = given()
+        val response =
+            given()
                 .header("Content-Type", "application/json")
                 .body(requestBody)
-                .`when`()
+            .`when`()
                 .post("/api/books")
-                .then()
+            .then()
                 .statusCode(201)
                 .contentType("application/hal+json;charset=UTF-8")
-                .and()
+            .and()
                 .extract().body().asString()
         // @formatter:on
         return objectMapper.readValue(response, BookResource::class.java)
@@ -203,26 +204,27 @@ internal class ApplicationSysTest {
 
     private fun deleteBookExpecting(bookLink: Link, expectedStatus: Int) {
         // @formatter:off
-        given()
+            given()
                 .header("Content-Type", "application/json")
-                .`when`()
+            .`when`()
                 .delete(toUrl(bookLink))
-                .then()
+            .then()
                 .statusCode(expectedStatus)
         // @formatter:on
     }
 
     private fun borrowBook(borrowLink: Link, requestBody: String): BookResource {
         // @formatter:off
-        val response = given()
+        val response =
+            given()
                 .header("Content-Type", "application/json")
                 .body(requestBody)
-                .`when`()
+            .`when`()
                 .post(toUrl(borrowLink))
-                .then()
+            .then()
                 .statusCode(200)
                 .contentType("application/hal+json;charset=UTF-8")
-                .and()
+            .and()
                 .extract().body().asString()
         // @formatter:on
         return objectMapper.readValue(response, BookResource::class.java)
@@ -230,26 +232,27 @@ internal class ApplicationSysTest {
 
     private fun borrowBookExpecting(borrowLink: Link, expectedStatus: Int) {
         // @formatter:off
-        given()
+            given()
                 .header("Content-Type", "application/json")
                 .body(""" { "borrower": "No One" }""")
-                .`when`()
+            .`when`()
                 .post(toUrl(borrowLink))
-                .then()
+            .then()
                 .statusCode(expectedStatus)
         // @formatter:on
     }
 
     private fun returnBook(returnLink: Link): BookResource {
         // @formatter:off
-        val response = given()
+        val response =
+            given()
                 .header("Content-Type", "application/json")
-                .`when`()
+            .`when`()
                 .post(toUrl(returnLink))
-                .then()
+            .then()
                 .statusCode(200)
                 .contentType("application/hal+json;charset=UTF-8")
-                .and()
+            .and()
                 .extract().body().asString()
         // @formatter:on
         return objectMapper.readValue(response, BookResource::class.java)
@@ -257,26 +260,26 @@ internal class ApplicationSysTest {
 
     private fun returnBookExpecting(returnLink: Link, expectedStatus: Int) {
         // @formatter:off
-        given()
+            given()
                 .header("Content-Type", "application/json")
-                .`when`()
+            .`when`()
                 .post(toUrl(returnLink))
-                .then()
+            .then()
                 .statusCode(expectedStatus)
         // @formatter:on
     }
 
     private fun getAllBooks(): BookListResource {
         // @formatter:off
-        val response = given()
+        val response =
+            given()
                 .header("Content-Type", "application/json")
-                .`when`()
+            .`when`()
                 .get("/api/books")
-                .then()
+            .then()
                 .statusCode(200)
                 .contentType("application/hal+json;charset=UTF-8")
-                .and()
-                .and().log().everything()
+            .and()
                 .extract().body().asString()
         // @formatter:on
         return objectMapper.readValue(response, BookListResource::class.java)
