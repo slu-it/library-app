@@ -1,6 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BookListComponent } from './book-list.component';
+import { FormsModule } from '@angular/forms';
+import { BookListItemComponent } from '../book-list-item/book-list-item.component';
+import { BookService } from '../service/book.service';
+import { BookServiceMock } from '../service/book.service.mock';
 
 describe('BookListComponent', () => {
   let component: BookListComponent;
@@ -8,7 +12,11 @@ describe('BookListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BookListComponent ]
+      imports: [FormsModule],
+      declarations: [ BookListComponent, BookListItemComponent ],
+      providers: [
+        { provide: BookService, useClass: BookServiceMock}
+      ]
     })
     .compileComponents();
   }));

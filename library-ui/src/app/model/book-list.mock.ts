@@ -33,4 +33,4 @@ export const MOCK_BOOK_LIST = {
       href: 'http://localhost:8080/api/books'
     }
   }
-}
+};
