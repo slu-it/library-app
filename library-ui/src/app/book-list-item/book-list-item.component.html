@@ -1,21 +1,24 @@
-<div class="card" style="width: 40rem;">
+<div class="card">
+  <div class="card-header">
+    <h4>{{book.title}}</h4>
+  </div>
   <div class="card-body">
-    <h4 class="card-title">{{book.isbn}}</h4>
-    <p class="card-text">{{book.title}}</p>
+    <p class="card-text">ISBN: {{book.isbn}}</p>
     <p *ngIf="book.borrowed"
        class="card-text">Borrowed by {{book.borrowed.by | uppercase}} on {{book.borrowed.on | date: "dd.MM.yyyy HH:mm"}}</p>
-    <a id="borrow" *ngIf="book._links.borrow" href="#" class="btn btn-primary" (click)="onBorrow()">Borrow</a>
-    <a id="return" *ngIf="book._links.return" href="#" class="btn btn-primary" (click)="onReturn()">Return</a>
-    <a id="delete" href="#" class="btn btn-primary" (click)="onDelete()">Delete</a>
+    <a id="borrow-{{index}}" *ngIf="book._links.borrow && !borrowActive" href="#" class="btn btn-primary" (click)="onBorrow()">Borrow</a>
+    <a id="return-{index}}" *ngIf="book._links.return && !returnActive" href="#" class="btn btn-primary" (click)="onReturn()">Return</a>
+    <a id="delete-{{index}}" *ngIf="!borrowActive && !returnActive" href="#" class="btn btn-primary" (click)="onDelete()">Delete</a>
 
-    <div class="container" *ngIf="borrowActive">
+    <div *ngIf="borrowActive">
       <hr>
       <h4>Borrow the book</h4>
       <form (ngSubmit)="borrowBook()" #borrowForm="ngForm">
         <div class="form-group">
-          <label for="name">Borrower initials</label>
-          <input type="text" class="form-control" id="name"
-                 required pattern="[a-zA-Z]{1,10}" maxlength="10" [(ngModel)]="borrower.name" name="name" #name="ngModel">
+          <label for="name-{{index}}">Borrower initials</label>
+          <input class="form-control" id="name-{{index}}"
+                 required pattern="[a-zA-Z]{1,10}" minlength="1" maxlength="10" [(ngModel)]="borrower.name"
+                 name="name" #name="ngModel" autofocus>
         </div>
 
         <div [hidden]="name.valid || name.pristine"
@@ -23,19 +26,18 @@
           Initials of borrower are required (between 1 and 10 characters)
         </div>
 
-        <button id="borrowBook" type="submit" class="btn btn-success" [disabled]="!borrowForm.form.valid">Do borrow</button>
-        <button id="cancelBorrow" type="button" (click)="onBorrow()" class="btn btn-secondary">Cancel</button>
+        <button id="borrowBook-{{index}}" type="submit" class="btn btn-success" [disabled]="!borrowForm.form.valid">Do borrow</button>
+        <button id="cancelBorrow-{{index}}" type="button" (click)="onBorrow()" class="btn btn-secondary">Cancel</button>
       </form>
     </div>
 
-    <div class="container" *ngIf="returnActive">
+    <div *ngIf="returnActive">
       <hr>
-      <h4>Return the book</h4>
+      <h4>Really return the book?</h4>
       <form (ngSubmit)="returnBook()" #returnForm="ngForm">
-        <button id="returnBook" type="submit" class="btn btn-success">Do return</button>
-        <button id="cancelReturn" type="button" (click)="onReturn()" class="btn btn-secondary">Cancel</button>
+        <button id="returnBook-{{index}}" type="submit" class="btn btn-success">Do return</button>
+        <button id="cancelReturn-{{index}}" type="button" (click)="onReturn()" class="btn btn-secondary">Cancel</button>
       </form>
     </div>
   </div>
-
 </div>

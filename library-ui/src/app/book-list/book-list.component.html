@@ -1,5 +1,33 @@
 
-<div class="container">
-  <lib-book-list-item *ngFor="let book of books" [book]="book" (onUpdate)="refreshList($event)"></lib-book-list-item>
-</div>
+<div class="container-fluid">
+  <div class="form-row align-items-center" >
+    <form (ngSubmit)="onFilter()" #booksFilterForm="ngForm" class="form-inline">
+      <div class="col-auto">
+        <label class="sr-only" for="title">Title</label>
+        <input type="text" class="form-control mb-2 mb-sm-0" id="title" maxlength="100"
+               [(ngModel)]="filter.title" name="title" #title="ngModel" placeholder="Title" autocomplete="off">
+      </div>
 
+      <div class="col-auto">
+        <label class="sr-only" for="isbn">ISBN</label>
+        <input type="text" class="form-control mb-2 mb-sm-0" id="isbn" maxlength="13"
+               [(ngModel)]="filter.isbn" name="isbn" #isbn="ngModel" placeholder="ISBN" autocomplete="off">
+      </div>
+
+      <div class="col-auto">
+        <button id="filter" type="submit" class="btn btn-success m-md-2">Filter</button>
+        <button id="reset" type="reset" (click)="onRefresh()" class="btn btn-secondary m-md-2">Reset</button>
+      </div>
+
+      <div *ngIf="error.error">
+        {{error.message}}
+      </div>
+    </form>
+  </div>
+  <hr>
+  <div class="">
+    <div *ngFor="let book of books; let idx = index" class="w-100 p-2">
+      <lib-book-list-item [book]="book" [index]="idx" (onUpdate)="refreshList($event)"></lib-book-list-item>
+    </div>
+  </div>
+</div>

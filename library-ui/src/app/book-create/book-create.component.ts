@@ -4,6 +4,7 @@ import { BookService } from '../service/book.service';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorResource } from '../model/error-resource';
+import { ErrorMessage } from '../shared/error-message';
 
 @Component({
   selector: 'lib-book-create',
@@ -14,7 +15,7 @@ export class BookCreateComponent implements OnInit {
 
   public book: CreateBookResource;
 
-  public error: Error = new Error(false, '');
+  public error: ErrorMessage = new ErrorMessage(false, '');
 
   constructor(private _bookService: BookService, private _router: Router) { }
 
@@ -28,7 +29,7 @@ export class BookCreateComponent implements OnInit {
       (err: HttpErrorResponse) => {
         console.log(`Backend returned code ${err.status}, body was: ${err.error}`);
         const errorResource: ErrorResource = Object.assign(new ErrorResource(null, '', '', ''), err.error);
-        this.error = new Error(true, errorResource.details);
+        this.error = new ErrorMessage(true, errorResource.details);
       }
     );
 
@@ -46,6 +47,4 @@ export class BookCreateComponent implements OnInit {
 
 }
 
-class Error {
-  constructor(public error: boolean, public message: string) {}
-}
+

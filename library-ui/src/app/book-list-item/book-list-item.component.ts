@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {BookResource} from "../model/book-resource";
+import { BookResource } from "../model/book-resource";
 import { BookService } from '../service/book.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BorrowBookResource } from '../model/borrow-book-resource';
@@ -13,6 +13,9 @@ export class BookListItemComponent implements OnInit {
 
   @Input()
   public book: BookResource;
+
+  @Input()
+  public index?: number = 0;
 
   @Output()
   public onUpdate = new EventEmitter<boolean>();
@@ -62,11 +65,8 @@ export class BookListItemComponent implements OnInit {
   updateList() {
     this.onUpdate.emit(true);
   }
-
-  get diagnostic() { return JSON.stringify(this.borrower); }
-
 }
 
-class Borrower {
+export class Borrower {
   constructor(public name: string) {}
 }
