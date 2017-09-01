@@ -9,6 +9,9 @@ import { BookService } from './service/book.service';
 import { HttpClientModule } from '@angular/common/http';
 import { BookCreateComponent } from './book-create/book-create.component';
 import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MdButtonModule, MdCheckboxModule, MdIconModule, MdSnackBarModule } from '@angular/material';
+import { LoadBooksResolver } from './resolver/load-books-resolver';
 
 @NgModule({
   declarations: [
@@ -19,11 +22,16 @@ import { FormsModule } from '@angular/forms';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    MdIconModule,
+    MdSnackBarModule,
+    MdButtonModule,
+    MdCheckboxModule
   ],
-  providers: [BookService],
+  providers: [LoadBooksResolver, BookService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
