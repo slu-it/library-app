@@ -1,6 +1,6 @@
 package library.service.api.books
 
-import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.types.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,7 +15,7 @@ internal class BookResourceAssemblerTest {
     @Test fun `book with 'available' state is assembled correctly`() {
         val id = BookId.generate()
         val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-        val bookEntity = BookEntity(id, book)
+        val bookEntity = BookRecord(id, book)
 
         val resource = cut.toResource(bookEntity)
 
@@ -31,7 +31,7 @@ internal class BookResourceAssemblerTest {
     @Test fun `book with 'borrowed' state is assembled correctly`() {
         val id = BookId.generate()
         val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-        val bookEntity = BookEntity(id, book)
+        val bookEntity = BookRecord(id, book)
 
         val borrowedBy = Borrower("Someone")
         val borrowedOn = OffsetDateTime.now()

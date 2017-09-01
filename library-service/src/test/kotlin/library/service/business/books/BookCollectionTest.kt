@@ -3,7 +3,7 @@ package library.service.business.books
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
-import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.states.BookState.Available
 import library.service.business.books.domain.states.BookState.Borrowed
 import library.service.business.books.domain.types.*
@@ -29,7 +29,7 @@ internal class BookCollectionTest {
 
         @Test fun `delegates directly to data store`() {
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-            val bookEntity = BookEntity(BookId.generate(), book)
+            val bookEntity = BookRecord(BookId.generate(), book)
             given { dataStore.create(book) }.willReturn(bookEntity)
 
             val addedBook = cut.addBook(book)
@@ -44,7 +44,7 @@ internal class BookCollectionTest {
         @Test fun `returns it if it was found in data store`() {
             val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-            val bookEntity = BookEntity(id, book)
+            val bookEntity = BookRecord(id, book)
             given { dataStore.findById(id) }.willReturn(bookEntity)
 
             val gotBook = cut.getBook(id)
@@ -66,8 +66,8 @@ internal class BookCollectionTest {
     @Nested inner class `getting all books` {
 
         @Test fun `delegates directly to data store`() {
-            val bookEntity1 = BookEntity(BookId.generate(), Book(Isbn13("0123456789012"), Title("Hello World #1")))
-            val bookEntity2 = BookEntity(BookId.generate(), Book(Isbn13("1234567890123"), Title("Hello World #2")))
+            val bookEntity1 = BookRecord(BookId.generate(), Book(Isbn13("0123456789012"), Title("Hello World #1")))
+            val bookEntity2 = BookRecord(BookId.generate(), Book(Isbn13("1234567890123"), Title("Hello World #2")))
             given { dataStore.findAll() }.willReturn(listOf(bookEntity1, bookEntity2))
 
             val allBooks = cut.getAllBooks()
@@ -82,7 +82,7 @@ internal class BookCollectionTest {
         @Test fun `deletes it from the data store if found`() {
             val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-            val bookEntity = BookEntity(id, book)
+            val bookEntity = BookRecord(id, book)
             given { dataStore.findById(id) }.willReturn(bookEntity)
 
             cut.removeBook(id)
@@ -106,7 +106,7 @@ internal class BookCollectionTest {
         @Test fun `changes its state and updates it in the data store`() {
             val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-            val bookEntity = BookEntity(id, book)
+            val bookEntity = BookRecord(id, book)
             given { dataStore.findById(id) }.willReturn(bookEntity)
             given { dataStore.update(bookEntity) }.willReturn(bookEntity)
 
@@ -128,7 +128,7 @@ internal class BookCollectionTest {
         @Test fun `throws exception if it is already 'borrowed'`() {
             val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-            val bookEntity = BookEntity(id, book)
+            val bookEntity = BookRecord(id, book)
             bookEntity.borrow(Borrower("Someone"), OffsetDateTime.now())
             given { dataStore.findById(id) }.willReturn(bookEntity)
 
@@ -144,7 +144,7 @@ internal class BookCollectionTest {
         @Test fun `changes its state and updates it in the data store`() {
             val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-            val bookEntity = BookEntity(id, book)
+            val bookEntity = BookRecord(id, book)
             bookEntity.borrow(Borrower("Someone"), OffsetDateTime.now())
             given { dataStore.findById(id) }.willReturn(bookEntity)
             given { dataStore.update(bookEntity) }.willReturn(bookEntity)
@@ -166,7 +166,7 @@ internal class BookCollectionTest {
         @Test fun `throws exception if it is already 'returning'`() {
             val id = BookId.generate()
             val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-            val bookEntity = BookEntity(id, book)
+            val bookEntity = BookRecord(id, book)
             given { dataStore.findById(id) }.willReturn(bookEntity)
 
             assertThrows(BookAlreadyReturnedException::class.java, {

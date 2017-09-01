@@ -1,7 +1,7 @@
 package library.service.api.books
 
 import library.service.api.books.BookResource.BorrowedState
-import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.states.BookState.Available
 import library.service.business.books.domain.states.BookState.Borrowed
 import library.service.business.books.domain.types.BookId
@@ -10,26 +10,26 @@ import org.springframework.hateoas.mvc.ResourceAssemblerSupport
 import org.springframework.stereotype.Component
 
 /**
- * Component responsible for converting a [BookEntity] into a [BookResource].
+ * Component responsible for converting a [BookRecord] into a [BookResource].
  *
  * This includes transforming the data from one class to another and adding the
- * correct links depending on the [BookEntity] state.
+ * correct links depending on the [BookRecord] state.
  */
 @Component
 class BookResourceAssembler
-    : ResourceAssemblerSupport<BookEntity, BookResource>(BooksController::class.java, BookResource::class.java) {
+    : ResourceAssemblerSupport<BookRecord, BookResource>(BooksController::class.java, BookResource::class.java) {
 
     private val booksController = BooksController::class.java
 
-    override fun toResource(bookEntity: BookEntity): BookResource {
-        val book = bookEntity.book
+    override fun toResource(bookRecord: BookRecord): BookResource {
+        val book = bookRecord.book
 
         val isbn = book.isbn.toString()
         val title = book.title.toString()
         val resource = BookResource(isbn, title)
 
-        val bookId = bookEntity.id
-        val bookState = bookEntity.state
+        val bookId = bookRecord.id
+        val bookState = bookRecord.state
         when (bookState) {
             is Borrowed -> handleBorrowedState(resource, bookId, bookState)
             is Available -> handleAvailableState(resource, bookId)

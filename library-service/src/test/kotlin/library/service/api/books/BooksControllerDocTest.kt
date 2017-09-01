@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT
 import com.nhaarman.mockito_kotlin.given
 import library.service.business.books.BookCollection
-import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.states.BookState
 import library.service.business.books.domain.types.*
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
@@ -210,7 +210,7 @@ class BooksControllerDocTest {
 
     // utility methods
 
-    private fun borrowedBook(id: BookId = BookId.generate()): BookEntity {
+    private fun borrowedBook(id: BookId = BookId.generate()): BookRecord {
         val borrowedBy = borrower()
         val borrowedOn = OffsetDateTime.parse("2017-08-21T12:34:56.789Z")
         return availableBook(id).borrow(borrowedBy, borrowedOn)
@@ -218,11 +218,11 @@ class BooksControllerDocTest {
 
     private fun borrower() = Borrower("slu")
 
-    private fun availableBook(id: BookId = BookId.generate()): BookEntity {
+    private fun availableBook(id: BookId = BookId.generate()): BookRecord {
         val isbn = Isbn13("9780132350882")
         val title = Title("Clean Code: A Handbook of Agile Software Craftsmanship")
         val book = Book(isbn, title)
-        return BookEntity(id, book)
+        return BookRecord(id, book)
     }
 
     private fun document(identifier: String, vararg snippets: Snippet): RestDocumentationResultHandler {

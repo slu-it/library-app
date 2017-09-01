@@ -1,10 +1,10 @@
 package library.service.business.books.domain.types
 
-import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.BookRecord
 import library.service.business.exceptions.MalformedValueException
 import java.util.*
 
-/** The unique ID of a [BookEntity]. */
+/** The unique ID of a [BookRecord]. */
 data class BookId(
         private val value: UUID
 ) {

@@ -12,9 +12,9 @@ import java.time.OffsetDateTime
 import java.util.*
 
 /**
- * Aggregation of a [Book], a unique reference ID ([UUID]) and [BookState].
+ * Aggregate of a [Book], its unique reference ID ([UUID]) and [state][BookState].
  */
-class BookEntity(
+class BookRecord(
         val id: BookId,
         val book: Book,
         initialState: BookState = Available
@@ -24,7 +24,7 @@ class BookEntity(
         private set
 
     /**
-     * Tries to borrow this [BookEntity].
+     * Tries to borrow this [BookRecord].
      *
      * Borrowing is a book's transition from the [Available] to the [Borrowed]
      * state. And can only be executed if the book is in the [Available] state.
@@ -36,11 +36,11 @@ class BookEntity(
      *
      * @param by who is borrowing the book
      * @param on when was the book borrowed
-     * @return the same [BookEntity] in it's [Borrowed] state
+     * @return the same [BookRecord] in it's [Borrowed] state
      * @throws BookAlreadyBorrowedException in case the book is already
      * [Borrowed] by someone
      */
-    fun borrow(by: Borrower, on: OffsetDateTime): BookEntity {
+    fun borrow(by: Borrower, on: OffsetDateTime): BookRecord {
         if (state is Borrowed) {
             throw BookAlreadyBorrowedException(id)
         }
@@ -49,18 +49,18 @@ class BookEntity(
     }
 
     /**
-     * Tries to return this [BookEntity].
+     * Tries to return this [BookRecord].
      *
      * Returning is a book's transition from the [Borrowed] to the [Available]
      * state. And can only be executed if the book is in the [Borrowed] state.
      * Attempting to return an already [Available] book will result in an
      * exception.
      *
-     * @return the same [BookEntity] in it's [Available] state
+     * @return the same [BookRecord] in it's [Available] state
      * @throws BookAlreadyReturnedException in case the book is already
      * [Available]
      */
-    fun `return`(): BookEntity {
+    fun `return`(): BookRecord {
         if (state is Available) {
             throw BookAlreadyReturnedException(id)
         }

@@ -1,6 +1,6 @@
 package library.service.business.books
 
-import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
@@ -36,41 +36,41 @@ class BookCollection(
      * usage.
      *
      * @param book the book to add to the collection
-     * @return the [BookEntity] containing the unique ID of the stored book
+     * @return the [BookRecord] containing the unique ID of the stored book
      */
-    fun addBook(book: Book): BookEntity {
+    fun addBook(book: Book): BookRecord {
         return dataStore.create(book)
     }
 
     /**
-     * Gets a [BookEntity] from the collection by its unique ID.
+     * Gets a [BookRecord] from the collection by its unique ID.
      *
-     * The [BookEntity] is looked up in the collection's [BookDataStore]. If
+     * The [BookRecord] is looked up in the collection's [BookDataStore]. If
      * the [BookDataStore] does not contain a book for that ID, an exception
      * is thrown.
      *
      * @param id the unique ID to look up
-     * @return the [BookEntity] for the given ID
+     * @return the [BookRecord] for the given ID
      * @throws BookNotFoundException in case there is no book for the given ID
      */
-    fun getBook(id: BookId): BookEntity {
+    fun getBook(id: BookId): BookRecord {
         return dataStore.findById(id) ?: throw BookNotFoundException(id)
     }
 
     /**
-     * Gets a list of all [BookEntity] currently part of this collection.
+     * Gets a list of all [BookRecord] currently part of this collection.
      *
      * The books are looked up in the collection's [BookDataStore]. If there
      * are no books in the data store, an empty list is returned.
      *
-     * @return a list of all [BookEntity]
+     * @return a list of all [BookRecord]
      */
-    fun getAllBooks(): List<BookEntity> {
+    fun getAllBooks(): List<BookRecord> {
         return dataStore.findAll()
     }
 
     /**
-     * Removes a [BookEntity] from the collection by its unique ID.
+     * Removes a [BookRecord] from the collection by its unique ID.
      *
      * The book needs to exist in the collection's [BookDataStore] in order to
      * remove it. If there is no book for the given ID an exception is thrown.
@@ -84,7 +84,7 @@ class BookCollection(
     }
 
     /**
-     * Tries to borrow a [BookEntity] with the given unique ID for the given
+     * Tries to borrow a [BookRecord] with the given unique ID for the given
      * [Borrower].
      *
      * The book needs to exist in the collection's [BookDataStore] in order to
@@ -93,29 +93,29 @@ class BookCollection(
      *
      * @param id the unique ID of the book to borrow
      * @param borrower the [Borrower] who is trying to borrow the book
-     * @return the borrowed and updated [BookEntity] instance
+     * @return the borrowed and updated [BookRecord] instance
      * @throws BookNotFoundException in case there is no book for the given ID
      * @throws BookAlreadyBorrowedException in case the book is already borrowed
      */
-    fun borrowBook(id: BookId, borrower: Borrower): BookEntity {
+    fun borrowBook(id: BookId, borrower: Borrower): BookRecord {
         val book = getBook(id)
         book.borrow(borrower, OffsetDateTime.now(clock))
         return dataStore.update(book)
     }
 
     /**
-     * Tries to return a [BookEntity] with the given unique ID.
+     * Tries to return a [BookRecord] with the given unique ID.
      *
      * The book needs to exist in the collection's [BookDataStore] in order to
      * return it. It also needs to be currently _borrowed_. If either of those
      * conditions is not met, an exception is thrown.
      *
      * @param id the unique ID of the book to borrow
-     * @return the returned and updated [BookEntity] instance
+     * @return the returned and updated [BookRecord] instance
      * @throws BookNotFoundException in case there is no book for the given ID
      * @throws BookAlreadyReturnedException in case the book is already returned
      */
-    fun returnBook(id: BookId): BookEntity {
+    fun returnBook(id: BookId): BookRecord {
         val book = getBook(id)
         book.`return`()
         return dataStore.update(book)

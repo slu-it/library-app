@@ -13,7 +13,7 @@ import utils.UnitTest
 import java.time.OffsetDateTime
 
 @UnitTest
-internal class BookEntityTest {
+internal class BookRecordTest {
 
     val book = Book(Isbn13("9780007507672"), Title("A Knight of the Seven Kingdoms"))
     val bookId = BookId.generate()
@@ -21,13 +21,13 @@ internal class BookEntityTest {
     val borrowed = Borrowed(Borrower("Duncan the Tall"), OffsetDateTime.now())
 
     @Test fun `books are initialized as 'available'`() {
-        val minimalBook = BookEntity(bookId, book)
+        val minimalBook = BookRecord(bookId, book)
         assertThat(minimalBook.state).isEqualTo(Available)
     }
 
     @Nested inner class `given an 'available' book` {
 
-        val availableBook = BookEntity(bookId, book, Available)
+        val availableBook = BookRecord(bookId, book, Available)
 
         @Test fun `it can be 'borrowed'`() {
             availableBook.borrow(borrowed.by, borrowed.on)
@@ -44,7 +44,7 @@ internal class BookEntityTest {
 
     @Nested inner class `given a 'borrowed' book` {
 
-        val borrowedBook = BookEntity(bookId, book, borrowed)
+        val borrowedBook = BookRecord(bookId, book, borrowed)
 
         @Test fun `it can be returned in order to make it 'available' again`() {
             borrowedBook.`return`()

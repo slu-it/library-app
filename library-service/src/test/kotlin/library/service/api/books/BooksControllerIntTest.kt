@@ -4,7 +4,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.given
 import library.service.api.ErrorHandlers
 import library.service.business.books.BookDataStore
-import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.types.*
 import library.service.common.correlation.CorrelationIdHolder
 import org.junit.jupiter.api.Nested
@@ -135,7 +135,7 @@ internal class BooksControllerIntTest {
             val idValue = id.toString()
             given { bookDataStore.create(any()) }.willAnswer {
                 val book = it.arguments[0] as Book
-                BookEntity(id, book)
+                BookRecord(id, book)
             }
 
             val requestBody = """
@@ -636,14 +636,14 @@ internal class BooksControllerIntTest {
 
     }
 
-    private fun borrowedBook(id: String, isbn: String, title: String, borrowedBy: String, borrowedOn: String): BookEntity {
+    private fun borrowedBook(id: String, isbn: String, title: String, borrowedBy: String, borrowedOn: String): BookRecord {
         val bookEntity = availableBook(id, isbn, title)
         bookEntity.borrow(Borrower(borrowedBy), OffsetDateTime.parse(borrowedOn))
         return bookEntity
     }
 
-    private fun availableBook(id: String, isbn: String, title: String): BookEntity {
-        return BookEntity(BookId.from(id), Book(Isbn13(isbn), Title(title)))
+    private fun availableBook(id: String, isbn: String, title: String): BookRecord {
+        return BookRecord(BookId.from(id), Book(Isbn13(isbn), Title(title)))
     }
 
 }

@@ -1,7 +1,7 @@
 package library.service.persistence.books
 
 import library.service.business.books.BookDataStore
-import library.service.business.books.domain.BookEntity
+import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.states.BookState.Available
 import library.service.business.books.domain.states.BookState.Borrowed
 import library.service.business.books.domain.types.*
@@ -18,7 +18,7 @@ class MongoBookDataStore(
         private val repository: BookRepository
 ) : BookDataStore {
 
-    override fun create(book: Book): BookEntity {
+    override fun create(book: Book): BookRecord {
         val document = BookDocument(
                 id = UUID.randomUUID(),
                 isbn = book.isbn.toString(),
@@ -28,10 +28,10 @@ class MongoBookDataStore(
         return toEntity(createdDocument)
     }
 
-    override fun update(bookEntity: BookEntity): BookEntity {
-        val book = bookEntity.book
-        val bookId = bookEntity.id.toUuid()
-        val bookState = bookEntity.state
+    override fun update(bookRecord: BookRecord): BookRecord {
+        val book = bookRecord.book
+        val bookId = bookRecord.id.toUuid()
+        val bookState = bookRecord.state
 
         val document = repository.findById(bookId).get()
 
@@ -50,24 +50,24 @@ class MongoBookDataStore(
         return toEntity(updatedDocument)
     }
 
-    override fun delete(bookEntity: BookEntity) {
-        val bookId = bookEntity.id.toUuid()
+    override fun delete(bookRecord: BookRecord) {
+        val bookId = bookRecord.id.toUuid()
         repository.deleteById(bookId)
     }
 
-    override fun findById(id: BookId): BookEntity? {
+    override fun findById(id: BookId): BookRecord? {
         val bookId = id.toUuid()
         return repository.findById(bookId)
                 .map(this::toEntity)
                 .orElse(null)
     }
 
-    override fun findAll(): List<BookEntity> {
+    override fun findAll(): List<BookRecord> {
         return repository.findAll()
                 .map(this::toEntity)
     }
 
-    private fun toEntity(document: BookDocument): BookEntity {
+    private fun toEntity(document: BookDocument): BookRecord {
         val id = BookId(document.id!!)
 
         val isbn = Isbn13(document.isbn!!)
@@ -77,7 +77,7 @@ class MongoBookDataStore(
         val borrowedState = document.borrowed
         val state = if (borrowedState != null) Borrowed(borrowedState) else Available
 
-        return BookEntity(id, book, state)
+        return BookRecord(id, book, state)
     }
 
     private fun Borrowed(borrowed: BorrowedState): Borrowed {
