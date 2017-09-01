@@ -27,7 +27,8 @@ export class BookCreateComponent implements OnInit {
     this._bookService.createBook(this.book).subscribe(
       data => this._router.navigate(['']),
       (err: HttpErrorResponse) => {
-        console.log(`Backend returned code ${err.status}, body was: ${err.error}`);
+        console.log(`Backend returned code ${err.status}`);
+        console.table(err.error);
         const errorResource: ErrorResource = Object.assign(new ErrorResource(null, '', '', ''), err.error);
         this.error = new ErrorMessage(true, errorResource.details);
       }

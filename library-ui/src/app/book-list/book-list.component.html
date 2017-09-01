@@ -4,7 +4,7 @@
     <form (ngSubmit)="onFilter()" #booksFilterForm="ngForm" class="form-inline">
       <div class="col-auto">
         <label class="sr-only" for="title">Title</label>
-        <input type="text" class="form-control mb-2 mb-sm-0" id="title" maxlength="100"
+        <input type="text" class="form-control mb-2 mb-sm-0" id="title" maxlength="256"
                [(ngModel)]="filter.title" name="title" #title="ngModel" placeholder="Title" autocomplete="off">
       </div>
 
@@ -12,6 +12,12 @@
         <label class="sr-only" for="isbn">ISBN</label>
         <input type="text" class="form-control mb-2 mb-sm-0" id="isbn" maxlength="13"
                [(ngModel)]="filter.isbn" name="isbn" #isbn="ngModel" placeholder="ISBN" autocomplete="off">
+      </div>
+
+      <div class="col-auto">
+        <label for="available">Only Available Books</label>
+        <input type="checkbox" class="form-control " style="horiz-align: center" id="available"
+               [(ngModel)]="filter.available" name="available" #available="ngModel" (click)="onFilter()">
       </div>
 
       <div class="col-auto">

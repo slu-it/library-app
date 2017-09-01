@@ -39,5 +39,14 @@
         <button id="cancelReturn-{{index}}" type="button" (click)="onReturn()" class="btn btn-secondary">Cancel</button>
       </form>
     </div>
+
+    <div *ngIf="deleteActive">
+      <hr>
+      <h4>Really delete the book?</h4>
+      <form (ngSubmit)="deleteBook()" #deleteForm="ngForm">
+        <button id="deleteBook-{{index}}" type="submit" class="btn btn-success">Do return</button>
+        <button id="cancelDelete-{{index}}" type="button" (click)="onDelete()" class="btn btn-secondary">Cancel</button>
+      </form>
+    </div>
   </div>
 </div>

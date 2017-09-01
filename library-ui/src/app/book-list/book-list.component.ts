@@ -21,7 +21,7 @@ export class BookListComponent implements OnInit {
   constructor(private _bookService: BookService) { }
 
   ngOnInit() {
-    this.filter = new BookFilter('','');
+    this.filter = new BookFilter('','', false);
     this.error = new ErrorMessage(false, '');
     this.loadList();
   }
@@ -31,7 +31,7 @@ export class BookListComponent implements OnInit {
   }
 
   onRefresh() {
-    this.filter = new BookFilter('', '');
+    this.filter = new BookFilter('', '', false);
     this.loadList();
   }
 
@@ -56,6 +56,11 @@ export class BookListComponent implements OnInit {
           } else {
             this.books = bl._embedded.books
           }
+          if (this.filter.available) {
+            this.books = this.books.filter(
+              b => !b.borrowed
+            )
+          }
         } else {
           this.books = [];
         }
@@ -70,7 +75,7 @@ export class BookListComponent implements OnInit {
 }
 
 class BookFilter {
-  constructor(public title: string, public isbn: string) {}
+  constructor(public title: string, public isbn: string, public available: boolean) {}
 
   isTitleFilterActive(): boolean {
     return this.title && this.title.length > 0;
