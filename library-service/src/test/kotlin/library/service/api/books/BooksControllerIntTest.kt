@@ -90,6 +90,9 @@ internal class BooksControllerIntTest {
                           "self": {
                             "href": "http://localhost/api/books/883a2931-325b-4482-8972-8cb6f7d33816"
                           },
+                          "delete": {
+                            "href": "http://localhost/api/books/883a2931-325b-4482-8972-8cb6f7d33816"
+                          },
                           "borrow": {
                             "href": "http://localhost/api/books/883a2931-325b-4482-8972-8cb6f7d33816/borrow"
                           }
@@ -104,6 +107,9 @@ internal class BooksControllerIntTest {
                         },
                         "_links": {
                           "self": {
+                            "href": "http://localhost/api/books/53397dc0-932d-4198-801a-3e00b2742ba7"
+                          },
+                          "delete": {
                             "href": "http://localhost/api/books/53397dc0-932d-4198-801a-3e00b2742ba7"
                           },
                           "return": {
@@ -153,6 +159,9 @@ internal class BooksControllerIntTest {
                   "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
                   "_links": {
                     "self": {
+                      "href": "http://localhost/api/books/$idValue"
+                    },
+                    "delete": {
                       "href": "http://localhost/api/books/$idValue"
                     },
                     "borrow": {
@@ -252,6 +261,9 @@ internal class BooksControllerIntTest {
                     "self": {
                       "href": "http://localhost/api/books/$idValue"
                     },
+                    "delete": {
+                      "href": "http://localhost/api/books/$idValue"
+                    },
                     "borrow": {
                       "href": "http://localhost/api/books/$idValue/borrow"
                     }
@@ -287,6 +299,9 @@ internal class BooksControllerIntTest {
                   },
                   "_links": {
                     "self": {
+                      "href": "http://localhost/api/books/$idValue"
+                    },
+                    "delete": {
                       "href": "http://localhost/api/books/$idValue"
                     },
                     "return": {
@@ -421,6 +436,9 @@ internal class BooksControllerIntTest {
                   },
                   "_links": {
                     "self": {
+                      "href": "http://localhost/api/books/$idValue"
+                    },
+                    "delete": {
                       "href": "http://localhost/api/books/$idValue"
                     },
                     "return": {
@@ -561,6 +579,9 @@ internal class BooksControllerIntTest {
                   "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
                   "_links": {
                     "self": {
+                      "href": "http://localhost/api/books/$idValue"
+                    },
+                    "delete": {
                       "href": "http://localhost/api/books/$idValue"
                     },
                     "borrow": {

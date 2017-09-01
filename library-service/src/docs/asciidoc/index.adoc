@@ -72,9 +72,22 @@ format. Links can be found beneath the `_links` key. Users of the API should
 not create URIs themselves, instead they should use the above-described links
 to navigate
 
-== Resources: Books
+== Resources
 
-=== Creating a new Book
+=== Index
+
+The API index can be retrieved with a GET on `/api`. It provides links to the
+resources provided by this service.
+
+include::{snippets}/index/getIndex/http-request.adoc[]
+
+An index response looks something like this:
+
+include::{snippets}/index/getIndex/http-response.adoc[]
+
+=== Books
+
+==== Creating a new Book
 
 In order to create a book, the consumer needs to provide an `isbn` number and
 a `title` for the new book and `POST` them to `/api/books`:
@@ -86,7 +99,7 @@ request will contain the stored data and links to available action resources.
 
 include::{snippets}/books/postBook-created/http-response.adoc[]
 
-=== Listing all existing Books
+==== Listing all existing Books
 
 All existing books of the library's collection can be retrieved with a `GET`
 request on the `/api/books` resource:
@@ -102,7 +115,7 @@ If there are no books in the library the response would be:
 
 include::{snippets}/books/getAllBooks-0Books/http-response.adoc[]
 
-=== Getting a Book
+==== Getting a Book
 
 Existing books of the library's collection can be retrieved with a `GET`
 request on the book's `/api/books/{id}` resource:
@@ -121,7 +134,7 @@ If the requested book doesn't exist a `404 Not Found` is returned like this:
 
 include::{snippets}/books/getBookById-notFound/http-response.adoc[]
 
-=== Borrowing a Book
+==== Borrowing a Book
 
 In order to borrow a book it has to (1) exist and (2) not already be borrowed
 by someone else. A book can be borrowed by providing a `borrower` as part
@@ -142,7 +155,7 @@ If the book doesn't exist a `404 Not Found` is returned like this:
 
 include::{snippets}/books/borrowBookById-notFound/http-response.adoc[]
 
-=== Returning a Book
+==== Returning a Book
 
 In order to return a book it has to (1) exist and (2) be borrowed by someone.
 A book can be returned sending an empty `POST` request to the
@@ -163,7 +176,7 @@ If the book doesn't exist a `404 Not Found` is returned like this:
 
 include::{snippets}/books/returnBookById-notFound/http-response.adoc[]
 
-=== Deleting a Book
+==== Deleting a Book
 
 Existing books can be deleted with a `DELETE` request on the book's
 `/api/books/{id}` resource:

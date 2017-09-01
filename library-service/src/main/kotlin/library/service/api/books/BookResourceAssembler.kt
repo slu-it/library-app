@@ -35,6 +35,7 @@ class BookResourceAssembler
             is Available -> handleAvailableState(resource, bookId)
         }
         resource.add(linkTo(booksController).slash(bookId).withSelfRel())
+        resource.add(linkTo(booksController).slash(bookId).withRel("delete"))
 
         return resource
     }
