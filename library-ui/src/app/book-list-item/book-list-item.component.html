@@ -3,6 +3,8 @@
     <h4>{{book.title}}</h4>
   </div>
   <div class="card-body">
+    <md-icon *ngIf="book._links.return" class="material-icons md-48">remove_shopping_cart</md-icon>
+    <md-icon *ngIf="book._links.borrow" class="material-icons md-48">shopping_cart</md-icon>
     <p class="card-text">ISBN: {{book.isbn}}</p>
     <p *ngIf="book.borrowed"
        class="card-text">Borrowed by {{book.borrowed.by | uppercase}} on {{book.borrowed.on | date: "dd.MM.yyyy HH:mm"}}</p>

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorResource } from '../model/error-resource';
 import { ErrorMessage } from '../shared/error-message';
+import { MdSnackBar } from '@angular/material';
 
 @Component({
   selector: 'lib-book-create',
@@ -15,9 +16,7 @@ export class BookCreateComponent implements OnInit {
 
   public book: CreateBookResource;
 
-  public error: ErrorMessage = new ErrorMessage(false, '');
-
-  constructor(private _bookService: BookService, private _router: Router) { }
+  constructor(private _bookService: BookService, private _router: Router, private _snackBar: MdSnackBar) { }
 
   ngOnInit() {
     this.book = new CreateBookResource('', '')
@@ -25,12 +24,20 @@ export class BookCreateComponent implements OnInit {
 
   onSubmit() {
     this._bookService.createBook(this.book).subscribe(
-      data => this._router.navigate(['']),
+
+        data => {
+          this._router.navigate(['']);
+          this._snackBar.open('Successfully created book', 'dismiss', {
+            duration: 5000
+          });
+        },
       (err: HttpErrorResponse) => {
         console.log(`Backend returned code ${err.status}`);
         console.table(err.error);
         const errorResource: ErrorResource = Object.assign(new ErrorResource(null, '', '', ''), err.error);
-        this.error = new ErrorMessage(true, errorResource.details);
+        this._snackBar.open('Error creating book ' + errorResource.details, '', {
+          duration: 10000
+        });
       }
     );
 

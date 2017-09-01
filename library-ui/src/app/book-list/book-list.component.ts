@@ -3,7 +3,9 @@ import {BookService} from "../service/book.service";
 import {BookResource} from "../model/book-resource";
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorResource } from '../model/error-resource';
-import { ErrorMessage } from '../shared/error-message';
+import { MdSnackBar } from '@angular/material';
+import { ActivatedRoute } from '@angular/router';
+import { BookListResource } from '../model/book-list-resource';
 
 @Component({
   selector: 'lib-book-list',
@@ -14,24 +16,26 @@ export class BookListComponent implements OnInit {
 
   public books: BookResource[];
 
-  public filter: BookFilter;
+  public filter: BookFilter = new BookFilter('','', false);
 
-  public error: ErrorMessage;
+  private _storage = localStorage;
 
-  constructor(private _bookService: BookService) { }
+  constructor(private _bookService: BookService, private _route: ActivatedRoute, private _snackBar: MdSnackBar) { }
 
   ngOnInit() {
-    this.filter = new BookFilter('','', false);
-    this.error = new ErrorMessage(false, '');
-    this.loadList();
+    console.log('ngOnInit');
+    this.restoreFilter();
+    this.filterList(this._route.snapshot.data['bookList']);
   }
 
   onFilter() {
+    this.storeFilter();
     this.loadList();
   }
 
   onRefresh() {
     this.filter = new BookFilter('', '', false);
+    this.storeFilter();
     this.loadList();
   }
 
@@ -39,40 +43,78 @@ export class BookListComponent implements OnInit {
     this.loadList();
   }
 
+  private storeFilter() {
+    if (this.filter.available !== null) {
+      this._storage.setItem('lib.filter.available', this.filter.available.toString());
+    }
+    if (this.filter.title) {
+      this._storage.setItem('lib.filter.title', this.filter.title);
+    } else {
+      this._storage.removeItem('lib.filter.title');
+    }
+    if (this.filter.isbn) {
+      this._storage.setItem('lib.filter.isbn', this.filter.isbn);
+    } else {
+      this._storage.removeItem('lib.filter.isbn');
+    }
+  }
+
+  private restoreFilter() {
+    if (this._storage.getItem('lib.filter.available') === 'true') {
+      this.filter.available = true;
+    } else {
+      this.filter.available = false;
+    }
+    if (this._storage.getItem('lib.filter.title')) {
+      this.filter.title = this._storage.getItem('lib.filter.title');
+    }
+    if (this._storage.getItem('lib.filter.isbn')) {
+      this.filter.isbn = this._storage.getItem('lib.filter.isbn');
+    }
+  }
+
   private loadList() {
     this._bookService.findAllBooks().subscribe(
       bl => {
-        if (bl._embedded) {
-          if (this.filter.isTitleFilterActive() && this.filter.isIsbnFilterActive()) {
-            this.books = bl._embedded.books.filter(
-              b => b.title.toUpperCase().includes(this.filter.title.toUpperCase())
-                && b.isbn.includes(this.filter.isbn));
-          } else if (this.filter.isTitleFilterActive()) {
-            this.books = bl._embedded.books.filter(
-              b => b.title.toUpperCase().includes(this.filter.title.toUpperCase()));
-          } else if (this.filter.isIsbnFilterActive()) {
-            this.books = bl._embedded.books.filter(
-              b => b.isbn.includes(this.filter.isbn));
-          } else {
-            this.books = bl._embedded.books
-          }
-          if (this.filter.available) {
-            this.books = this.books.filter(
-              b => !b.borrowed
-            )
-          }
-        } else {
-          this.books = [];
-        }
+        this.filterList(bl);
+        this._snackBar.open('Successfully loaded books', 'dismiss', {
+          duration: 5000
+        });
       },
       (err: HttpErrorResponse) => {
         console.log(`Backend returned code ${err.status}, body was: ${err.error}`);
-        const errorResource: ErrorResource = Object.assign(new ErrorResource(null, '', '', ''), err.error);
-        this.error = new ErrorMessage(true, errorResource.details);
+        this._snackBar.open('Error loading books: ' + err.message, 'dismiss', {
+          duration: 10000
+        });
       }
     );
   }
-}
+
+  private filterList(bookList: BookListResource) {
+      if (bookList._embedded) {
+        if (this.filter.isTitleFilterActive() && this.filter.isIsbnFilterActive()) {
+          this.books = bookList._embedded.books.filter(
+            b => b.title.toUpperCase().includes(this.filter.title.toUpperCase())
+              && b.isbn.includes(this.filter.isbn));
+        } else if (this.filter.isTitleFilterActive()) {
+          this.books = bookList._embedded.books.filter(
+            b => b.title.toUpperCase().includes(this.filter.title.toUpperCase()));
+        } else if (this.filter.isIsbnFilterActive()) {
+          this.books = bookList._embedded.books.filter(
+            b => b.isbn.includes(this.filter.isbn));
+        } else {
+          this.books = bookList._embedded.books
+        }
+        if (this.filter.available) {
+          this.books = this.books.filter(
+            b => !b.borrowed
+          )
+        }
+      } else {
+        this.books = [];
+      }
+    }
+  }
 
 class BookFilter {
   constructor(public title: string, public isbn: string, public available: boolean) {}

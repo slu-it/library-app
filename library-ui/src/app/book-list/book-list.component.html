@@ -17,17 +17,14 @@
       <div class="col-auto">
         <label for="available">Only Available Books</label>
         <input type="checkbox" class="form-control " style="horiz-align: center" id="available"
-               [(ngModel)]="filter.available" name="available" #available="ngModel" (click)="onFilter()">
+               [(ngModel)]="filter.available" name="available" #available="ngModel" (change)="onFilter()">
       </div>
 
       <div class="col-auto">
         <button id="filter" type="submit" class="btn btn-success m-md-2">Filter</button>
-        <button id="reset" type="reset" (click)="onRefresh()" class="btn btn-secondary m-md-2">Reset</button>
+        <button id="reset" type="button" (click)="onRefresh()" class="btn btn-secondary m-md-2">Reset</button>
       </div>
 
-      <div *ngIf="error.error">
-        {{error.message}}
-      </div>
     </form>
   </div>
   <hr>
