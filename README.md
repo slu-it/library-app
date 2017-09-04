@@ -17,7 +17,7 @@ soon(ish).
 
 - Kotlin
 - Spring Boot
-- Hexagonical Architecture Style
+- Hexagonal architecture
 - Object Oriented Design
 - Documenting an API with Spring REST Docs
 - Testing Spring Boot Applications with JUnit 5
