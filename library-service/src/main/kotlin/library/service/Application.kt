@@ -12,8 +12,7 @@ import java.time.Clock
 @SpringBootApplication
 class Application {
 
-    @Bean
-    fun clock(): Clock = Clock.systemUTC()
+    @Bean fun utcClock(): Clock = Clock.systemUTC()
 
     @Controller
     class RedirectController {
