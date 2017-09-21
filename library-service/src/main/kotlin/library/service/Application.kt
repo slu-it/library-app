@@ -18,9 +18,13 @@ class Application {
     class RedirectController {
 
         @GetMapping("/")
-        fun redirectIndexToDocumentation(): RedirectView {
-            return RedirectView("/docs/index.html")
-        }
+        fun redirectIndexToDocumentation() = RedirectView("/docs/index.html")
+
+        @GetMapping("/docs")
+        fun redirectDocsToDocumentation() = RedirectView("/docs/index.html")
+
+        @GetMapping("/help")
+        fun redirectHelpToDocumentation() = RedirectView("/docs/index.html")
 
     }
 
