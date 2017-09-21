@@ -117,7 +117,7 @@ task buildDocker(type: Docker, dependsOn: build) {
     push = false
     tag = 'caaqe/library-service'
 
-    baseImage = 'frolvlad/alpine-oraclejdk8:slim'
+    baseImage = 'openjdk:8-jre-alpine'
     volume("/tmp")
     addFile {
         from jar
