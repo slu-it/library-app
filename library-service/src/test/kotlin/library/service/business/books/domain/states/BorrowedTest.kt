@@ -7,7 +7,10 @@ import java.time.OffsetDateTime
 
 internal class BorrowedTest : ValueTypeContract<Borrowed>() {
 
-    override fun instanceExampleOne(): Borrowed = Borrowed(Borrower("Someone"), OffsetDateTime.now())
-    override fun instanceExampleTwo(): Borrowed = Borrowed(Borrower("Someone Else"), OffsetDateTime.now())
+    val timestampOne = OffsetDateTime.now()
+    val timestampTwo = OffsetDateTime.now().minusSeconds(2)
+
+    override fun instanceExampleOne(): Borrowed = Borrowed(Borrower("Someone"), timestampOne)
+    override fun instanceExampleTwo(): Borrowed = Borrowed(Borrower("Someone Else"), timestampTwo)
 
 }
