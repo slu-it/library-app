@@ -1,6 +1,7 @@
 package library.service.business.books
 
 import library.service.business.books.domain.BookRecord
+import library.service.business.books.domain.events.*
 import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
@@ -26,7 +27,8 @@ import java.time.OffsetDateTime
 @LogMethodEntryAndExit
 class BookCollection(
         private val clock: Clock,
-        private val dataStore: BookDataStore
+        private val dataStore: BookDataStore,
+        private val eventDispatcher: BookEventDispatcher
 ) {
 
     /**
@@ -35,12 +37,20 @@ class BookCollection(
      * The [Book] is stored in the collection's [BookDataStore] for future
      * usage.
      *
+     * Produces a [BookAdded] domain event.
+     *
      * @param book the book to add to the collection
      * @return the [BookRecord] containing the unique ID of the stored book
      */
     fun addBook(book: Book): BookRecord {
-        return dataStore.create(book)
+        val bookRecord = dataStore.create(book)
+
+        bookAddedEvent(bookRecord).dispatch()
+        return bookRecord
     }
+
+    private fun bookAddedEvent(bookRecord: BookRecord) =
+            BookAdded(timestamp = now(), bookId = bookRecord.id)
 
     /**
      * Gets a [BookRecord] from the collection by its unique ID.
@@ -75,13 +85,20 @@ class BookCollection(
      * The book needs to exist in the collection's [BookDataStore] in order to
      * remove it. If there is no book for the given ID an exception is thrown.
      *
+     * Produces a [BookRemoved] domain event.
+     *
      * @param id the unique ID of the book to delete
      * @throws BookNotFoundException in case there is no book for the given ID
      */
     fun removeBook(id: BookId) {
-        val book = getBook(id)
-        dataStore.delete(book)
+        val bookRecord = getBook(id)
+        dataStore.delete(bookRecord)
+
+        bookRemovedEvent(bookRecord).dispatch()
     }
+
+    private fun bookRemovedEvent(bookRecord: BookRecord) =
+            BookRemoved(timestamp = now(), bookId = bookRecord.id)
 
     /**
      * Tries to borrow a [BookRecord] with the given unique ID for the given
@@ -91,6 +108,8 @@ class BookCollection(
      * borrow it. It also needs to be _available_ for borrowing. If either of
      * those conditions is not met, an exception is thrown.
      *
+     * Produces a [BookBorrowed] domain event.
+     *
      * @param id the unique ID of the book to borrow
      * @param borrower the [Borrower] who is trying to borrow the book
      * @return the borrowed and updated [BookRecord] instance
@@ -98,10 +117,16 @@ class BookCollection(
      * @throws BookAlreadyBorrowedException in case the book is already borrowed
      */
     fun borrowBook(id: BookId, borrower: Borrower): BookRecord {
-        val book = getBook(id)
-        book.borrow(borrower, OffsetDateTime.now(clock))
-        return dataStore.update(book)
+        val bookRecord = getBook(id)
+        bookRecord.borrow(borrower, now())
+        val updatedBookRecord = dataStore.update(bookRecord)
+
+        bookBorrowedEvent(bookRecord).dispatch()
+        return updatedBookRecord
     }
+
+    private fun bookBorrowedEvent(bookRecord: BookRecord) =
+            BookBorrowed(timestamp = now(), bookId = bookRecord.id)
 
     /**
      * Tries to return a [BookRecord] with the given unique ID.
@@ -110,15 +135,26 @@ class BookCollection(
      * return it. It also needs to be currently _borrowed_. If either of those
      * conditions is not met, an exception is thrown.
      *
+     * Produces a [BookReturned] domain event.
+     *
      * @param id the unique ID of the book to borrow
      * @return the returned and updated [BookRecord] instance
      * @throws BookNotFoundException in case there is no book for the given ID
      * @throws BookAlreadyReturnedException in case the book is already returned
      */
     fun returnBook(id: BookId): BookRecord {
-        val book = getBook(id)
-        book.`return`()
-        return dataStore.update(book)
+        val bookRecord = getBook(id)
+        bookRecord.`return`()
+        val updatedBookRecord = dataStore.update(bookRecord)
+
+        bookReturnedEvent(bookRecord).dispatch()
+        return updatedBookRecord
     }
+
+    private fun bookReturnedEvent(bookRecord: BookRecord) =
+            BookReturned(timestamp = now(), bookId = bookRecord.id)
+
+    private fun BookEvent.dispatch() = eventDispatcher.dispatch(this)
+    private fun now() = OffsetDateTime.now(clock)
 
 }

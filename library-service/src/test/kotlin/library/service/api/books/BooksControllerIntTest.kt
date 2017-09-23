@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.given
 import library.service.api.ErrorHandlers
 import library.service.business.books.BookDataStore
+import library.service.business.books.BookEventDispatcher
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.types.*
 import library.service.common.correlation.CorrelationIdHolder
@@ -44,6 +45,7 @@ internal class BooksControllerIntTest {
     val CORRELATION_ID = UUID.randomUUID().toString()
 
     @MockBean lateinit var bookDataStore: BookDataStore
+    @MockBean lateinit var bookeEventDispatcher: BookEventDispatcher
     @Autowired lateinit var mockMvc: MockMvc
 
     @Nested inner class `get all books` {

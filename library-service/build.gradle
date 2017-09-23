@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.1.4-3'
+        kotlinVersion = '1.1.50'
         springBootVersion = '2.0.0.M4'
         junitPlatformVersion = '1.0.0'
         junitJupiterVersion = '5.0.0'
@@ -53,7 +53,7 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 
     // needs to be current snapshot, because 0.23 version is incompatible
-    // with current spring boot requirements (Milestone 3) (TODO: change ASAP)
+    // with current spring boot requirements (Milestone 4) (TODO: change ASAP)
     compile("org.springframework.hateoas:spring-hateoas:0.24.0.BUILD-SNAPSHOT")
 
     compile("org.springframework.boot:spring-boot-starter-aop")
@@ -65,8 +65,7 @@ dependencies {
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:${springRestDocsVersion}")
 
     testCompile("org.assertj:assertj-core:3.6.2")
-    testCompile("org.mockito:mockito-core:2.7.22")
-    testCompile("com.nhaarman:mockito-kotlin:1.4.0") { transitive = false }
+    testCompile("com.nhaarman:mockito-kotlin-kt1.1:1.5.0")
     testCompile("info.novatec.testit:testutils-logrecorder-logback:0.3.1")
     testCompile("io.rest-assured:rest-assured:3.0.3")
 
