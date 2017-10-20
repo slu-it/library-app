@@ -55,13 +55,15 @@ internal class ApplicationSysTest {
         } """
         val createdBook = createBook(createBookRequest)
 
-        assertThat(createdBook.isbn).isEqualTo("9780553573404")
-        assertThat(createdBook.title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
-        assertThat(createdBook.borrowed).isNull()
+        with(createdBook) {
+            assertThat(isbn).isEqualTo("9780553573404")
+            assertThat(title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
+            assertThat(borrowed).isNull()
 
-        assertThat(createdBook.getLink("self")).isNotNull()
-        assertThat(createdBook.getLink("borrow")).isNotNull()
-        assertThat(createdBook.getLink("return")).isNull()
+            assertThat(getLink("self")).isNotNull()
+            assertThat(getLink("borrow")).isNotNull()
+            assertThat(getLink("return")).isNull()
+        }
 
         // step 2: delete the book
         val bookLink = createdBook.getLink("self")
@@ -79,13 +81,15 @@ internal class ApplicationSysTest {
         } """
         val createdBook = createBook(createBookRequest)
 
-        assertThat(createdBook.isbn).isEqualTo("9780553573404")
-        assertThat(createdBook.title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
-        assertThat(createdBook.borrowed).isNull()
+        with(createdBook) {
+            assertThat(isbn).isEqualTo("9780553573404")
+            assertThat(title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
+            assertThat(borrowed).isNull()
 
-        assertThat(createdBook.getLink("self")).isNotNull()
-        assertThat(createdBook.getLink("borrow")).isNotNull()
-        assertThat(createdBook.getLink("return")).isNull()
+            assertThat(getLink("self")).isNotNull()
+            assertThat(getLink("borrow")).isNotNull()
+            assertThat(getLink("return")).isNull()
+        }
 
         // step 2: borrow the book
         val borrowLink = createdBook.getLink("borrow")
@@ -94,27 +98,31 @@ internal class ApplicationSysTest {
         } """
         val borrowedBook = borrowBook(borrowLink, borrowBookRequest)
 
-        assertThat(borrowedBook.isbn).isEqualTo("9780553573404")
-        assertThat(borrowedBook.title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
-        assertThat(borrowedBook.borrowed).isNotNull()
-        assertThat(borrowedBook.borrowed!!.by).isEqualTo("Rob Stark")
-        assertThat(borrowedBook.borrowed!!.on).isNotNull()
+        with(borrowedBook) {
+            assertThat(isbn).isEqualTo("9780553573404")
+            assertThat(title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
+            assertThat(borrowed).isNotNull()
+            assertThat(borrowed!!.by).isEqualTo("Rob Stark")
+            assertThat(borrowed!!.on).isNotNull()
 
-        assertThat(borrowedBook.getLink("self")).isNotNull()
-        assertThat(borrowedBook.getLink("borrow")).isNull()
-        assertThat(borrowedBook.getLink("return")).isNotNull()
+            assertThat(getLink("self")).isNotNull()
+            assertThat(getLink("borrow")).isNull()
+            assertThat(getLink("return")).isNotNull()
+        }
 
         // step 3: return the book
         val returnLink = borrowedBook.getLink("return")
         val returnedBook = returnBook(returnLink)
 
-        assertThat(returnedBook.isbn).isEqualTo("9780553573404")
-        assertThat(returnedBook.title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
-        assertThat(returnedBook.borrowed).isNull()
+        with(returnedBook) {
+            assertThat(isbn).isEqualTo("9780553573404")
+            assertThat(title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
+            assertThat(borrowed).isNull()
 
-        assertThat(returnedBook.getLink("self")).isNotNull()
-        assertThat(returnedBook.getLink("borrow")).isNotNull()
-        assertThat(returnedBook.getLink("return")).isNull()
+            assertThat(getLink("self")).isNotNull()
+            assertThat(getLink("borrow")).isNotNull()
+            assertThat(getLink("return")).isNull()
+        }
 
     }
 
