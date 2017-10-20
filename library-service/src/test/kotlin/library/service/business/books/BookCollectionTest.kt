@@ -49,8 +49,8 @@ internal class BookCollectionTest {
             given { dataStore.create(book) } willReturn { createdBook }
             cut.addBook(book)
             verify(eventDispatcher).dispatch(check<BookAdded> {
-                assertThat(it.bookId).isEqualTo(id)
-                assertThat(it.timestamp).isEqualTo(fixedTimestamp)
+                assertThat(it.bookId).isEqualTo("$id")
+                assertThat(it.timestamp).isEqualTo("$fixedTimestamp")
             })
         }
 
@@ -113,8 +113,8 @@ internal class BookCollectionTest {
             given { dataStore.findById(id) } willReturn { bookRecord }
             cut.removeBook(id)
             verify(eventDispatcher).dispatch(check<BookRemoved> {
-                assertThat(it.bookId).isEqualTo(id)
-                assertThat(it.timestamp).isEqualTo(fixedTimestamp)
+                assertThat(it.bookId).isEqualTo("$id")
+                assertThat(it.timestamp).isEqualTo("$fixedTimestamp")
             })
         }
 
@@ -154,8 +154,8 @@ internal class BookCollectionTest {
             given { dataStore.update(bookRecord) } willReturn { bookRecord }
             cut.borrowBook(id, Borrower("Someone"))
             verify(eventDispatcher).dispatch(check<BookBorrowed> {
-                assertThat(it.bookId).isEqualTo(id)
-                assertThat(it.timestamp).isEqualTo(fixedTimestamp)
+                assertThat(it.bookId).isEqualTo("$id")
+                assertThat(it.timestamp).isEqualTo("$fixedTimestamp")
             })
         }
 
@@ -205,8 +205,8 @@ internal class BookCollectionTest {
             given { dataStore.update(bookRecord) } willReturn { bookRecord }
             cut.returnBook(id)
             verify(eventDispatcher).dispatch(check<BookReturned> {
-                assertThat(it.bookId).isEqualTo(id)
-                assertThat(it.timestamp).isEqualTo(fixedTimestamp)
+                assertThat(it.bookId).isEqualTo("$id")
+                assertThat(it.timestamp).isEqualTo("$fixedTimestamp")
             })
         }
 
