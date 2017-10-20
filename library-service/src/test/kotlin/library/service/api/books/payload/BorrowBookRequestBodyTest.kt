@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import utils.UnitTest
+import test.classification.UnitTest
 import javax.validation.Validation
 import javax.validation.Validator
 

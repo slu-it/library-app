@@ -16,8 +16,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import utils.UnitTest
-import utils.junit.assertThrows
+import test.classification.UnitTest
+import test.utils.assertThrows
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.ZoneId

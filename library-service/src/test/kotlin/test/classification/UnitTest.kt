@@ -1,4 +1,4 @@
-package utils
+package test.classification
 
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance

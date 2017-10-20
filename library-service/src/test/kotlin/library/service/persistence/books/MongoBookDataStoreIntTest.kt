@@ -11,12 +11,14 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import utils.IntegrationTest
+import test.classification.IntegrationTest
+import test.extensions.UseDockerToRunMongoDB
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 @DataMongoTest
 @IntegrationTest
+@UseDockerToRunMongoDB
 @ExtendWith(SpringExtension::class)
 internal class MongoBookDataStoreIntTest {
 

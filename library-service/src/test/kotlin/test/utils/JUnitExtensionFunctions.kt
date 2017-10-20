@@ -1,4 +1,4 @@
-package utils.junit
+package test.utils
 
 import org.junit.jupiter.api.Assertions
 import kotlin.reflect.KClass

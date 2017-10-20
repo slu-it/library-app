@@ -1,7 +1,7 @@
 package library.service.business.books.domain.types
 
 import contracts.ValueTypeContract
-import utils.UnitTest
+import test.classification.UnitTest
 
 @UnitTest
 internal class BookTest : ValueTypeContract<Book>() {

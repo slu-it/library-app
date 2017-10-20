@@ -4,7 +4,7 @@ import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.types.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import utils.UnitTest
+import test.classification.UnitTest
 import java.time.OffsetDateTime
 
 @UnitTest

@@ -18,13 +18,17 @@ import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.hal.Jackson2HalModule
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import utils.SystemTest
+import test.classification.AcceptanceTest
+import test.extensions.UseDockerToRunMongoDB
+import test.extensions.UseDockerToRunRabbitMQ
 import java.net.URL
 
-@SystemTest
+@AcceptanceTest
+@UseDockerToRunMongoDB
+@UseDockerToRunRabbitMQ
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-internal class ApplicationSysTest {
+internal class ApplicationAcceptanceTest {
 
     val objectMapper = ObjectMapper().apply {
         registerModule(Jackson2HalModule())

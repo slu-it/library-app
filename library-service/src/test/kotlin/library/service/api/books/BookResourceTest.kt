@@ -5,7 +5,7 @@ import library.service.api.books.BookResource.BorrowedState
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import utils.UnitTest
+import test.classification.UnitTest
 
 @UnitTest
 internal class BookResourceTest {

@@ -5,7 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import utils.UnitTest
+import test.classification.UnitTest
 import javax.validation.Validation
 import javax.validation.Validator
 

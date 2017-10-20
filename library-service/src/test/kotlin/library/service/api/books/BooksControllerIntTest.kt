@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import utils.IntegrationTest
+import test.classification.IntegrationTest
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.ZoneId

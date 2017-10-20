@@ -1,14 +1,15 @@
-package utils
+package test.classification
 
 import org.junit.jupiter.api.Tag
 import org.springframework.test.context.ActiveProfiles
 
 /**
- * Qualifier for System Tests:
+ * Qualifier for Acceptance Tests:
  *
- * - [tagged][Tag] as `system-test`
+ * - [tagged][Tag] as `acceptance-test`
+ * - active spring profiles: `test` and `acceptance-test`
  *
- * A system test is a test against a running instance of the application
+ * An acceptance test is a test against a running instance of the application
  * without faking (mocking / stubbing etc.) _any_ part of it. In addition
  * any interaction with the application should be done through official
  * interfaces like the API.
@@ -21,6 +22,6 @@ import org.springframework.test.context.ActiveProfiles
  */
 @Retention
 @Target(AnnotationTarget.CLASS)
-@Tag("system-test")
-@ActiveProfiles("test", "sys-test")
-annotation class SystemTest
+@Tag("acceptance-test")
+@ActiveProfiles("test", "acceptance-test")
+annotation class AcceptanceTest

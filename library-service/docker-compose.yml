@@ -5,6 +5,12 @@ mongo-db:
 #  volumes:
 #    - /opt/mongodb/data:/data/db
 
+rabbit-mq:
+  image: rabbitmq:3.6-management
+  ports:
+    - "5672:5672"
+    - "15672:15672"
+
 #library-service:
 #  image: caaqe/library-service:latest
 #  ports:
