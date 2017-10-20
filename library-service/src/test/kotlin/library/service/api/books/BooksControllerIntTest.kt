@@ -213,8 +213,8 @@ internal class BooksControllerIntTest {
                   "correlationId": "$CORRELATION_ID",
                   "description": "The request's body is invalid. See details...",
                   "details": [
-                    "The field 'isbn' may not be empty.",
-                    "The field 'title' may not be empty."
+                    "The field 'isbn' must not be blank.",
+                    "The field 'title' must not be blank."
                   ]
                 }
             """
@@ -514,7 +514,7 @@ internal class BooksControllerIntTest {
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
                   "description": "The request's body is invalid. See details...",
-                  "details": [ "The field 'borrower' may not be empty." ]
+                  "details": [ "The field 'borrower' must not be blank." ]
                 }
             """
             mockMvc.perform(request)

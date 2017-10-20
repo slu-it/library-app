@@ -24,7 +24,7 @@ internal class BorrowBookRequestBodyTest {
         @Test fun `null is not allowed`() {
             val cut = BorrowBookRequestBody().apply { borrower = null }
             val result = validator.validate(cut).toList()
-            assertThat(result[0].message).isEqualTo("may not be empty")
+            assertThat(result[0].message).isEqualTo("must not be blank")
         }
 
         @Test fun `empty is not allowed`() {
@@ -32,14 +32,14 @@ internal class BorrowBookRequestBodyTest {
             val result = validator.validate(cut).toList()
             assertThat(result.map { it.message }).containsOnly(
                     "size must be between 1 and 50",
-                    "may not be empty"
+                    "must not be blank"
             )
         }
 
         @Test fun `blank is not allowed`() {
             val cut = BorrowBookRequestBody().apply { borrower = " " }
             val result = validator.validate(cut).toList()
-            assertThat(result[0].message).isEqualTo("may not be empty")
+            assertThat(result[0].message).isEqualTo("must not be blank")
         }
 
         @Test fun `values between 1 and 50 characters are valid`() {

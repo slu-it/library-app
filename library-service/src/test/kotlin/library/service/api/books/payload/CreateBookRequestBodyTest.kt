@@ -33,7 +33,7 @@ internal class CreateBookRequestBodyTest {
             @Test fun `null is not allowed`() {
                 val cut = validInstance.apply { isbn = null }
                 val result = validator.validate(cut).toList()
-                assertThat(result[0].message).isEqualTo("may not be empty")
+                assertThat(result[0].message).isEqualTo("must not be blank")
             }
 
             @Test fun `empty is not allowed`() {
@@ -41,7 +41,7 @@ internal class CreateBookRequestBodyTest {
                 val result = validator.validate(cut).toList()
                 assertThat(result.map { it.message }).containsOnly(
                         "size must be between 10 and 13",
-                        "may not be empty"
+                        "must not be blank"
                 )
             }
 
@@ -50,7 +50,7 @@ internal class CreateBookRequestBodyTest {
                 val result = validator.validate(cut).toList()
                 assertThat(result.map { it.message }).containsOnly(
                         "size must be between 10 and 13",
-                        "may not be empty"
+                        "must not be blank"
                 )
             }
 
@@ -83,7 +83,7 @@ internal class CreateBookRequestBodyTest {
             @Test fun `null is not allowed`() {
                 val cut = validInstance.apply { title = null }
                 val result = validator.validate(cut).toList()
-                assertThat(result[0].message).isEqualTo("may not be empty")
+                assertThat(result[0].message).isEqualTo("must not be blank")
             }
 
             @Test fun `empty is not allowed`() {
@@ -91,14 +91,14 @@ internal class CreateBookRequestBodyTest {
                 val result = validator.validate(cut).toList()
                 assertThat(result.map { it.message }).containsOnly(
                         "size must be between 1 and 256",
-                        "may not be empty"
+                        "must not be blank"
                 )
             }
 
             @Test fun `blank is not allowed`() {
                 val cut = validInstance.apply { title = " " }
                 val result = validator.validate(cut).toList()
-                assertThat(result[0].message).isEqualTo("may not be empty")
+                assertThat(result[0].message).isEqualTo("must not be blank")
             }
 
             @Test fun `values between 1 and 256 characters are valid`() {

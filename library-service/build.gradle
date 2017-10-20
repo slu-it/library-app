@@ -1,13 +1,12 @@
 buildscript {
     ext {
         kotlinVersion = '1.1.50'
-        springBootVersion = '2.0.0.M4'
+        springBootVersion = '2.0.0.M5'
         junitPlatformVersion = '1.0.0'
         junitJupiterVersion = '5.0.0'
         junitVintageVersion = '4.12.0'
         dockerPluginVersion = '1.2'
         asciidoctorVersion = '1.5.3'
-        springRestDocsVersion = '1.2.1.RELEASE'
         snippetsDir = file('build/generated-snippets')
     }
     repositories {
@@ -62,7 +61,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter-data-mongodb")
 
-    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:${springRestDocsVersion}")
+    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor")
 
     testCompile("org.assertj:assertj-core:3.6.2")
     testCompile("com.nhaarman:mockito-kotlin-kt1.1:1.5.0")
@@ -70,7 +69,7 @@ dependencies {
     testCompile("io.rest-assured:rest-assured:3.0.3")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompile("org.springframework.restdocs:spring-restdocs-mockmvc:${springRestDocsVersion}")
+    testCompile("org.springframework.restdocs:spring-restdocs-mockmvc")
     testCompile('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
 
     testCompile("com.tngtech.archunit:archunit-junit:0.4.0")
