@@ -41,21 +41,30 @@ class ErrorHandlers(
     @ExceptionHandler(NotFoundException::class)
     fun handle(e: NotFoundException): ErrorDescription {
         log.debug("received request for non existing resource:", e)
-        return errorDescription(e.message!!)
+        return errorDescription(
+                httpStatus = HttpStatus.NOT_FOUND,
+                message = e.message!!
+        )
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(NotPossibleException::class)
     fun handle(e: NotPossibleException): ErrorDescription {
         log.debug("received conflicting request:", e)
-        return errorDescription(e.message!!)
+        return errorDescription(
+                httpStatus = HttpStatus.CONFLICT,
+                message = e.message!!
+        )
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MalformedValueException::class)
     fun handle(e: MalformedValueException): ErrorDescription {
         log.debug("received malformed request:", e)
-        return errorDescription(e.message!!)
+        return errorDescription(
+                httpStatus = HttpStatus.BAD_REQUEST,
+                message = e.message!!
+        )
     }
 
     /** In case the request parameter has wrong type. */
@@ -63,7 +72,10 @@ class ErrorHandlers(
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)
     fun handle(e: MethodArgumentTypeMismatchException): ErrorDescription {
         log.debug("received bad request:", e)
-        return errorDescription("The request's '${e.name}' parameter is malformed.")
+        return errorDescription(
+                httpStatus = HttpStatus.BAD_REQUEST,
+                message = "The request's '${e.name}' parameter is malformed."
+        )
     }
 
     /** In case the request body is malformed or non existing. */
@@ -71,7 +83,10 @@ class ErrorHandlers(
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handle(e: HttpMessageNotReadableException): ErrorDescription {
         log.debug("received bad request:", e)
-        return errorDescription("The request's body could not be read. It is either empty or malformed.")
+        return errorDescription(
+                httpStatus = HttpStatus.BAD_REQUEST,
+                message = "The request's body could not be read. It is either empty or malformed."
+        )
     }
 
     /** In case a validation on a request body property fails */
@@ -85,18 +100,35 @@ class ErrorHandlers(
         val details = fieldDetails + globalDetails
         val sortedDetails = details.sorted()
 
-        return errorDescription("The request's body is invalid. See details...", sortedDetails)
-    }
-
-    private fun errorDescription(description: String, details: List<String> = emptyList()): ErrorDescription {
-        val timestamp = OffsetDateTime.now(clock).toString()
-        val correlationId = correlationIdHolder.get()
-        return ErrorDescription(
-                timestamp = timestamp,
-                correlationId = correlationId,
-                description = description,
-                details = details
+        return errorDescription(
+                httpStatus = HttpStatus.BAD_REQUEST,
+                message = "The request's body is invalid. See details...",
+                details = sortedDetails
         )
     }
+
+    /** In case any other exception occurs. */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception::class)
+    fun handle(e: Exception): ErrorDescription {
+        log.error("internal server error occurred:", e)
+        return errorDescription(
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+                message = "An internal server error occurred, see server logs for more information."
+        )
+    }
+
+    private fun errorDescription(
+            httpStatus: HttpStatus,
+            message: String,
+            details: List<String> = emptyList()
+    ) = ErrorDescription(
+            status = httpStatus.value(),
+            error = httpStatus.reasonPhrase,
+            timestamp = OffsetDateTime.now(clock).toString(),
+            correlationId = correlationIdHolder.get(),
+            message = message,
+            details = details
+    )
 
 }

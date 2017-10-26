@@ -13,9 +13,11 @@ internal class ErrorDescriptionTest {
 
     @Test fun `can be serialized to JSON`() {
         val cut = ErrorDescription(
+                status = 400,
+                error = "Bad Request",
                 timestamp = "2017-08-20T12:34:56.789Z",
                 correlationId = UUID.randomUUID().toString(),
-                description = "description",
+                message = "message",
                 details = listOf(
                         "detail #1",
                         "detail #2"

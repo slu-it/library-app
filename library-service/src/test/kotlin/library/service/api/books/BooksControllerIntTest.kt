@@ -191,9 +191,11 @@ internal class BooksControllerIntTest {
                     .content(requestBody)
             val expectedResponse = """
                 {
+                  "status": 400,
+                  "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "This is not a valid ISBN-13 number: 978abcdefghij"
+                  "message": "This is not a valid ISBN-13 number: 978abcdefghij"
                 }
             """
             mockMvc.perform(request)
@@ -209,9 +211,11 @@ internal class BooksControllerIntTest {
                     .content(" { } ")
             val expectedResponse = """
                 {
+                  "status": 400,
+                  "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The request's body is invalid. See details...",
+                  "message": "The request's body is invalid. See details...",
                   "details": [
                     "The field 'isbn' must not be blank.",
                     "The field 'title' must not be blank."
@@ -229,9 +233,11 @@ internal class BooksControllerIntTest {
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
                 {
+                  "status": 400,
+                  "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The request's body could not be read. It is either empty or malformed."
+                  "message": "The request's body could not be read. It is either empty or malformed."
                 }
             """
             mockMvc.perform(request)
@@ -327,9 +333,11 @@ internal class BooksControllerIntTest {
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
                 {
+                  "status": 404,
+                  "error": "Not Found",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The book with ID: $idValue does not exist!"
+                  "message": "The book with ID: $idValue does not exist!"
                 }
             """
             mockMvc.perform(request)
@@ -344,9 +352,11 @@ internal class BooksControllerIntTest {
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
                 {
+                  "status": 400,
+                  "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The request's 'id' parameter is malformed."
+                  "message": "The request's 'id' parameter is malformed."
                 }
             """
             mockMvc.perform(request)
@@ -382,9 +392,11 @@ internal class BooksControllerIntTest {
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
                 {
+                  "status": 404,
+                  "error": "Not Found",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The book with ID: $idValue does not exist!"
+                  "message": "The book with ID: $idValue does not exist!"
                 }
             """
             mockMvc.perform(request)
@@ -399,9 +411,11 @@ internal class BooksControllerIntTest {
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
                 {
+                  "status": 400,
+                  "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The request's 'id' parameter is malformed."
+                  "message": "The request's 'id' parameter is malformed."
                 }
             """
             mockMvc.perform(request)
@@ -473,9 +487,11 @@ internal class BooksControllerIntTest {
                     .content(""" { "borrower": "Uncle Bob" } """)
             val expectedResponse = """
                 {
+                  "status": 409,
+                  "error": "Conflict",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The book with ID: $idValue is already borrowed!"
+                  "message": "The book with ID: $idValue is already borrowed!"
                 }
             """
             mockMvc.perform(request)
@@ -492,9 +508,11 @@ internal class BooksControllerIntTest {
                     .content(""" { "borrower": "Uncle Bob" } """)
             val expectedResponse = """
                 {
+                  "status": 404,
+                  "error": "Not Found",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The book with ID: $idValue does not exist!"
+                  "message": "The book with ID: $idValue does not exist!"
                 }
             """
             mockMvc.perform(request)
@@ -511,9 +529,11 @@ internal class BooksControllerIntTest {
                     .content(" { } ")
             val expectedResponse = """
                 {
+                  "status": 400,
+                  "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The request's body is invalid. See details...",
+                  "message": "The request's body is invalid. See details...",
                   "details": [ "The field 'borrower' must not be blank." ]
                 }
             """
@@ -529,9 +549,11 @@ internal class BooksControllerIntTest {
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
                 {
+                  "status": 400,
+                  "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The request's body could not be read. It is either empty or malformed."
+                  "message": "The request's body could not be read. It is either empty or malformed."
                 }
             """
             mockMvc.perform(request)
@@ -546,9 +568,11 @@ internal class BooksControllerIntTest {
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
                 {
+                  "status": 400,
+                  "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The request's 'id' parameter is malformed."
+                  "message": "The request's 'id' parameter is malformed."
                 }
             """
             mockMvc.perform(request)
@@ -612,9 +636,11 @@ internal class BooksControllerIntTest {
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
                 {
+                  "status": 409,
+                  "error": "Conflict",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The book with ID: $idValue was already returned!"
+                  "message": "The book with ID: $idValue was already returned!"
                 }
             """
             mockMvc.perform(request)
@@ -629,9 +655,11 @@ internal class BooksControllerIntTest {
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
                 {
+                  "status": 404,
+                  "error": "Not Found",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The book with ID: $idValue does not exist!"
+                  "message": "The book with ID: $idValue does not exist!"
                 }
             """
             mockMvc.perform(request)
@@ -646,9 +674,11 @@ internal class BooksControllerIntTest {
                     .header("X-Correlation-ID", CORRELATION_ID)
             val expectedResponse = """
                 {
+                  "status": 400,
+                  "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$CORRELATION_ID",
-                  "description": "The request's 'id' parameter is malformed."
+                  "message": "The request's 'id' parameter is malformed."
                 }
             """
             mockMvc.perform(request)
