@@ -8,4 +8,4 @@ package library.service.business.exceptions
  * 2. data loaded from a data store was corrupted or not correctly migrated
  * to a new format
  */
-abstract class MalformedValueException(msg: String) : RuntimeException(msg)
+open class MalformedValueException(msg: String) : RuntimeException(msg)

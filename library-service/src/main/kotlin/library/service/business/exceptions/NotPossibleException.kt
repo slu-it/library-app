@@ -6,4 +6,4 @@ package library.service.business.exceptions
  * possible, but was in fact not. As an example this could be transitioning
  * something to a state it is already in.
  */
-abstract class NotPossibleException(msg: String) : RuntimeException(msg)
+open class NotPossibleException(msg: String) : RuntimeException(msg)
