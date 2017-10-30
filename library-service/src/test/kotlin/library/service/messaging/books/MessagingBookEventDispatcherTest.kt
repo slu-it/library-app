@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
-import test.classification.UnitTest
+import utils.classification.UnitTest
 import java.time.OffsetDateTime
 import java.util.*
 

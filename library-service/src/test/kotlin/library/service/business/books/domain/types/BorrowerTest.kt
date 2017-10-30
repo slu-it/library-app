@@ -3,7 +3,7 @@ package library.service.business.books.domain.types
 import contracts.ValueTypeContract
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import test.classification.UnitTest
+import utils.classification.UnitTest
 
 @UnitTest
 internal class BorrowerTest : ValueTypeContract<Borrower, String>() {

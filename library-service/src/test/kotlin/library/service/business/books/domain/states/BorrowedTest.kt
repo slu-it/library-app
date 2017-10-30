@@ -3,7 +3,7 @@ package library.service.business.books.domain.states
 import contracts.CompositeTypeContract
 import library.service.business.books.domain.states.BookState.Borrowed
 import library.service.business.books.domain.types.Borrower
-import test.utils.clockWithFixedTime
+import utils.clockWithFixedTime
 import java.time.OffsetDateTime.now
 
 internal class BorrowedTest : CompositeTypeContract<Borrowed>() {

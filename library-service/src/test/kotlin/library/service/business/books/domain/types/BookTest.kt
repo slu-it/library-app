@@ -1,7 +1,7 @@
 package library.service.business.books.domain.types
 
 import contracts.CompositeTypeContract
-import test.classification.UnitTest
+import utils.classification.UnitTest
 
 @UnitTest
 internal class BookTest : CompositeTypeContract<Book>() {

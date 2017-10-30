@@ -5,7 +5,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.slf4j.MDC
-import test.classification.UnitTest
+import utils.classification.UnitTest
 
 @UnitTest
 internal class CorrelationIdHolderTest {

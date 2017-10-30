@@ -15,9 +15,9 @@ import library.service.business.books.exceptions.BookNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import test.classification.UnitTest
-import test.utils.assertThrows
-import test.utils.clockWithFixedTime
+import utils.assertThrows
+import utils.classification.UnitTest
+import utils.clockWithFixedTime
 import java.time.OffsetDateTime
 
 @UnitTest

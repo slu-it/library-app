@@ -7,7 +7,9 @@ import io.restassured.RestAssured.given
 import library.service.api.books.BookResource
 import library.service.persistence.books.BookRepository
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,9 +18,9 @@ import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.hal.Jackson2HalModule
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import test.classification.AcceptanceTest
-import test.extensions.UseDockerToRunMongoDB
-import test.extensions.UseDockerToRunRabbitMQ
+import utils.classification.AcceptanceTest
+import utils.extensions.UseDockerToRunMongoDB
+import utils.extensions.UseDockerToRunRabbitMQ
 import java.net.URL
 
 @AcceptanceTest

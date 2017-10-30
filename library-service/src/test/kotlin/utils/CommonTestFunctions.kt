@@ -1,4 +1,4 @@
-package test.utils
+package utils
 
 import java.time.Clock
 import java.time.ZoneId

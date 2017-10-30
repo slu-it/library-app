@@ -33,7 +33,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
-import test.classification.IntegrationTest
+import utils.classification.IntegrationTest
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.ZoneId

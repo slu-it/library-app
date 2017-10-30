@@ -1,4 +1,4 @@
-package test.classification
+package utils.classification
 
 import org.junit.jupiter.api.Tag
 import org.springframework.test.context.ActiveProfiles

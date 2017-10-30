@@ -12,7 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.assertj.LogRecorderAssertions.assertThat
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
-import test.classification.IntegrationTest
+import utils.classification.IntegrationTest
 
 @SpringBootTest
 @IntegrationTest

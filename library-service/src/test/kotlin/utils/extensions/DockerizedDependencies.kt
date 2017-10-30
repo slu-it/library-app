@@ -1,4 +1,4 @@
-package test.extensions
+package utils.extensions
 
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
@@ -10,11 +10,19 @@ import java.io.InputStreamReader
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentLinkedQueue
 
+/**
+ * Will enable the [DockerizedMongoDBExtension] to start a MongoDB Docker container
+ * before the first test is executed and remove it after the last test was executed.
+ */
 @Retention
 @Target(AnnotationTarget.CLASS)
 @ExtendWith(DockerizedMongoDBExtension::class)
 annotation class UseDockerToRunMongoDB
 
+/**
+ * Will enable the [DockerizedRabbitMQExtension] to start a RabbitMQ Docker container
+ * before the first test is executed and remove it after the last test was executed.
+ */
 @Retention
 @Target(AnnotationTarget.CLASS)
 @ExtendWith(DockerizedRabbitMQExtension::class)

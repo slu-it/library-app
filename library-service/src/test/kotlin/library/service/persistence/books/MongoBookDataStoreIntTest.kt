@@ -11,8 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import test.classification.IntegrationTest
-import test.extensions.UseDockerToRunMongoDB
+import utils.classification.IntegrationTest
+import utils.extensions.UseDockerToRunMongoDB
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 

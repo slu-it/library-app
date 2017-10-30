@@ -4,7 +4,7 @@ import com.nhaarman.mockito_kotlin.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import test.classification.UnitTest
+import utils.classification.UnitTest
 import java.util.*
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest

@@ -8,8 +8,8 @@ import library.service.business.books.exceptions.BookAlreadyReturnedException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import test.classification.UnitTest
-import test.utils.assertThrows
+import utils.assertThrows
+import utils.classification.UnitTest
 import java.time.OffsetDateTime
 
 @UnitTest
