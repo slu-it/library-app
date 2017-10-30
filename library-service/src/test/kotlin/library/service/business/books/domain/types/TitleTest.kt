@@ -6,10 +6,11 @@ import org.junit.jupiter.api.Test
 import test.classification.UnitTest
 
 @UnitTest
-internal class TitleTest : ValueTypeContract<Title>() {
+internal class TitleTest : ValueTypeContract<Title, String>() {
 
-    override fun instanceExampleOne() = Title("Title #1")
-    override fun instanceExampleTwo() = Title("Title #2")
+    override fun getValueExample() = "Title #1"
+    override fun getAnotherValueExample() = "Title #2"
+    override fun createNewInstance(value: String) = Title(value)
 
     @Test fun `toString() returns Title's value as a String`() {
         val title = Title("My Title")

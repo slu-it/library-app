@@ -13,44 +13,42 @@ import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import test.classification.UnitTest
 import test.utils.assertThrows
-import java.time.Clock
+import test.utils.clockWithFixedTime
 import java.time.OffsetDateTime
-import java.time.ZoneId
 
 @UnitTest
 internal class BookCollectionTest {
 
-    val fixedTimestamp = OffsetDateTime.parse("2017-09-23T12:34:56.789Z")
+    val fixedTimestamp = "2017-09-23T12:34:56.789Z"
+    val fixedClock = clockWithFixedTime(fixedTimestamp)
 
-    val clock: Clock = Clock.fixed(fixedTimestamp.toInstant(), ZoneId.of("UTC"))
     val dataStore: BookDataStore = mock()
     val eventDispatcher: BookEventDispatcher = mock()
 
-    val cut = BookCollection(clock, dataStore, eventDispatcher)
+    val cut = BookCollection(fixedClock, dataStore, eventDispatcher)
 
     @Nested inner class `adding a book` {
 
         val id = BookId.generate()
         val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-        val createdBook = BookRecord(id, book)
+        val bookRecord = BookRecord(id, book)
 
         @Test fun `creates a new record in the data store`() {
-            given { dataStore.create(book) } willReturn { createdBook }
+            given { dataStore.create(book) } willReturn { bookRecord }
             val addedBook = cut.addBook(book)
-            assertThat(addedBook).isEqualTo(createdBook)
+            assertThat(addedBook).isEqualTo(bookRecord)
         }
 
         @Test fun `dispatches a BookAdded event`() {
-            given { dataStore.create(book) } willReturn { createdBook }
+            given { dataStore.create(book) } willReturn { bookRecord }
             cut.addBook(book)
             verify(eventDispatcher).dispatch(check<BookAdded> {
                 assertThat(it.bookId).isEqualTo("$id")
-                assertThat(it.timestamp).isEqualTo("$fixedTimestamp")
+                assertThat(it.timestamp).isEqualTo(fixedTimestamp)
             })
         }
 
@@ -91,7 +89,9 @@ internal class BookCollectionTest {
             val bookRecord1 = BookRecord(BookId.generate(), Book(Isbn13("0123456789012"), Title("Hello World #1")))
             val bookRecord2 = BookRecord(BookId.generate(), Book(Isbn13("1234567890123"), Title("Hello World #2")))
             given { dataStore.findAll() } willReturn { listOf(bookRecord1, bookRecord2) }
+
             val allBooks = cut.getAllBooks()
+
             assertThat(allBooks).containsExactly(bookRecord1, bookRecord2)
         }
 
@@ -114,7 +114,7 @@ internal class BookCollectionTest {
             cut.removeBook(id)
             verify(eventDispatcher).dispatch(check<BookRemoved> {
                 assertThat(it.bookId).isEqualTo("$id")
-                assertThat(it.timestamp).isEqualTo("$fixedTimestamp")
+                assertThat(it.timestamp).isEqualTo(fixedTimestamp)
             })
         }
 
@@ -144,7 +144,9 @@ internal class BookCollectionTest {
         @Test fun `changes its state and updates it in the data store`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
             given { dataStore.update(bookRecord) } willReturn { bookRecord }
+
             val borrowedBook = cut.borrowBook(id, Borrower("Someone"))
+
             assertThat(borrowedBook.state).isInstanceOf(Borrowed::class.java)
             assertThat(borrowedBook).isSameAs(bookRecord)
         }
@@ -152,7 +154,9 @@ internal class BookCollectionTest {
         @Test fun `dispatches a BookBorrowed event`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
             given { dataStore.update(bookRecord) } willReturn { bookRecord }
+
             cut.borrowBook(id, Borrower("Someone"))
+
             verify(eventDispatcher).dispatch(check<BookBorrowed> {
                 assertThat(it.bookId).isEqualTo("$id")
                 assertThat(it.timestamp).isEqualTo("$fixedTimestamp")
@@ -195,7 +199,9 @@ internal class BookCollectionTest {
         @Test fun `changes its state and updates it in the data store`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
             given { dataStore.update(bookRecord) } willReturn { bookRecord }
+
             val returnedBook = cut.returnBook(id)
+
             assertThat(returnedBook.state).isEqualTo(Available)
             assertThat(returnedBook).isSameAs(bookRecord)
         }
@@ -203,7 +209,9 @@ internal class BookCollectionTest {
         @Test fun `dispatches a BookReturned event`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
             given { dataStore.update(bookRecord) } willReturn { bookRecord }
+
             cut.returnBook(id)
+
             verify(eventDispatcher).dispatch(check<BookReturned> {
                 assertThat(it.bookId).isEqualTo("$id")
                 assertThat(it.timestamp).isEqualTo("$fixedTimestamp")
@@ -220,9 +228,9 @@ internal class BookCollectionTest {
         @Test fun `throws exception if it is already 'returned'`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
             bookRecord.`return`()
-            assertThrows(BookAlreadyReturnedException::class.java, {
+            assertThrows(BookAlreadyReturnedException::class) {
                 cut.returnBook(id)
-            })
+            }
         }
 
         @Test fun `does not dispatch any events in case of an exception`() {

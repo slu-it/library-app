@@ -27,6 +27,13 @@ internal class ArchitectureTest {
                     .resideInAPackage("library.service.persistence..")
         }
 
+        @Test fun `must have no knowledge about the existence of the messaging module`() = checkThat {
+            noClasses().that()
+                    .resideInAPackage("library.service.business..")
+                    .should().accessClassesThat()
+                    .resideInAPackage("library.service.messaging..")
+        }
+
     }
 
     fun checkThat(ruleSupplier: () -> ArchRule) {

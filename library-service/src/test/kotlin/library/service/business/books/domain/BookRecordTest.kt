@@ -6,10 +6,10 @@ import library.service.business.books.domain.types.*
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import test.classification.UnitTest
+import test.utils.assertThrows
 import java.time.OffsetDateTime
 
 @UnitTest
@@ -35,9 +35,9 @@ internal class BookRecordTest {
         }
 
         @Test fun `trying to return it will throw an exception`() {
-            assertThrows(BookAlreadyReturnedException::class.java, {
+            assertThrows(BookAlreadyReturnedException::class) {
                 availableBook.`return`()
-            })
+            }
         }
 
     }
@@ -52,9 +52,9 @@ internal class BookRecordTest {
         }
 
         @Test fun `trying to borrow it will throw an exception`() {
-            assertThrows(BookAlreadyBorrowedException::class.java, {
+            assertThrows(BookAlreadyBorrowedException::class) {
                 borrowedBook.borrow(borrowed.by, borrowed.on)
-            })
+            }
         }
 
     }

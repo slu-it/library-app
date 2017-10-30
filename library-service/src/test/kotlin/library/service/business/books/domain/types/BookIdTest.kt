@@ -2,17 +2,18 @@ package library.service.business.books.domain.types
 
 import contracts.ValueTypeContract
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import test.classification.UnitTest
+import test.utils.assertThrows
 import java.util.*
 
 @UnitTest
-internal class BookIdTest : ValueTypeContract<BookId>() {
+internal class BookIdTest : ValueTypeContract<BookId, String>() {
 
-    override fun instanceExampleOne() = BookId.from("d19eafd1-c77c-45a3-bcc1-96cd288910b2")
-    override fun instanceExampleTwo() = BookId.from("40335985-97bc-42d2-9fdb-e48ae3c94ea6")
+    override fun getValueExample() = "d19eafd1-c77c-45a3-bcc1-96cd288910b2"
+    override fun getAnotherValueExample() = "40335985-97bc-42d2-9fdb-e48ae3c94ea6"
+    override fun createNewInstance(value: String) = BookId.from(value)
 
     val uuid = UUID.fromString("4b13ce6b-4546-4b89-9356-dd7bbf67c40d")
 
@@ -45,9 +46,9 @@ internal class BookIdTest : ValueTypeContract<BookId>() {
         }
 
         @Test fun `non UUID conform Strings will throw an exception`() {
-            assertThrows(BookId.NotAnUuidException::class.java, {
+            assertThrows(BookId.NotAnUuidException::class) {
                 BookId.from("not a uuid")
-            })
+            }
         }
 
     }

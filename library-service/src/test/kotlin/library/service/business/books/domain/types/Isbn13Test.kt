@@ -2,18 +2,19 @@ package library.service.business.books.domain.types
 
 import contracts.ValueTypeContract
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import test.classification.UnitTest
+import test.utils.assertThrows
 
 @UnitTest
-internal class Isbn13Test : ValueTypeContract<Isbn13>() {
+internal class Isbn13Test : ValueTypeContract<Isbn13, String>() {
 
-    override fun instanceExampleOne() = Isbn13("0123456789012")
-    override fun instanceExampleTwo() = Isbn13("1234567890123")
+    override fun getValueExample() = "0123456789012"
+    override fun getAnotherValueExample() = "1234567890123"
+    override fun createNewInstance(value: String) = Isbn13(value)
 
     @Test fun `toString() returns ISBN's value as a String`() {
         val isbn = Isbn13("1234567890123")
@@ -43,9 +44,9 @@ internal class Isbn13Test : ValueTypeContract<Isbn13>() {
                 "14000000000000"
         ))
         @ParameterizedTest fun `any other number of digits is considered invalid`(isbnCandidate: String) {
-            assertThrows(Isbn13.NotAnIsbnNumberException::class.java, {
+            assertThrows(Isbn13.NotAnIsbnNumberException::class) {
                 Isbn13(isbnCandidate)
-            })
+            }
         }
 
         @ValueSource(strings = arrayOf(
@@ -57,9 +58,9 @@ internal class Isbn13Test : ValueTypeContract<Isbn13>() {
                 "_000000000000"
         ))
         @ParameterizedTest fun `any non number characters are considered invalid`(isbnCandidate: String) {
-            assertThrows(Isbn13.NotAnIsbnNumberException::class.java, {
+            assertThrows(Isbn13.NotAnIsbnNumberException::class) {
                 Isbn13(isbnCandidate)
-            })
+            }
         }
 
     }
@@ -81,9 +82,9 @@ internal class Isbn13Test : ValueTypeContract<Isbn13>() {
                 "14000000000000"
         ))
         @ParameterizedTest fun `any other number of digits is considered invalid`(isbnCandidate: String) {
-            assertThrows(Isbn13.NotAnIsbnNumberException::class.java, {
+            assertThrows(Isbn13.NotAnIsbnNumberException::class) {
                 Isbn13.parse(isbnCandidate)
-            })
+            }
         }
 
     }
