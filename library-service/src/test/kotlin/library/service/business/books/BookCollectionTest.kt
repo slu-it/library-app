@@ -7,8 +7,8 @@ import library.service.business.books.domain.events.BookAdded
 import library.service.business.books.domain.events.BookBorrowed
 import library.service.business.books.domain.events.BookRemoved
 import library.service.business.books.domain.events.BookReturned
-import library.service.business.books.domain.states.BookState.Available
-import library.service.business.books.domain.states.BookState.Borrowed
+import library.service.business.books.domain.states.Available
+import library.service.business.books.domain.states.Borrowed
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13

@@ -2,8 +2,8 @@ package library.service.api.books
 
 import library.service.api.books.BookResource.BorrowedState
 import library.service.business.books.domain.BookRecord
-import library.service.business.books.domain.states.BookState.Available
-import library.service.business.books.domain.states.BookState.Borrowed
+import library.service.business.books.domain.states.Available
+import library.service.business.books.domain.states.Borrowed
 import library.service.business.books.domain.types.BookId
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport

@@ -1,8 +1,8 @@
 package library.service.business.books.domain
 
 import library.service.business.books.domain.composites.Book
-import library.service.business.books.domain.states.BookState.Available
-import library.service.business.books.domain.states.BookState.Borrowed
+import library.service.business.books.domain.states.Available
+import library.service.business.books.domain.states.Borrowed
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13

@@ -6,7 +6,7 @@ import com.nhaarman.mockito_kotlin.given
 import library.service.business.books.BookCollection
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.composites.Book
-import library.service.business.books.domain.states.BookState
+import library.service.business.books.domain.states.Borrowed
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
@@ -146,7 +146,7 @@ class BooksControllerDocTest {
 
     @Test fun `borrowing book by ID - found available`() {
         val book = borrowedBook()
-        val borrower = (book.state as BookState.Borrowed).by
+        val borrower = (book.state as Borrowed).by
         given { bookCollection.borrowBook(book.id, borrower) }.willReturn(book)
 
         val request = post("/api/books/${book.id}/borrow")
