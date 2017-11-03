@@ -46,7 +46,7 @@ internal class BookIdTest : ValueTypeContract<BookId, String>() {
         }
 
         @Test fun `non UUID conform Strings will throw an exception`() {
-            assertThrows(BookId.NotAnUuidException::class) {
+            assertThrows(BookId.NotABookIdException::class) {
                 BookId.from("not a uuid")
             }
         }

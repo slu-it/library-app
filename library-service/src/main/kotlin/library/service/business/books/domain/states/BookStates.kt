@@ -4,12 +4,7 @@ import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.types.Borrower
 import java.time.OffsetDateTime
 
-/**
- * The state of a [BookRecord]. Can be one of:
- *
- * - [Available]
- * - [Borrowed]
- */
+/** The state of a [BookRecord]. */
 sealed class BookState
 
 /**
