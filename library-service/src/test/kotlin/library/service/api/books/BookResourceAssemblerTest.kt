@@ -1,7 +1,11 @@
 package library.service.api.books
 
 import library.service.business.books.domain.BookRecord
-import library.service.business.books.domain.types.*
+import library.service.business.books.domain.composites.Book
+import library.service.business.books.domain.types.BookId
+import library.service.business.books.domain.types.Borrower
+import library.service.business.books.domain.types.Isbn13
+import library.service.business.books.domain.types.Title
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import utils.classification.UnitTest

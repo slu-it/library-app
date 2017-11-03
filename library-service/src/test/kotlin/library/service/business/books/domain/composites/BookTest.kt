@@ -1,6 +1,8 @@
-package library.service.business.books.domain.types
+package library.service.business.books.domain.composites
 
 import contracts.CompositeTypeContract
+import library.service.business.books.domain.types.Isbn13
+import library.service.business.books.domain.types.Title
 import utils.classification.UnitTest
 
 @UnitTest

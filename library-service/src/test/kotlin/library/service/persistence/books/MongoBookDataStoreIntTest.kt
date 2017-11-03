@@ -1,8 +1,12 @@
 package library.service.persistence.books
 
+import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.states.BookState.Available
 import library.service.business.books.domain.states.BookState.Borrowed
-import library.service.business.books.domain.types.*
+import library.service.business.books.domain.types.BookId
+import library.service.business.books.domain.types.Borrower
+import library.service.business.books.domain.types.Isbn13
+import library.service.business.books.domain.types.Title
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

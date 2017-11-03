@@ -2,13 +2,17 @@ package library.service.business.books
 
 import com.nhaarman.mockito_kotlin.*
 import library.service.business.books.domain.BookRecord
+import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.events.BookAdded
 import library.service.business.books.domain.events.BookBorrowed
 import library.service.business.books.domain.events.BookRemoved
 import library.service.business.books.domain.events.BookReturned
 import library.service.business.books.domain.states.BookState.Available
 import library.service.business.books.domain.states.BookState.Borrowed
-import library.service.business.books.domain.types.*
+import library.service.business.books.domain.types.BookId
+import library.service.business.books.domain.types.Borrower
+import library.service.business.books.domain.types.Isbn13
+import library.service.business.books.domain.types.Title
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException

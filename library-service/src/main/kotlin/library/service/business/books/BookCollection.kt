@@ -1,8 +1,8 @@
 package library.service.business.books
 
 import library.service.business.books.domain.BookRecord
+import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.events.*
-import library.service.business.books.domain.types.Book
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.exceptions.BookAlreadyBorrowedException

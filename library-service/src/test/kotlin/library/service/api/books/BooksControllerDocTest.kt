@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT
 import com.nhaarman.mockito_kotlin.given
 import library.service.business.books.BookCollection
 import library.service.business.books.domain.BookRecord
+import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.states.BookState
-import library.service.business.books.domain.types.*
+import library.service.business.books.domain.types.BookId
+import library.service.business.books.domain.types.Borrower
+import library.service.business.books.domain.types.Isbn13
+import library.service.business.books.domain.types.Title
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException

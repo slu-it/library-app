@@ -3,7 +3,10 @@ package library.service.messaging.books
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
-import library.service.business.books.domain.events.*
+import library.service.business.books.domain.events.BookAdded
+import library.service.business.books.domain.events.BookBorrowed
+import library.service.business.books.domain.events.BookRemoved
+import library.service.business.books.domain.events.BookReturned
 import library.service.business.books.domain.types.BookId
 import library.service.messaging.Channels
 import org.junit.jupiter.api.DynamicTest
@@ -27,7 +30,7 @@ internal class MessagingBookEventDispatcherTest {
     val timestamp = OffsetDateTime.now()
 
     @TestFactory fun `events are send as JSONs`(): List<DynamicTest> {
-        val map = mapOf<BookEvent, String>(
+        val map = mapOf(
                 BookAdded(uuid, bookId, timestamp) to "book-added",
                 BookRemoved(uuid, bookId, timestamp) to "book-removed",
                 BookBorrowed(uuid, bookId, timestamp) to "book-borrowed",

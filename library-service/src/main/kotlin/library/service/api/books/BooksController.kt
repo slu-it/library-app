@@ -3,7 +3,11 @@ package library.service.api.books
 import library.service.api.books.payload.BorrowBookRequestBody
 import library.service.api.books.payload.CreateBookRequestBody
 import library.service.business.books.BookCollection
-import library.service.business.books.domain.types.*
+import library.service.business.books.domain.composites.Book
+import library.service.business.books.domain.types.BookId
+import library.service.business.books.domain.types.Borrower
+import library.service.business.books.domain.types.Isbn13
+import library.service.business.books.domain.types.Title
 import library.service.common.logging.LogMethodEntryAndExit
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
