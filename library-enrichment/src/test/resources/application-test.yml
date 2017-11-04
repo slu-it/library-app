@@ -1,0 +1,7 @@
+logging:
+  level:
+    root: error
+    library.enrichment: error
+spring:
+  main:
+    banner-mode: log
