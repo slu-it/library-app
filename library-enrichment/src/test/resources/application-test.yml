@@ -1,7 +1,9 @@
 logging:
   level:
-    root: error
-    library.enrichment: error
+    root: info
+    library.enrichment: debug
+    utils: debug
+    feign: debug
 spring:
   main:
     banner-mode: log

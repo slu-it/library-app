@@ -1,0 +1,43 @@
+{
+  "ISBN:0261102354": {
+    "publishers": [
+      {
+        "name": "HarperCollins Publishers"
+      }
+    ],
+    "identifiers": {
+      "isbn_13": [
+        "9780261102354"
+      ],
+      "openlibrary": [
+        "OL10236390M"
+      ],
+      "isbn_10": [
+        "0261102354"
+      ],
+      "goodreads": [
+        "727798"
+      ],
+      "librarything": [
+        "3203347"
+      ]
+    },
+    "weight": "10.6 ounces",
+    "title": "Lord of the Rings, the - Part One (The Lord of the Rings)",
+    "url": "https://openlibrary.org/books/OL10236390M/Lord_of_the_Rings_the_-_Part_One_(The_Lord_of_the_Rings)",
+    "number_of_pages": 576,
+    "cover": {
+      "small": "https://covers.openlibrary.org/b/id/2341292-S.jpg",
+      "large": "https://covers.openlibrary.org/b/id/2341292-L.jpg",
+      "medium": "https://covers.openlibrary.org/b/id/2341292-M.jpg"
+    },
+    "publish_date": "June 1999",
+    "key": "/books/OL10236390M",
+    "authors": [
+      {
+        "url": "https://openlibrary.org/authors/OL26320A/J._R._R._Tolkien",
+        "name": "J. R. R. Tolkien"
+      }
+    ]
+  }
+}

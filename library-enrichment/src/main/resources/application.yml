@@ -4,3 +4,6 @@ logging:
   level:
     root: info
     library.enrichment: debug
+
+openlibrary:
+  url: "https://openlibrary.org"

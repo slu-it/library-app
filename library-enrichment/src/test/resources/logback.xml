@@ -8,7 +8,11 @@
         </encoder>
     </appender>
 
-    <root level="error">
-        <appender-ref ref="STDOUT" />
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
     </root>
+
+    <logger name="library.enrichment" level="DEBUG"/>
+    <logger name="utils" level="DEBUG"/>
+
 </configuration>
