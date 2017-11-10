@@ -18,35 +18,32 @@ class OpenLibraryAccessor(
     private val log = OpenLibraryAccessor::class.logger()
 
     override fun getBookData(isbn: String): BookData? {
+        log.debug("Looking up ISBN {} on openlibrary.org ...", isbn)
         try {
-            val searchResult = client.searchBooks(isbn)
-            val bookResult = searchResult.get("ISBN:$isbn")
-            if (bookResult != null) {
-                return extractBookData(bookResult, isbn)
-            }
+            val data = client.searchBooks(isbn)
+                    .get("ISBN:$isbn")
+                    ?.extractBookData()
+            log.debug("Found book data: {}", data)
+            return data
         } catch (e: FeignException) {
-            handleException(e)
+            handleException(e);
         }
         return null
     }
 
-    private fun extractBookData(resultNode: JsonNode, isbn: String): BookData {
-        val title = resultNode.get("title")?.asText()
-        val authors = resultNode.get("authors")?.map { it.get("name").asText() } ?: emptyList()
-        val numberOfPages = resultNode.get("number_of_pages")?.asInt()
-        return BookData(
-                isbn = isbn,
-                title = title,
-                authors = authors,
-                numberOfPages = numberOfPages
-        )
-    }
+    private fun JsonNode.extractBookData() = BookData(
+            title = get("title")
+                    ?.asText(),
+            authors = get("authors")
+                    ?.map { it.get("name").asText() }
+                    ?: emptyList(),
+            numberOfPages = get("number_of_pages")
+                    ?.asInt()
+    )
 
-    private fun handleException(e: FeignException) {
-        when (e.status()) {
-            in 500..599 -> log.warn("Could not retrieve book data from openlibrary.org because of an error on their end:", e)
-            else -> log.error("Could not retrieve book data from openlibrary.org because of an error on our end:", e)
-        }
+    private fun handleException(e: FeignException) = when (e.status()) {
+        in 500..599 -> log.warn("Could not retrieve book data from openlibrary.org because of an error on their end:", e)
+        else -> log.error("Could not retrieve book data from openlibrary.org because of an error on our end:", e)
     }
 
 }

@@ -13,14 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.test.context.ContextConfiguration
-import org.testit.testutils.logrecorder.api.LogLevel
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
 import utils.classification.IntegrationTest
+import utils.errorMessages
 import utils.extensions.EnableSpringExtension
 import utils.extensions.EnableWireMockExtension
 import utils.readFile
-import java.util.stream.Collectors.toList
+import utils.warningMessages
 
 @SpringBootTest
 @IntegrationTest
@@ -47,7 +47,6 @@ internal class OpenLibraryIntegrationTest {
         }
         val bookData = getBookData("0261102354")
         with(bookData) {
-            assertThat(isbn).isEqualTo("0261102354")
             assertThat(title).isEqualTo("Lord of the Rings, the - Part One (The Lord of the Rings)")
             assertThat(authors).containsExactly("J. R. R. Tolkien")
             assertThat(numberOfPages).isEqualTo(576)
@@ -68,7 +67,6 @@ internal class OpenLibraryIntegrationTest {
         }
         val bookData = getBookData(testIsbn)
         with(bookData) {
-            assertThat(isbn).isEqualTo(testIsbn)
             assertThat(title).isEqualTo("The Title")
             assertThat(authors).containsExactly("The Author")
             assertThat(numberOfPages).isEqualTo(42)
@@ -102,13 +100,13 @@ internal class OpenLibraryIntegrationTest {
         @Test fun `missing title property`(wireMock: WireMockServer) {
             wireMock.stubBookSearchResponse(testIsbn) {
                 """
-            {
-              "ISBN:$testIsbn": {
-                "number_of_pages": 42,
-                "authors": [ { "name": "The Author" } ]
-              }
-            }
-            """
+                {
+                  "ISBN:$testIsbn": {
+                    "number_of_pages": 42,
+                    "authors": [ { "name": "The Author" } ]
+                  }
+                }
+                """
             }
             val bookData = getBookData(testIsbn)
             assertThat(bookData.title).isNull()
@@ -117,13 +115,13 @@ internal class OpenLibraryIntegrationTest {
         @Test fun `missing number of pages property`(wireMock: WireMockServer) {
             wireMock.stubBookSearchResponse(testIsbn) {
                 """
-            {
-              "ISBN:$testIsbn": {
-                "title": "The Title",
-                "authors": [ { "name": "The Author" } ]
-              }
-            }
-            """
+                {
+                  "ISBN:$testIsbn": {
+                    "title": "The Title",
+                    "authors": [ { "name": "The Author" } ]
+                  }
+                }
+                """
             }
             val bookData = getBookData(testIsbn)
             assertThat(bookData.numberOfPages).isNull()
@@ -132,13 +130,13 @@ internal class OpenLibraryIntegrationTest {
         @Test fun `missing authors property`(wireMock: WireMockServer) {
             wireMock.stubBookSearchResponse(testIsbn) {
                 """
-            {
-              "ISBN:$testIsbn": {
-                "title": "The Title",
-                "number_of_pages": 42
-              }
-            }
-            """
+                {
+                  "ISBN:$testIsbn": {
+                    "title": "The Title",
+                    "number_of_pages": 42
+                  }
+                }
+                """
             }
             val bookData = getBookData(testIsbn)
             assertThat(bookData.authors).isEmpty()
@@ -154,13 +152,8 @@ internal class OpenLibraryIntegrationTest {
             wireMock.givenThat(get(urlEqualTo(bookSearchUrl(testIsbn))).willReturn(aResponse().withStatus(status)))
             getOptionalBookData(testIsbn)
 
-            val entries = log.entries.collect(toList())
-            assertThat(entries).hasSize(1)
-
-            with(entries[0]) {
-                assertThat(level).isEqualTo(LogLevel.WARN)
-                assertThat(message).isEqualTo("Could not retrieve book data from openlibrary.org because of an error on their end:")
-            }
+            assertThat(log.warningMessages())
+                    .containsOnly("Could not retrieve book data from openlibrary.org because of an error on their end:")
         }
 
         @RecordLoggers(OpenLibraryAccessor::class)
@@ -169,13 +162,8 @@ internal class OpenLibraryIntegrationTest {
             wireMock.givenThat(get(urlEqualTo(bookSearchUrl(testIsbn))).willReturn(aResponse().withStatus(status)))
             getOptionalBookData(testIsbn)
 
-            val entries = log.entries.collect(toList())
-            assertThat(entries).hasSize(1)
-
-            with(entries[0]) {
-                assertThat(level).isEqualTo(LogLevel.ERROR)
-                assertThat(message).isEqualTo("Could not retrieve book data from openlibrary.org because of an error on our end:")
-            }
+            assertThat(log.errorMessages())
+                    .containsOnly("Could not retrieve book data from openlibrary.org because of an error on our end:")
         }
 
     }

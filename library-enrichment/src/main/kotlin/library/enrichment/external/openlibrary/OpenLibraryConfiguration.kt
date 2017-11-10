@@ -12,14 +12,14 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @EnableConfigurationProperties(OpenLibrarySettings::class)
-class OpenLibraryConfiguration {
+internal class OpenLibraryConfiguration {
 
     @Bean fun openLibraryClient(settings: OpenLibrarySettings): OpenLibraryClient {
         val target = DynamicUrlTarget(OpenLibraryClient::class) { settings.url }
         return Feign.builder()
                 .encoder(JacksonEncoder())
                 .decoder(JacksonDecoder())
-                .logger(Slf4jLogger("feign"))
+                .logger(Slf4jLogger("utils.feign"))
                 .logLevel(Logger.Level.FULL)
                 .target(target)
     }

@@ -4,6 +4,7 @@ logging:
   level:
     root: info
     library.enrichment: debug
+    utils.feign: debug
 
 openlibrary:
   url: "https://openlibrary.org"

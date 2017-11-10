@@ -4,6 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 
 @ConfigurationProperties("openlibrary")
-class OpenLibrarySettings {
+internal class OpenLibrarySettings {
     lateinit var url: String
 }
