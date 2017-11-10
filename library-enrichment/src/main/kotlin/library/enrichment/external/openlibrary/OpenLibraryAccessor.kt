@@ -26,7 +26,7 @@ class OpenLibraryAccessor(
             log.debug("Found book data: {}", data)
             return data
         } catch (e: FeignException) {
-            handleException(e);
+            handleException(e)
         }
         return null
     }

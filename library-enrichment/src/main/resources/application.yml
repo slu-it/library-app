@@ -8,3 +8,8 @@ logging:
 
 openlibrary:
   url: "https://openlibrary.org"
+  logLevel: "FULL"
+isbndb:
+  url: "http://isbndb.com"
+  apiKey: "ABCDEFG"
+  logLevel: "FULL"
