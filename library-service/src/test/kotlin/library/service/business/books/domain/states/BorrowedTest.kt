@@ -2,9 +2,11 @@ package library.service.business.books.domain.states
 
 import contracts.CompositeTypeContract
 import library.service.business.books.domain.types.Borrower
+import utils.classification.UnitTest
 import utils.clockWithFixedTime
 import java.time.OffsetDateTime.now
 
+@UnitTest
 internal class BorrowedTest : CompositeTypeContract<Borrowed>() {
 
     val fixedClock = clockWithFixedTime("2017-10-30T12:34:56.789Z")

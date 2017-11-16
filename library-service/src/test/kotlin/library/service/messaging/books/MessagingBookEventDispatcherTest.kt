@@ -39,7 +39,7 @@ internal class MessagingBookEventDispatcherTest {
         return map.map { (event, type) ->
             dynamicTest(event.javaClass.simpleName) {
                 cut.dispatch(event)
-                val expectedJson = """{"id":"$uuid","bookId":"$bookId","timestamp":"$timestamp","type":"$type"}"""
+                val expectedJson = """{"type":"$type","id":"$uuid","bookId":"$bookId","timestamp":"$timestamp"}"""
                 verify(rabbitTemplate).convertAndSend(Channels.BOOK_EVENTS, expectedJson)
             }
         }
