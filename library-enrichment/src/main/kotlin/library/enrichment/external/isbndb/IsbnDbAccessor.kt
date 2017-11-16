@@ -6,12 +6,14 @@ import library.enrichment.common.logging.logger
 import library.enrichment.external.BookData
 import library.enrichment.external.BookDataSource
 import library.enrichment.external.openlibrary.OpenLibraryClient
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
 /**
  * A [BookDataSource] using `isbndb.com` as its source of information.
  */
 @Service
+@Order(1)
 class IsbnDbAccessor(
         private val client: IsbnDbClient,
         private val settings: IsbnDbSettings

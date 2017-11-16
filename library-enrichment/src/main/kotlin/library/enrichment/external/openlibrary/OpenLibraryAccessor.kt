@@ -5,12 +5,14 @@ import feign.FeignException
 import library.enrichment.common.logging.logger
 import library.enrichment.external.BookData
 import library.enrichment.external.BookDataSource
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
 /**
  * A [BookDataSource] using `openlibrary.org` as its source of information.
  */
 @Service
+@Order(2)
 class OpenLibraryAccessor(
         private val client: OpenLibraryClient
 ) : BookDataSource {
