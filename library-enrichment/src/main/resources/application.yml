@@ -6,6 +6,9 @@ logging:
     library.enrichment: debug
     utils.feign: debug
 
+server:
+  port: 8081
+
 openlibrary:
   url: "https://openlibrary.org"
   logLevel: "FULL"
