@@ -1,6 +1,5 @@
 package library.service.messaging.books
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import library.service.business.books.domain.events.BookAdded
@@ -8,7 +7,6 @@ import library.service.business.books.domain.events.BookBorrowed
 import library.service.business.books.domain.events.BookRemoved
 import library.service.business.books.domain.events.BookReturned
 import library.service.business.books.domain.types.BookId
-import library.service.messaging.Channels
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -21,9 +19,9 @@ import java.util.*
 internal class MessagingBookEventDispatcherTest {
 
     val rabbitTemplate = mock<RabbitTemplate>()
-    val objectMapper = ObjectMapper()
+    val exchange = BookEventsExchange()
 
-    val cut = MessagingBookEventDispatcher(rabbitTemplate, objectMapper)
+    val cut = MessagingBookEventDispatcher(rabbitTemplate, exchange)
 
     val uuid = UUID.randomUUID()
     val bookId = BookId.generate()
@@ -39,8 +37,7 @@ internal class MessagingBookEventDispatcherTest {
         return map.map { (event, type) ->
             dynamicTest(event.javaClass.simpleName) {
                 cut.dispatch(event)
-                val expectedJson = """{"type":"$type","id":"$uuid","bookId":"$bookId","timestamp":"$timestamp"}"""
-                verify(rabbitTemplate).convertAndSend(Channels.BOOK_EVENTS, expectedJson)
+                verify(rabbitTemplate).convertAndSend(exchange.name, type, event)
             }
         }
     }
