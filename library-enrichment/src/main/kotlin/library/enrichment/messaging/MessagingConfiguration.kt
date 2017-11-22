@@ -35,7 +35,7 @@ internal class MessagingConfiguration(
             = BindingBuilder.bind(queue).to(exchange).with("book-added")
 
     @Bean fun bookAddedEventMessageContainer(): SimpleMessageListenerContainer {
-        val listener = ExceptionHandlingMessageListener(objectMapper, BookAddedEvent::class) {
+        val listener = JsonConvertingMessageListener(objectMapper, BookAddedEvent::class) {
             processor.bookWasAdded(it)
         }
         return SimpleMessageListenerContainer(connectionFactory).apply {

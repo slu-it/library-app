@@ -6,13 +6,13 @@ import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageListener
 import kotlin.reflect.KClass
 
-class ExceptionHandlingMessageListener<T : Any>(
+class JsonConvertingMessageListener<T : Any>(
         private val objectMapper: ObjectMapper,
         private val payloadType: KClass<T>,
         private val payloadConsumer: (T) -> Unit
 ) : MessageListener {
 
-    private val log = ExceptionHandlingMessageListener::class.logger()
+    private val log = JsonConvertingMessageListener::class.logger()
 
     override fun onMessage(message: Message) {
         tryToReadEvent(message)?.let {
@@ -24,7 +24,7 @@ class ExceptionHandlingMessageListener<T : Any>(
         try {
             return objectMapper.readValue(message.body, payloadType.java)
         } catch (e: Exception) {
-            log.warn("received malformed {} message: {}", payloadType.simpleName, message)
+            log.warn("received malformed {} message: {}", payloadType.simpleName, message, e)
         }
         return null
     }
