@@ -83,7 +83,7 @@ private abstract class DockerizedDependencyExtension(
     private fun waitUntilServiceWasStarted(): Boolean {
         val start = now()
         var started = false
-        while (!started && (now() - start) < 10_000L) {
+        while (!started && (now() - start) < 30_000L) {
             while (log.peek() != null) {
                 if (log.poll().contains(startupPhrase, true)) {
                     started = true

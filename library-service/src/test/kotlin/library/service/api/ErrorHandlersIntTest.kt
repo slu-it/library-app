@@ -116,7 +116,7 @@ internal class ErrorHandlersIntTest {
     }
 
     @Test fun `MethodArgumentTypeMismatchException is handled`() {
-        executionWillThrow { MethodArgumentTypeMismatchException("value", String::class.java, "myArgument", null, null) }
+        executionWillThrow { MethodArgumentTypeMismatchException("value", String::class.java, "myArgument", mock(), mock()) }
         executeAndExpect(BAD_REQUEST) {
             """
             {
@@ -147,7 +147,7 @@ internal class ErrorHandlersIntTest {
 
     @Test fun `MethodArgumentNotValidException is handled`() {
         val bindingResult = bindingResult()
-        executionWillThrow { MethodArgumentNotValidException(null, bindingResult) }
+        executionWillThrow { MethodArgumentNotValidException(mock(), bindingResult) }
         executeAndExpect(BAD_REQUEST) {
             """
             {

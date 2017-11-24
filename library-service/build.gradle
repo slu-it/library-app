@@ -42,17 +42,11 @@ compileTestKotlin {
 repositories {
     mavenCentral()
     maven { url "https://repo.spring.io/milestone" }
-    maven { url "https://repo.spring.io/snapshot" }
-    mavenLocal()
 }
 
 dependencies {
     compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-
-    // needs to be current snapshot, because 0.23 version is incompatible
-    // with current spring boot requirements (Milestone 4) (TODO: change ASAP)
-    compile("org.springframework.hateoas:spring-hateoas:0.24.0.BUILD-SNAPSHOT")
 
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter-aop")
@@ -75,7 +69,6 @@ dependencies {
 
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
     testCompile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
-    testCompile("junit:junit:4.12")
 
     testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
