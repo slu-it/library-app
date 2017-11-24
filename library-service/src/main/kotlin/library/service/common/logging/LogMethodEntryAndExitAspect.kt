@@ -3,8 +3,6 @@ package library.service.common.logging
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 /**
@@ -16,7 +14,7 @@ import org.springframework.stereotype.Component
 @Component
 class LogMethodEntryAndExitAspect {
 
-    private val log: Logger = LoggerFactory.getLogger(javaClass)
+    private val log = LogMethodEntryAndExitAspect::class.logger()
 
     @Around("(@within(LogMethodEntryAndExit) && execution(public * *(..)))")
     fun aroundMethod(pjp: ProceedingJoinPoint): Any? {

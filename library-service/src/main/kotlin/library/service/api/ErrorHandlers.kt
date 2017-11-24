@@ -4,8 +4,7 @@ import library.service.business.exceptions.MalformedValueException
 import library.service.business.exceptions.NotFoundException
 import library.service.business.exceptions.NotPossibleException
 import library.service.common.correlation.CorrelationIdHolder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import library.service.common.logging.logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -35,7 +34,7 @@ class ErrorHandlers(
         private val correlationIdHolder: CorrelationIdHolder
 ) {
 
-    private val log: Logger = LoggerFactory.getLogger(javaClass)
+    private val log = ErrorHandlers::class.logger()
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException::class)

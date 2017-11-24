@@ -7,6 +7,8 @@ import library.service.business.books.domain.events.BookBorrowed
 import library.service.business.books.domain.events.BookRemoved
 import library.service.business.books.domain.events.BookReturned
 import library.service.business.books.domain.types.BookId
+import library.service.messaging.MessagingBookEventDispatcher
+import library.service.messaging.MessagingConfiguration
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -19,7 +21,7 @@ import java.util.*
 internal class MessagingBookEventDispatcherTest {
 
     val rabbitTemplate = mock<RabbitTemplate>()
-    val exchange = BookEventsExchange()
+    val exchange = MessagingConfiguration.BookEventsExchange()
 
     val cut = MessagingBookEventDispatcher(rabbitTemplate, exchange)
 
