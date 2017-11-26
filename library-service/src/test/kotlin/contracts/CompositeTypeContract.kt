@@ -27,7 +27,7 @@ abstract class CompositeTypeContract<out T : Any> {
      * All of these contract's tests are grouped in one sub-set to prevent
      * accidental overrides.
      */
-    @Nested inner class `is a value type` {
+    @Nested inner class `is a composite type` {
 
         @Nested inner class `equality` {
 
