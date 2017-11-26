@@ -1,7 +1,6 @@
 package library.enrichment.external.openlibrary
 
 import feign.Feign
-import feign.Logger
 import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import feign.slf4j.Slf4jLogger
@@ -15,7 +14,7 @@ import org.springframework.context.annotation.Configuration
 class OpenLibraryConfiguration {
 
     @Bean fun openLibraryClient(settings: OpenLibrarySettings): OpenLibraryClient {
-        val target = DynamicUrlTarget(OpenLibraryClient::class) { settings.url }
+        val target = DynamicUrlTarget("openlibrary", OpenLibraryClient::class) { settings.url }
         return Feign.builder()
                 .encoder(JacksonEncoder())
                 .decoder(JacksonDecoder())
