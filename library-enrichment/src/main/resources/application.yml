@@ -9,10 +9,15 @@ logging:
 server:
   port: 8081
 
-openlibrary:
-  url: "https://openlibrary.org"
+library:
+  url: "http://localhost:8081"
   logLevel: "FULL"
-isbndb:
-  url: "http://isbndb.com"
-  apiKey: "ABCDEFG"
-  logLevel: "FULL"
+
+datasources:
+  openlibrary:
+    url: "https://openlibrary.org"
+    logLevel: "FULL"
+  isbndb:
+    url: "http://isbndb.com"
+    apiKey: "ABCDEFG"
+    logLevel: "FULL"

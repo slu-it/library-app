@@ -1,4 +1,4 @@
-package library.enrichment.external.openlibrary
+package library.enrichment.datasources.openlibrary
 
 import com.fasterxml.jackson.databind.JsonNode
 import feign.Param

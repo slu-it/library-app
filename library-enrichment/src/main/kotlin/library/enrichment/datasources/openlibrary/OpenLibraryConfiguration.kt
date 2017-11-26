@@ -1,4 +1,4 @@
-package library.enrichment.external.openlibrary
+package library.enrichment.datasources.openlibrary
 
 import feign.Feign
 import feign.jackson.JacksonDecoder

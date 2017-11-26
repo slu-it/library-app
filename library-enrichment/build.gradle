@@ -1,9 +1,9 @@
 buildscript {
 	ext {
-		kotlinVersion = '1.1.60'
-		springBootVersion = '2.0.0.M6'
+		kotlinVersion = '1.2.10'
+		springBootVersion = '2.0.0.M7'
 		junitPlatformVersion = '1.0.2'
-		junitJupiterVersion = '5.0.2'
+		junitJupiterVersion = '5.0.3'
 		dockerPluginVersion = '1.2'
         feignVersion= '9.5.1'
 	}
@@ -51,22 +51,24 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-amqp")
 	compile("org.springframework.boot:spring-boot-starter-web")
 
+	compile("com.fasterxml.jackson.module:jackson-module-kotlin")
+
 	compile("io.github.openfeign:feign-core:${feignVersion}")
 	compile("io.github.openfeign:feign-jackson:${feignVersion}")
 	compile("io.github.openfeign:feign-slf4j:${feignVersion}")
 
-	testCompile("org.assertj:assertj-core:3.6.2")
 	testCompile("com.nhaarman:mockito-kotlin-kt1.1:1.5.0")
 	testCompile("info.novatec.testit:testutils-logrecorder-logback:0.3.3")
 
-	testCompile("org.springframework.boot:spring-boot-starter-test")
+	testCompile("org.springframework.boot:spring-boot-starter-test") {
+		exclude group: 'junit'
+	}
 
 	testCompile("com.tngtech.archunit:archunit-junit:0.4.0")
 	testCompile("com.github.tomakehurst:wiremock-standalone:2.10.1")
 
 	testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
 	testCompile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
-
 	testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 	testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 }

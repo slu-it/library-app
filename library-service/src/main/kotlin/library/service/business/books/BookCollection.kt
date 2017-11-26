@@ -56,7 +56,7 @@ class BookCollection(
     }
 
     private fun bookAddedEvent(bookRecord: BookRecord) =
-            BookAdded(timestamp = now(), bookId = bookRecord.id)
+            BookAdded(timestamp = now(), bookId = bookRecord.id, isbn = bookRecord.book.isbn)
 
     /**
      * Gets a [BookRecord] from the collection by its unique ID.

@@ -1,11 +1,11 @@
-package library.enrichment.external.isbndb
+package library.enrichment.datasources.openlibrary
 
 import feign.Logger
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties("isbndb")
-class IsbnDbSettings {
+
+@ConfigurationProperties("datasources.openlibrary")
+class OpenLibrarySettings {
     lateinit var url: String
-    lateinit var apiKey: String
     lateinit var logLevel: Logger.Level
 }

@@ -1,8 +1,8 @@
-package library.enrichment.external.isbndb
+package library.enrichment.datasources.openlibrary
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import library.enrichment.external.isbndb.IsbnDbIntegrationTest.CustomConfiguration
+import library.enrichment.datasources.openlibrary.OpenLibraryIntegrationTest.CustomConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -27,60 +27,47 @@ import utils.warningMessages
 @EnableSpringExtension
 @EnableWireMockExtension
 @ContextConfiguration(classes = arrayOf(CustomConfiguration::class))
-internal class IsbnDbIntegrationTest {
+internal class OpenLibraryIntegrationTest {
 
-    @ComponentScan("library.enrichment.external.isbndb")
+    @ComponentScan("library.enrichment.datasources.openlibrary")
     class CustomConfiguration
 
-    @Autowired lateinit var settings: IsbnDbSettings
-    @Autowired lateinit var accessor: IsbnDbAccessor
+    @Autowired lateinit var settings: OpenLibrarySettings
+    @Autowired lateinit var accessor: OpenLibraryAccessor
 
     val testIsbn = "1234567890"
 
     @BeforeEach fun configureWireMockAsTarget(wireMock: WireMockServer) {
         settings.url = "http://localhost:${wireMock.port()}"
-        settings.apiKey = "ABCDEF"
     }
 
-    @Test fun `representative found response is processed correctly`(wireMock: WireMockServer) {
-        wireMock.stubBookSearchResponse("0132350882", 200) {
-            fromFile("200_found.json")
+    @Test fun `representative response is processed correctly`(wireMock: WireMockServer) {
+        wireMock.stubBookSearchResponse("0261102354", 200) {
+            fromFile("200_isbn_0261102354.json")
         }
-        val bookData = getBookData("0132350882")
+        val bookData = getBookData("0261102354")
         with(bookData) {
-            assertThat(title).isEqualTo("Clean code")
-            assertThat(authors).containsOnly("Martin, Robert W. T.", "Michael Feathers")
-            assertThat(numberOfPages).isNull()
+            assertThat(authors).containsExactly("J. R. R. Tolkien")
+            assertThat(numberOfPages).isEqualTo(576)
         }
-    }
-
-    @Test fun `representative not found response is processed correctly`(wireMock: WireMockServer) {
-        // service does not implement HTTP correctly - not found is a 200 OK with an error in the body
-        wireMock.stubBookSearchResponse("013235088X", 200) {
-            fromFile("200_not_found.json")
-        }
-        val bookData = getOptionalBookData("013235088X")
-        assertThat(bookData).isNull()
     }
 
     @Test fun `all BookData properties are read correctly if book was found`(wireMock: WireMockServer) {
         wireMock.stubBookSearchResponse(testIsbn) {
             """
             {
-              "data": [
-                {
-                  "title": "The Title",
-                  "author_data": [ { "name": "The Author" } ]
-                }
-              ]
+              "ISBN:$testIsbn": {
+                "title": "The Title",
+                "number_of_pages": 42,
+                "authors": [ { "name": "The Author" } ]
+              }
             }
             """
         }
         val bookData = getBookData(testIsbn)
         with(bookData) {
-            assertThat(title).isEqualTo("The Title")
             assertThat(authors).containsExactly("The Author")
-            assertThat(numberOfPages).isNull()
+            assertThat(numberOfPages).isEqualTo(42)
         }
     }
 
@@ -88,12 +75,11 @@ internal class IsbnDbIntegrationTest {
         wireMock.stubBookSearchResponse(testIsbn) {
             """
             {
-              "data": [
-                {
-                  "title": "The Title",
-                  "author_data": [ { "name": "The Author" }, { "name": "Another Author" } ]
-                }
-              ]
+              "ISBN:$testIsbn": {
+                "title": "The Title",
+                "number_of_pages": 42,
+                "authors": [ { "name": "The Author" }, { "name": "Another Author" } ]
+              }
             }
             """
         }
@@ -101,33 +87,37 @@ internal class IsbnDbIntegrationTest {
         assertThat(bookData.authors).containsExactly("The Author", "Another Author")
     }
 
+    @Test fun `empty search result will result in null return value`(wireMock: WireMockServer) {
+        wireMock.stubBookSearchResponse(testIsbn) { "{}" }
+        val bookData = getOptionalBookData(testIsbn)
+        assertThat(bookData).isNull()
+    }
+
     @Nested inner class `processing can handle incomplete data` {
 
-        @Test fun `missing title property`(wireMock: WireMockServer) {
+        @Test fun `missing number of pages property`(wireMock: WireMockServer) {
             wireMock.stubBookSearchResponse(testIsbn) {
                 """
                 {
-                  "data": [
-                    {
-                      "author_data": [ { "name": "The Author" } ]
-                    }
-                  ]
+                  "ISBN:$testIsbn": {
+                    "title": "The Title",
+                    "authors": [ { "name": "The Author" } ]
+                  }
                 }
                 """
             }
             val bookData = getBookData(testIsbn)
-            assertThat(bookData.title).isNull()
+            assertThat(bookData.numberOfPages).isNull()
         }
 
         @Test fun `missing authors property`(wireMock: WireMockServer) {
             wireMock.stubBookSearchResponse(testIsbn) {
                 """
                 {
-                  "data": [
-                    {
-                      "title": "The Title"
-                    }
-                  ]
+                  "ISBN:$testIsbn": {
+                    "title": "The Title",
+                    "number_of_pages": 42
+                  }
                 }
                 """
             }
@@ -139,24 +129,24 @@ internal class IsbnDbIntegrationTest {
 
     @Nested inner class `error cases` {
 
-        @RecordLoggers(IsbnDbAccessor::class)
+        @RecordLoggers(OpenLibraryAccessor::class)
         @ValueSource(ints = intArrayOf(500, 502, 503, 504))
         @ParameterizedTest fun `internal server errors are logged as warnings`(status: Int, wireMock: WireMockServer, log: LogRecord) {
             wireMock.givenThat(get(urlEqualTo(bookSearchUrl(testIsbn))).willReturn(aResponse().withStatus(status)))
             getOptionalBookData(testIsbn)
 
             assertThat(log.warningMessages())
-                    .containsOnly("Could not retrieve book data from isbndb.com because of an error on their end:")
+                    .containsOnly("Could not retrieve book data from openlibrary.org because of an error on their end:")
         }
 
-        @RecordLoggers(IsbnDbAccessor::class)
+        @RecordLoggers(OpenLibraryAccessor::class)
         @ValueSource(ints = intArrayOf(400, 401, 403, 404, 405, 406, 409, 410))
         @ParameterizedTest fun `client errors are logged as errors`(status: Int, wireMock: WireMockServer, log: LogRecord) {
             wireMock.givenThat(get(urlEqualTo(bookSearchUrl(testIsbn))).willReturn(aResponse().withStatus(status)))
             getOptionalBookData(testIsbn)
 
             assertThat(log.errorMessages())
-                    .containsOnly("Could not retrieve book data from isbndb.com because of an error on our end:")
+                    .containsOnly("Could not retrieve book data from openlibrary.org because of an error on our end:")
         }
 
     }
@@ -172,7 +162,7 @@ internal class IsbnDbIntegrationTest {
     fun getBookData(isbn: String) = getOptionalBookData(isbn)!!
     fun getOptionalBookData(isbn: String) = accessor.getBookData(isbn)
 
-    fun bookSearchUrl(isbn: String) = "/api/v2/json/ABCDEF/book/$isbn"
-    fun fromFile(fileName: String) = readFile("isbndb/responses/$fileName")
+    fun bookSearchUrl(isbn: String) = "/api/books?bibkeys=ISBN%3A$isbn&format=json&jscmd=data"
+    fun fromFile(fileName: String) = readFile("openlibrary/responses/$fileName")
 
 }

@@ -2,7 +2,7 @@ package library.enrichment.messaging
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import library.enrichment.core.BookEventProcessor
-import library.enrichment.core.events.BookAddedEvent
+import library.enrichment.core.BookAddedEvent
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue

@@ -1,6 +1,7 @@
 package library.service.business.books.domain.events
 
 import library.service.business.books.domain.types.BookId
+import library.service.business.books.domain.types.Isbn13
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
@@ -15,9 +16,10 @@ internal class BookEventsTest {
     val uuid = UUID.randomUUID()!!
     val bookId = BookId.generate()
     val timestamp = OffsetDateTime.now()!!
+    val isbn = Isbn13("0123456789123")
 
     val allBookEventTypes = listOf(
-            BookAdded(uuid, bookId, timestamp),
+            BookAdded(uuid, bookId, timestamp, isbn),
             BookRemoved(uuid, bookId, timestamp),
             BookBorrowed(uuid, bookId, timestamp),
             BookReturned(uuid, bookId, timestamp)
@@ -51,6 +53,11 @@ internal class BookEventsTest {
         dynamicTest(it.javaClass.simpleName) {
             assertThat(it.timestamp).isEqualTo(timestamp.toString())
         }
+    }
+
+    @Test fun `book added events contain an ISBN formatted as a string`() {
+        val event = BookAdded(uuid, bookId, timestamp, isbn)
+        assertThat(event.isbn).isEqualTo(isbn.toString())
     }
 
 }

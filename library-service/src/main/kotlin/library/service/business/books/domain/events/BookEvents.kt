@@ -1,6 +1,7 @@
 package library.service.business.books.domain.events
 
 import library.service.business.books.domain.types.BookId
+import library.service.business.books.domain.types.Isbn13
 import library.service.business.events.DomainEvent
 import java.time.OffsetDateTime
 import java.util.*
@@ -31,8 +32,11 @@ sealed class BookEvent(
 class BookAdded(
         id: UUID = UUID.randomUUID(),
         bookId: BookId,
-        timestamp: OffsetDateTime
-) : BookEvent("book-added", id, bookId, timestamp)
+        timestamp: OffsetDateTime,
+        isbn:Isbn13
+) : BookEvent("book-added", id, bookId, timestamp){
+    val isbn:String = isbn.toString()
+}
 
 /** A book was permanently removed from the library. */
 class BookRemoved(

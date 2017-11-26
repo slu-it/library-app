@@ -1,4 +1,4 @@
-package library.enrichment.external.isbndb
+package library.enrichment.library
 
 import feign.Feign
 import feign.jackson.JacksonDecoder
@@ -10,15 +10,15 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@EnableConfigurationProperties(IsbnDbSettings::class)
-class IsbnDbConfiguration {
+@EnableConfigurationProperties(LibrarySettings::class)
+class LibraryConfiguration {
 
-    @Bean fun isbnDbClient(settings: IsbnDbSettings): IsbnDbClient {
-        val target = DynamicUrlTarget("isbndb", IsbnDbClient::class) { settings.url }
+    @Bean fun libraryClient(settings: LibrarySettings): LibraryClient {
+        val target = DynamicUrlTarget("library", LibraryClient::class) { settings.url }
         return Feign.builder()
                 .encoder(JacksonEncoder())
                 .decoder(JacksonDecoder())
-                .logger(Slf4jLogger("utils.feign.isbndb"))
+                .logger(Slf4jLogger("utils.feign.library"))
                 .logLevel(settings.logLevel)
                 .target(target)
     }

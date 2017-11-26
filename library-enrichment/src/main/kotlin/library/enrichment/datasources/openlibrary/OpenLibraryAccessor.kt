@@ -1,10 +1,10 @@
-package library.enrichment.external.openlibrary
+package library.enrichment.datasources.openlibrary
 
 import com.fasterxml.jackson.databind.JsonNode
 import feign.FeignException
 import library.enrichment.common.logging.logger
-import library.enrichment.external.BookData
-import library.enrichment.external.BookDataSource
+import library.enrichment.core.BookData
+import library.enrichment.core.BookDataSource
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
@@ -34,8 +34,6 @@ class OpenLibraryAccessor(
     }
 
     private fun JsonNode.extractBookData() = BookData(
-            title = get("title")
-                    ?.asText(),
             authors = get("authors")
                     ?.map { it.get("name").asText() }
                     ?: emptyList(),
