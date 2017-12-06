@@ -4,7 +4,7 @@ import library.service.business.books.domain.types.Isbn13.NotAnIsbnNumberExcepti
 import library.service.business.exceptions.MalformedValueException
 
 /**
- * The unique 13 digit identification number of a [Book].
+ * The unique 13 digit identification number of a book.
  *
  * This type cannot be instantiated with anything other than 13 digit numbers.
  * Any attempt to do so will result in a [NotAnIsbnNumberException].

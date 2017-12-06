@@ -36,13 +36,10 @@ data class BookId(
          * @throws NotABookIdException in case the given string does not comply
          *                             with the `UUID` format
          */
-        fun from(value: String): BookId {
-            try {
-                val uuid = UUID.fromString(value)
-                return BookId(uuid)
-            } catch (e: IllegalArgumentException) {
-                throw NotABookIdException(value)
-            }
+        fun from(value: String): BookId = try {
+            BookId(UUID.fromString(value))
+        } catch (e: IllegalArgumentException) {
+            throw NotABookIdException(value)
         }
 
     }

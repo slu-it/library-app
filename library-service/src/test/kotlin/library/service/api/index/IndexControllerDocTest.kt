@@ -24,7 +24,7 @@ import utils.classification.IntegrationTest
 @WebMvcTest(IndexController::class)
 @ExtendWith(SpringExtension::class)
 @AutoConfigureRestDocs("build/generated-snippets/index")
-class IndexControllerDocTest {
+internal class IndexControllerDocTest {
 
     @SpyBean lateinit var correlationIdHolder: CorrelationIdHolder
 

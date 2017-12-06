@@ -25,7 +25,7 @@ class CorrelationIdSettingFilter(
         private val correlationIdHolder: CorrelationIdHolder
 ) : GenericFilterBean() {
 
-    private val CORRELATION_ID_HEADER = "X-Correlation-ID"
+    private val correlationIdHeader = "X-Correlation-ID"
 
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val correlationId = getCorrelationId(request)
@@ -40,12 +40,12 @@ class CorrelationIdSettingFilter(
 
     private fun getCorrelationId(request: ServletRequest): String {
         val httpRequest = request as HttpServletRequest
-        return httpRequest.getHeader(CORRELATION_ID_HEADER) ?: UUID.randomUUID().toString()
+        return httpRequest.getHeader(correlationIdHeader) ?: UUID.randomUUID().toString()
     }
 
     private fun setCorrelationId(response: ServletResponse, correlationId: String) {
         val httpResponse = response as HttpServletResponse
-        httpResponse.setHeader(CORRELATION_ID_HEADER, correlationId)
+        httpResponse.setHeader(correlationIdHeader, correlationId)
     }
 
 }

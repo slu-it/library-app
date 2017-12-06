@@ -23,7 +23,7 @@ internal class Isbn13Test : ValueTypeContract<Isbn13, String>() {
 
     @Nested inner class `during construction` {
 
-        @ValueSource(strings = arrayOf(
+        @ValueSource(strings = [
                 "0123456789012",
                 "1234567890123",
                 "2345678901234",
@@ -34,29 +34,29 @@ internal class Isbn13Test : ValueTypeContract<Isbn13, String>() {
                 "7890123456789",
                 "8901234567890",
                 "9012345678901"
-        ))
+        ])
         @ParameterizedTest fun `13 digit numbers are considered valid`(isbnCandidate: String) {
             Isbn13(isbnCandidate) // no error means it's OK
         }
 
-        @ValueSource(strings = arrayOf(
+        @ValueSource(strings = [
                 "120000000000",
                 "14000000000000"
-        ))
+        ])
         @ParameterizedTest fun `any other number of digits is considered invalid`(isbnCandidate: String) {
             assertThrows(Isbn13.NotAnIsbnNumberException::class) {
                 Isbn13(isbnCandidate)
             }
         }
 
-        @ValueSource(strings = arrayOf(
+        @ValueSource(strings = [
                 "a000000000000",
                 "A000000000000",
                 "z000000000000",
                 "Z000000000000",
                 "$000000000000",
                 "_000000000000"
-        ))
+        ])
         @ParameterizedTest fun `any non number characters are considered invalid`(isbnCandidate: String) {
             assertThrows(Isbn13.NotAnIsbnNumberException::class) {
                 Isbn13(isbnCandidate)
@@ -77,10 +77,10 @@ internal class Isbn13Test : ValueTypeContract<Isbn13, String>() {
             assertThat(isbn.toString()).isEqualTo("0000000000111")
         }
 
-        @ValueSource(strings = arrayOf(
+        @ValueSource(strings = [
                 "120000000000",
                 "14000000000000"
-        ))
+        ])
         @ParameterizedTest fun `any other number of digits is considered invalid`(isbnCandidate: String) {
             assertThrows(Isbn13.NotAnIsbnNumberException::class) {
                 Isbn13.parse(isbnCandidate)

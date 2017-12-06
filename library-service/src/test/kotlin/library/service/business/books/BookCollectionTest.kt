@@ -163,7 +163,7 @@ internal class BookCollectionTest {
 
             verify(eventDispatcher).dispatch(check<BookBorrowed> {
                 assertThat(it.bookId).isEqualTo("$id")
-                assertThat(it.timestamp).isEqualTo("$fixedTimestamp")
+                assertThat(it.timestamp).isEqualTo(fixedTimestamp)
             })
         }
 
@@ -218,7 +218,7 @@ internal class BookCollectionTest {
 
             verify(eventDispatcher).dispatch(check<BookReturned> {
                 assertThat(it.bookId).isEqualTo("$id")
-                assertThat(it.timestamp).isEqualTo("$fixedTimestamp")
+                assertThat(it.timestamp).isEqualTo(fixedTimestamp)
             })
         }
 

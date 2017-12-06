@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.hateoas.MediaTypes.HAL_JSON_UTF8
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
@@ -23,7 +24,7 @@ import java.time.ZoneId
 @WebMvcTest
 @IntegrationTest
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = arrayOf(IndexControllerIntTest.TestConfiguration::class))
+@ContextConfiguration(classes = [IndexControllerIntTest.TestConfiguration::class])
 internal class IndexControllerIntTest {
 
     @ComponentScan("library.service.api.index", "library.service.common")
@@ -31,8 +32,6 @@ internal class IndexControllerIntTest {
         @Bean fun clock(): Clock = Clock.fixed(OffsetDateTime.parse("2017-09-01T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
         @Bean fun errorHandlers(clock: Clock, correlationIdHolder: CorrelationIdHolder) = ErrorHandlers(clock, correlationIdHolder)
     }
-
-    val APPLICATION_HAL_JSON = "application/hal+json;charset=UTF-8"
 
     @Autowired lateinit var mockMvc: MockMvc
 
@@ -49,7 +48,7 @@ internal class IndexControllerIntTest {
             """
         mockMvc.perform(request)
                 .andExpect(status().isOk)
-                .andExpect(content().contentType(APPLICATION_HAL_JSON))
+                .andExpect(content().contentType(HAL_JSON_UTF8))
                 .andExpect(content().json(expectedResponse, true))
     }
 

@@ -15,7 +15,7 @@ import utils.classification.UnitTest
 @AcceptanceTest
 internal class ArchitectureTest {
 
-    val classes = ClassFileImporter().importClasspath()
+    val classes = ClassFileImporter().importClasspath()!!
 
     @Nested inner class `business module` {
 

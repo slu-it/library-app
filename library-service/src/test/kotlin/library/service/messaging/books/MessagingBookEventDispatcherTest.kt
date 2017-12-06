@@ -25,9 +25,9 @@ internal class MessagingBookEventDispatcherTest {
 
     val cut = MessagingBookEventDispatcher(rabbitTemplate, exchange)
 
-    val uuid = UUID.randomUUID()
+    val uuid = UUID.randomUUID()!!
     val bookId = BookId.generate()
-    val timestamp = OffsetDateTime.now()
+    val timestamp = OffsetDateTime.now()!!
 
     @TestFactory fun `events are send as JSONs`(): List<DynamicTest> {
         val map = mapOf(

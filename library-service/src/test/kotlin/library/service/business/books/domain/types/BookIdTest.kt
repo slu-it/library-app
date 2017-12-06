@@ -15,7 +15,7 @@ internal class BookIdTest : ValueTypeContract<BookId, String>() {
     override fun getAnotherValueExample() = "40335985-97bc-42d2-9fdb-e48ae3c94ea6"
     override fun createNewInstance(value: String) = BookId.from(value)
 
-    val uuid = UUID.fromString("4b13ce6b-4546-4b89-9356-dd7bbf67c40d")
+    val uuid = UUID.fromString("4b13ce6b-4546-4b89-9356-dd7bbf67c40d")!!
 
     @Test fun `toString() returns BookId's value as a String`() {
         val bookId = BookId(uuid)

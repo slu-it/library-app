@@ -40,7 +40,7 @@ import java.time.OffsetDateTime
 @WebMvcTest(BooksController::class)
 @ExtendWith(SpringExtension::class)
 @AutoConfigureRestDocs("build/generated-snippets/books")
-class BooksControllerDocTest {
+internal class BooksControllerDocTest {
 
     @SpyBean lateinit var correlationIdHolder: CorrelationIdHolder
     @SpyBean lateinit var bookResourceAssembler: BookResourceAssembler

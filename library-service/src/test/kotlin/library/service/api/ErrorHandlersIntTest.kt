@@ -43,10 +43,10 @@ import java.util.*
 @WebMvcTest
 @IntegrationTest
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = arrayOf(IndexControllerIntTest.TestConfiguration::class))
+@ContextConfiguration(classes = [IndexControllerIntTest.TestConfiguration::class])
 internal class ErrorHandlersIntTest {
 
-    val CORRELATION_ID = UUID.randomUUID().toString()
+    val correlationId = UUID.randomUUID().toString()
 
     @ComponentScan("library.service.common")
     class TestConfiguration {
@@ -78,7 +78,7 @@ internal class ErrorHandlersIntTest {
               "status": 404,
               "error": "Not Found",
               "timestamp": "2017-09-01T12:34:56.789Z",
-              "correlationId": "$CORRELATION_ID",
+              "correlationId": "$correlationId",
               "message": "something was not found"
             }
             """
@@ -93,7 +93,7 @@ internal class ErrorHandlersIntTest {
               "status": 409,
               "error": "Conflict",
               "timestamp": "2017-09-01T12:34:56.789Z",
-              "correlationId": "$CORRELATION_ID",
+              "correlationId": "$correlationId",
               "message": "something could not be done"
             }
             """
@@ -108,7 +108,7 @@ internal class ErrorHandlersIntTest {
               "status": 400,
               "error": "Bad Request",
               "timestamp": "2017-09-01T12:34:56.789Z",
-              "correlationId": "$CORRELATION_ID",
+              "correlationId": "$correlationId",
               "message": "some value was wrong"
             }
             """
@@ -123,7 +123,7 @@ internal class ErrorHandlersIntTest {
               "status": 400,
               "error": "Bad Request",
               "timestamp": "2017-09-01T12:34:56.789Z",
-              "correlationId": "$CORRELATION_ID",
+              "correlationId": "$correlationId",
               "message": "The request's 'myArgument' parameter is malformed."
             }
             """
@@ -138,7 +138,7 @@ internal class ErrorHandlersIntTest {
               "status": 400,
               "error": "Bad Request",
               "timestamp": "2017-09-01T12:34:56.789Z",
-              "correlationId": "$CORRELATION_ID",
+              "correlationId": "$correlationId",
               "message": "The request's body could not be read. It is either empty or malformed."
             }
             """
@@ -154,7 +154,7 @@ internal class ErrorHandlersIntTest {
               "status": 400,
               "error": "Bad Request",
               "timestamp": "2017-09-01T12:34:56.789Z",
-              "correlationId": "$CORRELATION_ID",
+              "correlationId": "$correlationId",
               "message": "The request's body is invalid. See details...",
               "details": [
                 "Gloabl Message 1",
@@ -187,7 +187,7 @@ internal class ErrorHandlersIntTest {
               "status": 500,
               "error": "Internal Server Error",
               "timestamp": "2017-09-01T12:34:56.789Z",
-              "correlationId": "$CORRELATION_ID",
+              "correlationId": "$correlationId",
               "message": "An internal server error occurred, see server logs for more information."
             }
             """
@@ -200,7 +200,7 @@ internal class ErrorHandlersIntTest {
 
     private fun executeAndExpect(expectedStatus: HttpStatus, expectedResponseSupplier: () -> String) {
         mockMvc.perform(post("/test")
-                .header("X-Correlation-ID", CORRELATION_ID))
+                .header("X-Correlation-ID", correlationId))
                 .andExpect(status().`is`(expectedStatus.value()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json(expectedResponseSupplier(), true))

@@ -17,11 +17,11 @@ import utils.classification.IntegrationTest
 @SpringBootTest
 @IntegrationTest
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = arrayOf(LogMethodEntryAndExitAspectIntTest.TestConfiguration::class))
+@ContextConfiguration(classes = [LogMethodEntryAndExitAspectIntTest.TestConfiguration::class])
 internal class LogMethodEntryAndExitAspectIntTest {
 
     @EnableAspectJAutoProxy
-    @ComponentScan(basePackageClasses = arrayOf(LogMethodEntryAndExitAspect::class))
+    @ComponentScan(basePackageClasses = [LogMethodEntryAndExitAspect::class])
     class TestConfiguration {
 
         @Bean fun exampleClass() = ExampleClass()

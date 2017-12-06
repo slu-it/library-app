@@ -20,6 +20,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.hateoas.MediaTypes.HAL_JSON_UTF8
+import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
@@ -35,7 +37,7 @@ import java.util.*
 @WebMvcTest
 @IntegrationTest
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = arrayOf(BooksControllerIntTest.TestConfiguration::class))
+@ContextConfiguration(classes = [BooksControllerIntTest.TestConfiguration::class])
 internal class BooksControllerIntTest {
 
     @ComponentScan("library.service.api.books", "library.service.business.books", "library.service.common")
@@ -44,9 +46,7 @@ internal class BooksControllerIntTest {
         @Bean fun errorHandlers(clock: Clock, correlationIdHolder: CorrelationIdHolder) = ErrorHandlers(clock, correlationIdHolder)
     }
 
-    val APPLICATION_JSON = "application/json;charset=UTF-8"
-    val APPLICATION_HAL_JSON = "application/hal+json;charset=UTF-8"
-    val CORRELATION_ID = UUID.randomUUID().toString()
+    val correlationId = UUID.randomUUID().toString()
 
     @MockBean lateinit var bookDataStore: BookDataStore
     @MockBean lateinit var bookeEventDispatcher: BookEventDispatcher
@@ -65,7 +65,7 @@ internal class BooksControllerIntTest {
             """
             mockMvc.perform(request)
                     .andExpect(status().isOk)
-                    .andExpect(content().contentType(APPLICATION_HAL_JSON))
+                    .andExpect(content().contentType(HAL_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -134,7 +134,7 @@ internal class BooksControllerIntTest {
             """
             mockMvc.perform(request)
                     .andExpect(status().isOk)
-                    .andExpect(content().contentType(APPLICATION_HAL_JSON))
+                    .andExpect(content().contentType(HAL_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -157,7 +157,7 @@ internal class BooksControllerIntTest {
                 }
             """
             val request = post("/api/books")
-                    .contentType(APPLICATION_JSON)
+                    .contentType(APPLICATION_JSON_UTF8)
                     .content(requestBody)
             val expectedResponse = """
                 {
@@ -178,7 +178,7 @@ internal class BooksControllerIntTest {
             """
             mockMvc.perform(request)
                     .andExpect(status().isCreated)
-                    .andExpect(content().contentType(APPLICATION_HAL_JSON))
+                    .andExpect(content().contentType(HAL_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -190,35 +190,35 @@ internal class BooksControllerIntTest {
                 }
             """
             val request = post("/api/books")
-                    .header("X-Correlation-ID", CORRELATION_ID)
-                    .contentType(APPLICATION_JSON)
+                    .header("X-Correlation-ID", correlationId)
+                    .contentType(APPLICATION_JSON_UTF8)
                     .content(requestBody)
             val expectedResponse = """
                 {
                   "status": 400,
                   "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "This is not a valid ISBN-13 number: 978abcdefghij"
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isBadRequest)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
         @Test fun `returns error response (400) if request content invalid`() {
             val request = post("/api/books")
-                    .header("X-Correlation-ID", CORRELATION_ID)
-                    .contentType(APPLICATION_JSON)
+                    .header("X-Correlation-ID", correlationId)
+                    .contentType(APPLICATION_JSON_UTF8)
                     .content(" { } ")
             val expectedResponse = """
                 {
                   "status": 400,
                   "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The request's body is invalid. See details...",
                   "details": [
                     "The field 'isbn' must not be blank.",
@@ -228,25 +228,25 @@ internal class BooksControllerIntTest {
             """
             mockMvc.perform(request)
                     .andExpect(status().isBadRequest)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
         @Test fun `returns error response (400) if request malformed`() {
             val request = post("/api/books")
-                    .header("X-Correlation-ID", CORRELATION_ID)
+                    .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
                   "status": 400,
                   "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The request's body could not be read. It is either empty or malformed."
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isBadRequest)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -284,7 +284,7 @@ internal class BooksControllerIntTest {
             """
             mockMvc.perform(request)
                     .andExpect(status().isOk)
-                    .andExpect(content().contentType(APPLICATION_HAL_JSON))
+                    .andExpect(content().contentType(HAL_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -324,7 +324,7 @@ internal class BooksControllerIntTest {
             """
             mockMvc.perform(request)
                     .andExpect(status().isOk)
-                    .andExpect(content().contentType(APPLICATION_HAL_JSON))
+                    .andExpect(content().contentType(HAL_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -334,38 +334,38 @@ internal class BooksControllerIntTest {
             given { bookDataStore.findById(id) }.willReturn(null)
 
             val request = get("/api/books/$idValue")
-                    .header("X-Correlation-ID", CORRELATION_ID)
+                    .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
                   "status": 404,
                   "error": "Not Found",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The book with ID: $idValue does not exist!"
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isNotFound)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
         @Test fun `returns error response (400) if ID parameter malformed`() {
             val idValue = "malformed-id"
             val request = get("/api/books/$idValue")
-                    .header("X-Correlation-ID", CORRELATION_ID)
+                    .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
                   "status": 400,
                   "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The request's 'id' parameter is malformed."
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isBadRequest)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -393,38 +393,38 @@ internal class BooksControllerIntTest {
             given { bookDataStore.findById(id) }.willReturn(null)
 
             val request = delete("/api/books/$idValue")
-                    .header("X-Correlation-ID", CORRELATION_ID)
+                    .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
                   "status": 404,
                   "error": "Not Found",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The book with ID: $idValue does not exist!"
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isNotFound)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
         @Test fun `returns error response (400) if ID parameter malformed`() {
             val idValue = "malformed-id"
             val request = delete("/api/books/$idValue")
-                    .header("X-Correlation-ID", CORRELATION_ID)
+                    .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
                   "status": 400,
                   "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The request's 'id' parameter is malformed."
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isBadRequest)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -444,7 +444,7 @@ internal class BooksControllerIntTest {
             given { bookDataStore.update(book) }.willReturn(book)
 
             val request = post("/api/books/$idValue/borrow")
-                    .contentType(APPLICATION_JSON)
+                    .contentType(APPLICATION_JSON_UTF8)
                     .content(""" { "borrower": "Uncle Bob" } """)
             val expectedResponse = """
                 {
@@ -469,7 +469,7 @@ internal class BooksControllerIntTest {
             """
             mockMvc.perform(request)
                     .andExpect(status().isOk)
-                    .andExpect(content().contentType(APPLICATION_HAL_JSON))
+                    .andExpect(content().contentType(HAL_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -486,102 +486,102 @@ internal class BooksControllerIntTest {
             given { bookDataStore.findById(id) }.willReturn(borrowedBook)
 
             val request = post("/api/books/$idValue/borrow")
-                    .header("X-Correlation-ID", CORRELATION_ID)
-                    .contentType(APPLICATION_JSON)
+                    .header("X-Correlation-ID", correlationId)
+                    .contentType(APPLICATION_JSON_UTF8)
                     .content(""" { "borrower": "Uncle Bob" } """)
             val expectedResponse = """
                 {
                   "status": 409,
                   "error": "Conflict",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The book with ID: $idValue is already borrowed!"
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isConflict)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
         @Test fun `returns error response (404) if book was not found`() {
             val idValue = BookId.generate().toString()
             val request = post("/api/books/$idValue/borrow")
-                    .header("X-Correlation-ID", CORRELATION_ID)
-                    .contentType(APPLICATION_JSON)
+                    .header("X-Correlation-ID", correlationId)
+                    .contentType(APPLICATION_JSON_UTF8)
                     .content(""" { "borrower": "Uncle Bob" } """)
             val expectedResponse = """
                 {
                   "status": 404,
                   "error": "Not Found",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The book with ID: $idValue does not exist!"
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isNotFound)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
         @Test fun `returns error response (400) if request content invalid`() {
             val idValue = BookId.generate().toString()
             val request = post("/api/books/$idValue/borrow")
-                    .header("X-Correlation-ID", CORRELATION_ID)
-                    .contentType(APPLICATION_JSON)
+                    .header("X-Correlation-ID", correlationId)
+                    .contentType(APPLICATION_JSON_UTF8)
                     .content(" { } ")
             val expectedResponse = """
                 {
                   "status": 400,
                   "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The request's body is invalid. See details...",
                   "details": [ "The field 'borrower' must not be blank." ]
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isBadRequest)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
         @Test fun `returns error response (400) if request malformed`() {
             val idValue = BookId.generate().toString()
             val request = post("/api/books/$idValue/borrow")
-                    .header("X-Correlation-ID", CORRELATION_ID)
+                    .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
                   "status": 400,
                   "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The request's body could not be read. It is either empty or malformed."
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isBadRequest)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
         @Test fun `returns error response (400) if ID parameter malformed`() {
             val idValue = "malformed-id"
             val request = post("/api/books/$idValue/borrow")
-                    .header("X-Correlation-ID", CORRELATION_ID)
+                    .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
                   "status": 400,
                   "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The request's 'id' parameter is malformed."
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isBadRequest)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -622,7 +622,7 @@ internal class BooksControllerIntTest {
             """
             mockMvc.perform(request)
                     .andExpect(status().isOk)
-                    .andExpect(content().contentType(APPLICATION_HAL_JSON))
+                    .andExpect(content().contentType(HAL_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
@@ -637,57 +637,57 @@ internal class BooksControllerIntTest {
             given { bookDataStore.findById(id) }.willReturn(availableBook)
 
             val request = post("/api/books/$idValue/return")
-                    .header("X-Correlation-ID", CORRELATION_ID)
+                    .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
                   "status": 409,
                   "error": "Conflict",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The book with ID: $idValue was already returned!"
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isConflict)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
         @Test fun `returns error response (404) if book was not found`() {
             val idValue = BookId.generate().toString()
             val request = post("/api/books/$idValue/return")
-                    .header("X-Correlation-ID", CORRELATION_ID)
+                    .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
                   "status": 404,
                   "error": "Not Found",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The book with ID: $idValue does not exist!"
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isNotFound)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 
         @Test fun `returns error response (400) if ID parameter malformed`() {
             val idValue = "malformed-id"
             val request = post("/api/books/$idValue/return")
-                    .header("X-Correlation-ID", CORRELATION_ID)
+                    .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
                   "status": 400,
                   "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
-                  "correlationId": "$CORRELATION_ID",
+                  "correlationId": "$correlationId",
                   "message": "The request's 'id' parameter is malformed."
                 }
             """
             mockMvc.perform(request)
                     .andExpect(status().isBadRequest)
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))
         }
 

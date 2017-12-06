@@ -79,12 +79,12 @@ class MongoBookDataStore(
         val book = Book(isbn, title)
 
         val borrowedState = document.borrowed
-        val state = if (borrowedState != null) Borrowed(borrowedState) else Available
+        val state = if (borrowedState != null) borrowed(borrowedState) else Available
 
         return BookRecord(id, book, state)
     }
 
-    private fun Borrowed(borrowed: BorrowedState): Borrowed {
+    private fun borrowed(borrowed: BorrowedState): Borrowed {
         return Borrowed(Borrower(borrowed.by!!), OffsetDateTime.parse(borrowed.on!!))
     }
 
