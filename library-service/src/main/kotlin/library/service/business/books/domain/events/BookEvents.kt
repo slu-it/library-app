@@ -33,6 +33,8 @@ sealed class BookEvent(
     /** The exact time the event occurred formatted as an ISO-8601 string. */
     val timestamp: String = timestamp.toString()
 
+    override fun toString() = "BookEvent(type='$type', id='$id', bookId='$bookId', timestamp='$timestamp')"
+
 }
 
 /** A new book was added to the library. */
