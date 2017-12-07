@@ -1,7 +1,7 @@
 package library.service.security
 
 object Roles {
-    val ACTUATOR: String = "ACTUATOR"
-    val CURATOR: String = "CURATOR"
-    val USER: String = "USER"
+    const val ACTUATOR: String = "ACTUATOR"
+    const val CURATOR: String = "CURATOR"
+    const val USER: String = "USER"
 }

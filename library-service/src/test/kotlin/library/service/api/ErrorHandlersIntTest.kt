@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
@@ -176,6 +177,21 @@ internal class ErrorHandlersIntTest {
         return mock {
             on { fieldErrors } doReturn listOf(fieldError1, fieldError2)
             on { globalErrors } doReturn listOf(globalError1, globalError2)
+        }
+    }
+
+    @Test fun `AccessDeniedException is handled`() {
+        executionWillThrow { AccessDeniedException("missing right") }
+        executeAndExpect(FORBIDDEN) {
+            """
+            {
+              "status": 403,
+              "error": "Forbidden",
+              "timestamp": "2017-09-01T12:34:56.789Z",
+              "correlationId": "$correlationId",
+              "message": "You don't have the necessary rights to to this."
+            }
+            """
         }
     }
 

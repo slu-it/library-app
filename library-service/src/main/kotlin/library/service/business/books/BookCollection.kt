@@ -9,6 +9,9 @@ import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
 import library.service.common.logging.LogMethodEntryAndExit
+import library.service.security.Authorizations.IS_CURATOR
+import library.service.security.Authorizations.IS_USER
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.OffsetDateTime
@@ -42,6 +45,7 @@ class BookCollection(
      * @param book the book to add to the collection
      * @return the [BookRecord] containing the unique ID of the stored book
      */
+    @PreAuthorize(IS_CURATOR)
     fun addBook(book: Book): BookRecord {
         val bookRecord = dataStore.create(book)
 
@@ -63,6 +67,7 @@ class BookCollection(
      * @return the [BookRecord] for the given ID
      * @throws BookNotFoundException in case there is no book for the given ID
      */
+    @PreAuthorize(IS_USER)
     fun getBook(id: BookId): BookRecord {
         return dataStore.findById(id) ?: throw BookNotFoundException(id)
     }
@@ -75,6 +80,7 @@ class BookCollection(
      *
      * @return a list of all [BookRecord]
      */
+    @PreAuthorize(IS_USER)
     fun getAllBooks(): List<BookRecord> {
         return dataStore.findAll()
     }
@@ -90,6 +96,7 @@ class BookCollection(
      * @param id the unique ID of the book to delete
      * @throws BookNotFoundException in case there is no book for the given ID
      */
+    @PreAuthorize(IS_CURATOR)
     fun removeBook(id: BookId) {
         val bookRecord = getBook(id)
         dataStore.delete(bookRecord)
@@ -116,6 +123,7 @@ class BookCollection(
      * @throws BookNotFoundException in case there is no book for the given ID
      * @throws BookAlreadyBorrowedException in case the book is already borrowed
      */
+    @PreAuthorize(IS_USER)
     fun borrowBook(id: BookId, borrower: Borrower): BookRecord {
         val bookRecord = getBook(id)
         bookRecord.borrow(borrower, now())
@@ -142,6 +150,7 @@ class BookCollection(
      * @throws BookNotFoundException in case there is no book for the given ID
      * @throws BookAlreadyReturnedException in case the book is already returned
      */
+    @PreAuthorize(IS_USER)
     fun returnBook(id: BookId): BookRecord {
         val bookRecord = getBook(id)
         bookRecord.`return`()

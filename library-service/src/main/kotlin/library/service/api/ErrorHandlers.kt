@@ -7,6 +7,8 @@ import library.service.common.correlation.CorrelationIdHolder
 import library.service.common.logging.logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import java.time.Clock
 import java.time.OffsetDateTime
+import javax.servlet.http.HttpServletRequest
 
 /**
  * Defines a number of commonly used exception handlers for REST endpoints.
@@ -103,6 +106,17 @@ class ErrorHandlers(
                 httpStatus = HttpStatus.BAD_REQUEST,
                 message = "The request's body is invalid. See details...",
                 details = sortedDetails
+        )
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException::class)
+    fun handle(e: AccessDeniedException, request: HttpServletRequest): ErrorDescription {
+        val userName = SecurityContextHolder.getContext()?.authentication?.name
+        log.debug("blocked illegal access from user [{}]: {} {}", userName, request.method, request.requestURI)
+        return errorDescription(
+                httpStatus = HttpStatus.FORBIDDEN,
+                message = "You don't have the necessary rights to to this."
         )
     }
 
