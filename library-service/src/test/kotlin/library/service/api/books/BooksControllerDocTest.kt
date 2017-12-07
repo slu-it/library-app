@@ -37,7 +37,7 @@ import java.time.OffsetDateTime
 
 
 @IntegrationTest
-@WebMvcTest(BooksController::class)
+@WebMvcTest(BooksController::class, secure = false)
 @ExtendWith(SpringExtension::class)
 @AutoConfigureRestDocs("build/generated-snippets/books")
 internal class BooksControllerDocTest {

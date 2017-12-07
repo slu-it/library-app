@@ -201,6 +201,7 @@ internal class ApplicationAcceptanceTest {
         // @formatter:off
         val response =
             given()
+                .auth().basic("admin", "admin")
                 .header("Content-Type", "application/json")
                 .body(requestBody)
             .`when`()
@@ -217,6 +218,7 @@ internal class ApplicationAcceptanceTest {
     private fun deleteBookExpecting(bookLink: Link, expectedStatus: Int) {
         // @formatter:off
             given()
+                .auth().basic("admin", "admin")
                 .header("Content-Type", "application/json")
             .`when`()
                 .delete(toUrl(bookLink))
@@ -229,6 +231,7 @@ internal class ApplicationAcceptanceTest {
         // @formatter:off
         val response =
             given()
+                .auth().basic("admin", "admin")
                 .header("Content-Type", "application/json")
                 .body(requestBody)
             .`when`()
@@ -245,6 +248,7 @@ internal class ApplicationAcceptanceTest {
     private fun borrowBookExpecting(borrowLink: Link, expectedStatus: Int) {
         // @formatter:off
             given()
+                .auth().basic("admin", "admin")
                 .header("Content-Type", "application/json")
                 .body(""" { "borrower": "No One" }""")
             .`when`()
@@ -258,6 +262,7 @@ internal class ApplicationAcceptanceTest {
         // @formatter:off
         val response =
             given()
+                .auth().basic("admin", "admin")
                 .header("Content-Type", "application/json")
             .`when`()
                 .post(toUrl(returnLink))
@@ -273,6 +278,7 @@ internal class ApplicationAcceptanceTest {
     private fun returnBookExpecting(returnLink: Link, expectedStatus: Int) {
         // @formatter:off
             given()
+                .auth().basic("admin", "admin")
                 .header("Content-Type", "application/json")
             .`when`()
                 .post(toUrl(returnLink))
@@ -285,6 +291,7 @@ internal class ApplicationAcceptanceTest {
         // @formatter:off
         val response =
             given()
+                .auth().basic("admin", "admin")
                 .header("Content-Type", "application/json")
             .`when`()
                 .get("/api/books")

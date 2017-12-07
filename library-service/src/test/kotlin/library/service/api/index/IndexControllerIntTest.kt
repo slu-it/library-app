@@ -21,7 +21,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 
 
-@WebMvcTest
+@WebMvcTest(secure = false)
 @IntegrationTest
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [IndexControllerIntTest.TestConfiguration::class])

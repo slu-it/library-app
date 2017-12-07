@@ -23,5 +23,5 @@ import org.springframework.test.context.ActiveProfiles
 @Retention
 @Target(AnnotationTarget.CLASS)
 @Tag("acceptance-test")
-@ActiveProfiles("test", "acceptance-test")
+@ActiveProfiles("test", "acceptance-test", "unsecured")
 annotation class AcceptanceTest

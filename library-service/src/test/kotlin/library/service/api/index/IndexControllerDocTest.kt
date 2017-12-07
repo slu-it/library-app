@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import utils.classification.IntegrationTest
 
 @IntegrationTest
-@WebMvcTest(IndexController::class)
+@WebMvcTest(IndexController::class, secure = false)
 @ExtendWith(SpringExtension::class)
 @AutoConfigureRestDocs("build/generated-snippets/index")
 internal class IndexControllerDocTest {

@@ -40,7 +40,7 @@ import java.time.ZoneId
 import java.util.*
 
 
-@WebMvcTest
+@WebMvcTest(secure = false)
 @IntegrationTest
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [IndexControllerIntTest.TestConfiguration::class])

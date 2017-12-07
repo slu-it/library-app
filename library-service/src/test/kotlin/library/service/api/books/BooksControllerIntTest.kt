@@ -34,8 +34,8 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.*
 
-@WebMvcTest
 @IntegrationTest
+@WebMvcTest(secure = false)
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [BooksControllerIntTest.TestConfiguration::class])
 internal class BooksControllerIntTest {
