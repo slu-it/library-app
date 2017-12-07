@@ -8,11 +8,12 @@ import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import utils.classification.AcceptanceTest
 import utils.classification.IntegrationTest
+import utils.classification.SecuredAcceptanceTest
 import utils.classification.UnitTest
+import utils.classification.UnsecuredAcceptanceTest
 
-@AcceptanceTest
+@UnitTest
 internal class ArchitectureTest {
 
     val classes = ClassFileImporter().importClasspath()!!
@@ -62,7 +63,8 @@ internal class ArchitectureTest {
             return when {
                 javaClass.isEquivalentTo(UnitTest::class.java) -> true
                 javaClass.isEquivalentTo(IntegrationTest::class.java) -> true
-                javaClass.isEquivalentTo(AcceptanceTest::class.java) -> true
+                javaClass.isEquivalentTo(SecuredAcceptanceTest::class.java) -> true
+                javaClass.isEquivalentTo(UnsecuredAcceptanceTest::class.java) -> true
                 else -> false
             }
         }

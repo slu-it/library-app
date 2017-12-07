@@ -3,7 +3,7 @@ package library.service
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured
-import io.restassured.RestAssured.given
+import io.restassured.RestAssured.*
 import library.service.api.books.BookResource
 import library.service.persistence.books.BookRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -18,17 +18,17 @@ import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.hal.Jackson2HalModule
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import utils.classification.AcceptanceTest
+import utils.classification.UnsecuredAcceptanceTest
 import utils.extensions.UseDockerToRunMongoDB
 import utils.extensions.UseDockerToRunRabbitMQ
 import java.net.URL
 
-@AcceptanceTest
+@UnsecuredAcceptanceTest
 @UseDockerToRunMongoDB
 @UseDockerToRunRabbitMQ
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-internal class ApplicationAcceptanceTest {
+internal class FunctionalAcceptanceTest {
 
     val objectMapper = ObjectMapper().apply {
         registerModule(Jackson2HalModule())
@@ -42,7 +42,7 @@ internal class ApplicationAcceptanceTest {
     lateinit var bookRepository: BookRepository
 
     @BeforeEach fun setupRestAssured() {
-        RestAssured.baseURI = "http://localhost"
+        baseURI = "http://localhost"
         RestAssured.port = port
     }
 
@@ -201,7 +201,6 @@ internal class ApplicationAcceptanceTest {
         // @formatter:off
         val response =
             given()
-                .auth().basic("admin", "admin")
                 .header("Content-Type", "application/json")
                 .body(requestBody)
             .`when`()
@@ -217,10 +216,7 @@ internal class ApplicationAcceptanceTest {
 
     private fun deleteBookExpecting(bookLink: Link, expectedStatus: Int) {
         // @formatter:off
-            given()
-                .auth().basic("admin", "admin")
-                .header("Content-Type", "application/json")
-            .`when`()
+            `when`()
                 .delete(toUrl(bookLink))
             .then()
                 .statusCode(expectedStatus)
@@ -231,7 +227,6 @@ internal class ApplicationAcceptanceTest {
         // @formatter:off
         val response =
             given()
-                .auth().basic("admin", "admin")
                 .header("Content-Type", "application/json")
                 .body(requestBody)
             .`when`()
@@ -248,7 +243,6 @@ internal class ApplicationAcceptanceTest {
     private fun borrowBookExpecting(borrowLink: Link, expectedStatus: Int) {
         // @formatter:off
             given()
-                .auth().basic("admin", "admin")
                 .header("Content-Type", "application/json")
                 .body(""" { "borrower": "No One" }""")
             .`when`()
@@ -261,10 +255,7 @@ internal class ApplicationAcceptanceTest {
     private fun returnBook(returnLink: Link): BookResource {
         // @formatter:off
         val response =
-            given()
-                .auth().basic("admin", "admin")
-                .header("Content-Type", "application/json")
-            .`when`()
+            `when`()
                 .post(toUrl(returnLink))
             .then()
                 .statusCode(200)
@@ -277,10 +268,7 @@ internal class ApplicationAcceptanceTest {
 
     private fun returnBookExpecting(returnLink: Link, expectedStatus: Int) {
         // @formatter:off
-            given()
-                .auth().basic("admin", "admin")
-                .header("Content-Type", "application/json")
-            .`when`()
+            `when`()
                 .post(toUrl(returnLink))
             .then()
                 .statusCode(expectedStatus)
@@ -290,10 +278,7 @@ internal class ApplicationAcceptanceTest {
     private fun getAllBooks(): BookListResource {
         // @formatter:off
         val response =
-            given()
-                .auth().basic("admin", "admin")
-                .header("Content-Type", "application/json")
-            .`when`()
+            `when`()
                 .get("/api/books")
             .then()
                 .statusCode(200)

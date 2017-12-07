@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Tag
 import org.springframework.test.context.ActiveProfiles
 
 /**
- * Qualifier for Acceptance Tests:
+ * Qualifier for unsecured Acceptance Tests:
  *
  * - [tagged][Tag] as `acceptance-test`
- * - active spring profiles: `test` and `acceptance-test`
+ * - active spring profiles: `test`, `acceptance-test` and `unsecured`
  *
  * An acceptance test is a test against a running instance of the application
  * without faking (mocking / stubbing etc.) _any_ part of it. In addition
@@ -24,4 +24,4 @@ import org.springframework.test.context.ActiveProfiles
 @Target(AnnotationTarget.CLASS)
 @Tag("acceptance-test")
 @ActiveProfiles("test", "acceptance-test", "unsecured")
-annotation class AcceptanceTest
+annotation class UnsecuredAcceptanceTest
