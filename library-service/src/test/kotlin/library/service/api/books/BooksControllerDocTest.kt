@@ -15,6 +15,7 @@ import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
 import library.service.common.correlation.CorrelationIdHolder
+import library.service.security.UserContext
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -42,6 +43,7 @@ import java.time.OffsetDateTime
 @AutoConfigureRestDocs("build/generated-snippets/books")
 internal class BooksControllerDocTest {
 
+    @SpyBean lateinit var userContext: UserContext
     @SpyBean lateinit var correlationIdHolder: CorrelationIdHolder
     @SpyBean lateinit var bookResourceAssembler: BookResourceAssembler
     @MockBean lateinit var bookCollection: BookCollection

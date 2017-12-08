@@ -2,6 +2,7 @@ package library.service.api.index
 
 import library.service.api.ErrorHandlers
 import library.service.common.correlation.CorrelationIdHolder
+import library.service.security.UserContext
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,6 +32,7 @@ internal class IndexControllerIntTest {
     class TestConfiguration {
         @Bean fun clock(): Clock = Clock.fixed(OffsetDateTime.parse("2017-09-01T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
         @Bean fun errorHandlers(clock: Clock, correlationIdHolder: CorrelationIdHolder) = ErrorHandlers(clock, correlationIdHolder)
+        @Bean fun userContext() = UserContext()
     }
 
     @Autowired lateinit var mockMvc: MockMvc

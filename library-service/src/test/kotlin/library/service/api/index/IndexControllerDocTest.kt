@@ -3,6 +3,7 @@ package library.service.api.index
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import library.service.common.correlation.CorrelationIdHolder
+import library.service.security.UserContext
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -26,6 +27,7 @@ import utils.classification.IntegrationTest
 @AutoConfigureRestDocs("build/generated-snippets/index")
 internal class IndexControllerDocTest {
 
+    @SpyBean lateinit var userContext: UserContext
     @SpyBean lateinit var correlationIdHolder: CorrelationIdHolder
 
     @Autowired lateinit var objectMapper: ObjectMapper

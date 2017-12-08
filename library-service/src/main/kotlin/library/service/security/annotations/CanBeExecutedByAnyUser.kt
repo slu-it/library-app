@@ -5,5 +5,5 @@ import org.springframework.security.access.prepost.PreAuthorize
 
 
 @Retention
-@PreAuthorize(Authorizations.IS_USER)
+@PreAuthorize(Authorizations.IS_USER_EXPRESSION)
 annotation class CanBeExecutedByAnyUser

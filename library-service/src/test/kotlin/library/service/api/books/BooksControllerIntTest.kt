@@ -12,6 +12,7 @@ import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
 import library.service.common.correlation.CorrelationIdHolder
+import library.service.security.UserContext
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -44,6 +45,7 @@ internal class BooksControllerIntTest {
     class TestConfiguration {
         @Bean fun clock(): Clock = Clock.fixed(OffsetDateTime.parse("2017-08-20T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
         @Bean fun errorHandlers(clock: Clock, correlationIdHolder: CorrelationIdHolder) = ErrorHandlers(clock, correlationIdHolder)
+        @Bean fun userContext() = UserContext()
     }
 
     val correlationId = UUID.randomUUID().toString()

@@ -5,6 +5,7 @@ import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.states.Available
 import library.service.business.books.domain.states.Borrowed
 import library.service.business.books.domain.types.BookId
+import library.service.security.UserContext
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport
 import org.springframework.stereotype.Component
@@ -16,8 +17,9 @@ import org.springframework.stereotype.Component
  * correct links depending on the [BookRecord] state.
  */
 @Component
-class BookResourceAssembler
-    : ResourceAssemblerSupport<BookRecord, BookResource>(BooksController::class.java, BookResource::class.java) {
+class BookResourceAssembler(
+        private val currentUser: UserContext
+) : ResourceAssemblerSupport<BookRecord, BookResource>(BooksController::class.java, BookResource::class.java) {
 
     private val booksController = BooksController::class.java
 
@@ -35,7 +37,10 @@ class BookResourceAssembler
             is Available -> handleAvailableState(resource, bookId)
         }
         resource.add(linkTo(booksController).slash(bookId).withSelfRel())
-        resource.add(linkTo(booksController).slash(bookId).withRel("delete"))
+
+        if (currentUser.isCurator()) {
+            resource.add(linkTo(booksController).slash(bookId).withRel("delete"))
+        }
 
         return resource
     }

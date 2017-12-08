@@ -5,5 +5,5 @@ import org.springframework.security.access.prepost.PreAuthorize
 
 
 @Retention
-@PreAuthorize(Authorizations.IS_CURATOR)
+@PreAuthorize(Authorizations.IS_CURATOR_EXPRESSION)
 annotation class CanOnlyBeExecutedByCurators
