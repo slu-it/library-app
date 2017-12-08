@@ -36,10 +36,10 @@ class SecurityConfiguration(
         httpBasic()
         sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         authorizeRequests {
-            antMatchers(HttpMethod.GET, "/docs/**").permitAll()
+            antMatchers(HttpMethod.GET, "/", "/help", "/docs", "/docs/**").permitAll()
             requestMatchers(EndpointRequest.to(infoEndpoint, healthEndpoint)).permitAll()
             requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(Roles.ACTUATOR)
-            anyRequest().authenticated()
+            anyRequest().fullyAuthenticated()
         }
     }
 
