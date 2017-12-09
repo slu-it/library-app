@@ -4,29 +4,27 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.EnableAspectJAutoProxy
-import org.springframework.test.context.ContextConfiguration
+import org.springframework.context.annotation.*
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.assertj.LogRecorderAssertions.assertThat
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
 import utils.classification.IntegrationTest
 
-@SpringBootTest
 @IntegrationTest
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [LogMethodEntryAndExitAspectIntTest.TestConfiguration::class])
+@SpringBootTest
+@ActiveProfiles("test", "log-method-entry-and-exit-aspect-test")
 internal class LogMethodEntryAndExitAspectIntTest {
 
+    @Configuration
+    @ComponentScan
     @EnableAspectJAutoProxy
-    @ComponentScan(basePackageClasses = [LogMethodEntryAndExitAspect::class])
+    @Profile("log-method-entry-and-exit-aspect-test")
     class TestConfiguration {
-
         @Bean fun exampleClass() = ExampleClass()
         @Bean fun annotatedExampleClass() = AnnotatedExampleClass()
-
     }
 
     @Autowired lateinit var example: ExampleClass

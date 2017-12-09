@@ -47,6 +47,7 @@ private abstract class DockerizedDependencyExtension(
     private val log = ConcurrentLinkedQueue<String>()
 
     override fun beforeAll(context: ExtensionContext) {
+        execute("$dockerCompose down").waitFor()
         execute("$dockerCompose up")
         if (!waitUntilServiceWasStarted()) {
             error("service did not start in time: ${javaClass.simpleName}")

@@ -1,7 +1,6 @@
 package utils.classification
 
 import org.junit.jupiter.api.Tag
-import org.springframework.test.context.ActiveProfiles
 
 /**
  * Qualifier for Integration Tests:
@@ -20,5 +19,4 @@ import org.springframework.test.context.ActiveProfiles
 @Retention
 @Target(AnnotationTarget.CLASS)
 @Tag("integration-test")
-@ActiveProfiles("test", "int-test")
 annotation class IntegrationTest

@@ -1,7 +1,5 @@
 package library.service.api.books
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT
 import com.nhaarman.mockito_kotlin.given
 import library.service.business.books.BookCollection
 import library.service.business.books.domain.BookRecord
@@ -16,7 +14,6 @@ import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
 import library.service.common.correlation.CorrelationIdHolder
 import library.service.security.UserContext
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,22 +21,19 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.mock.mockito.SpyBean
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
-import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler
-import org.springframework.restdocs.operation.preprocess.Preprocessors.*
-import org.springframework.restdocs.snippet.Snippet
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import utils.classification.IntegrationTest
+import utils.document
 import java.time.OffsetDateTime
 
 
 @IntegrationTest
-@WebMvcTest(BooksController::class, secure = false)
 @ExtendWith(SpringExtension::class)
+@WebMvcTest(BooksController::class, secure = false)
 @AutoConfigureRestDocs("build/generated-snippets/books")
 internal class BooksControllerDocTest {
 
@@ -48,12 +42,7 @@ internal class BooksControllerDocTest {
     @SpyBean lateinit var bookResourceAssembler: BookResourceAssembler
     @MockBean lateinit var bookCollection: BookCollection
 
-    @Autowired lateinit var objectMapper: ObjectMapper
     @Autowired lateinit var mvc: MockMvc
-
-    @BeforeEach fun setUp() {
-        objectMapper.configure(INDENT_OUTPUT, true)
-    }
 
     // POST on /api/books
 
@@ -229,10 +218,6 @@ internal class BooksControllerDocTest {
         val title = Title("Clean Code: A Handbook of Agile Software Craftsmanship")
         val book = Book(isbn, title)
         return BookRecord(id, book)
-    }
-
-    private fun document(identifier: String, vararg snippets: Snippet): RestDocumentationResultHandler {
-        return document(identifier, preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()), *snippets)
     }
 
 }

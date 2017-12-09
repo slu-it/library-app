@@ -4,24 +4,26 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.willThrow
-import library.service.api.index.IndexControllerIntTest
+import library.service.api.ErrorHandlersIntTest.CustomTestConfiguration.TestController
+import library.service.api.ErrorHandlersIntTest.CustomTestConfiguration.TestService
 import library.service.business.exceptions.MalformedValueException
 import library.service.business.exceptions.NotFoundException
 import library.service.business.exceptions.NotPossibleException
-import library.service.common.correlation.CorrelationIdHolder
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
-import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -41,32 +43,34 @@ import java.time.ZoneId
 import java.util.*
 
 
-@WebMvcTest(secure = false)
 @IntegrationTest
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [IndexControllerIntTest.TestConfiguration::class])
+@WebMvcTest(TestController::class, secure = false)
+@ActiveProfiles("test", "error-handlers-test")
 internal class ErrorHandlersIntTest {
 
-    val correlationId = UUID.randomUUID().toString()
-
+    @TestConfiguration
+    @Profile("error-handlers-test")
     @ComponentScan("library.service.common")
-    class TestConfiguration {
+    class CustomTestConfiguration {
 
         @Bean fun clock(): Clock = Clock.fixed(OffsetDateTime.parse("2017-09-01T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
-        @Bean fun errorHandlers(clock: Clock, correlationIdHolder: CorrelationIdHolder) = ErrorHandlers(clock, correlationIdHolder)
 
         @RestController
+        @Profile("error-handlers-test")
         class TestController(private val testService: TestService) {
             @PostMapping("/test")
             fun post() = testService.doSomething()
         }
 
+        interface TestService {
+            @Throws(Throwable::class)
+            fun doSomething()
+        }
+
     }
 
-    interface TestService {
-        @Throws(Throwable::class)
-        fun doSomething()
-    }
+    val correlationId = UUID.randomUUID().toString()
 
     @MockBean lateinit var testService: TestService
     @Autowired lateinit var mockMvc: MockMvc

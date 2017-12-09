@@ -17,17 +17,19 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.hal.Jackson2HalModule
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import utils.classification.UnsecuredAcceptanceTest
+import utils.classification.AcceptanceTest
 import utils.extensions.UseDockerToRunMongoDB
 import utils.extensions.UseDockerToRunRabbitMQ
 import java.net.URL
 
-@UnsecuredAcceptanceTest
+@AcceptanceTest
 @UseDockerToRunMongoDB
 @UseDockerToRunRabbitMQ
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test", "unsecured")
 internal class FunctionalAcceptanceTest {
 
     val objectMapper = ObjectMapper().apply {

@@ -20,10 +20,10 @@ import utils.extensions.UseDockerToRunMongoDB
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
-@DataMongoTest
 @IntegrationTest
-@UseDockerToRunMongoDB
 @ExtendWith(SpringExtension::class)
+@DataMongoTest
+@UseDockerToRunMongoDB
 internal class MongoBookDataStoreIntTest {
 
     @Autowired lateinit var repository: BookRepository

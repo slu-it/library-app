@@ -2,7 +2,6 @@ package library.service.api.books
 
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.given
-import library.service.api.ErrorHandlers
 import library.service.business.books.BookDataStore
 import library.service.business.books.BookEventDispatcher
 import library.service.business.books.domain.BookRecord
@@ -11,19 +10,20 @@ import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
-import library.service.common.correlation.CorrelationIdHolder
 import library.service.security.UserContext
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Profile
 import org.springframework.hateoas.MediaTypes.HAL_JSON_UTF8
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
-import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -36,15 +36,16 @@ import java.time.ZoneId
 import java.util.*
 
 @IntegrationTest
-@WebMvcTest(secure = false)
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [BooksControllerIntTest.TestConfiguration::class])
+@WebMvcTest(BooksController::class, secure = false)
+@ActiveProfiles("test", "books-controller-test")
 internal class BooksControllerIntTest {
 
+    @TestConfiguration
+    @Profile("books-controller-test")
     @ComponentScan("library.service.api.books", "library.service.business.books", "library.service.common")
-    class TestConfiguration {
+    class AdditionalConfiguration {
         @Bean fun clock(): Clock = Clock.fixed(OffsetDateTime.parse("2017-08-20T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
-        @Bean fun errorHandlers(clock: Clock, correlationIdHolder: CorrelationIdHolder) = ErrorHandlers(clock, correlationIdHolder)
         @Bean fun userContext() = UserContext()
     }
 
@@ -52,6 +53,7 @@ internal class BooksControllerIntTest {
 
     @MockBean lateinit var bookDataStore: BookDataStore
     @MockBean lateinit var bookeEventDispatcher: BookEventDispatcher
+
     @Autowired lateinit var mockMvc: MockMvc
 
     @Nested inner class `get all books` {

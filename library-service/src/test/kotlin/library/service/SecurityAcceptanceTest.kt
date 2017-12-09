@@ -24,18 +24,20 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resources
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import utils.classification.SecuredAcceptanceTest
+import utils.classification.AcceptanceTest
 import utils.extensions.UseDockerToRunMongoDB
 import utils.extensions.UseDockerToRunRabbitMQ
 import java.net.URL
 import java.time.OffsetDateTime
 
-@SecuredAcceptanceTest
+@AcceptanceTest
 @UseDockerToRunMongoDB
 @UseDockerToRunRabbitMQ
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 internal class SecurityAcceptanceTest {
 
     val book = Book(Isbn13("9780553573404"), Title("A Game of Thrones: A Song of Ice and Fire (1)"))
