@@ -10,14 +10,14 @@ import org.springframework.hateoas.core.Relation
 @JsonInclude(NON_EMPTY)
 @Relation(value = "book", collectionRelation = "books")
 data class BookResource(
-        var isbn: String? = null,
-        var title: String? = null,
-        var borrowed: BorrowedState? = null
+        val isbn: String,
+        val title: String,
+        val borrowed: BorrowedState?
 ) : ResourceSupport() {
 
     data class BorrowedState(
-            var by: String? = null,
-            var on: String? = null
+            val by: String,
+            val on: String
     )
 
 }

@@ -11,9 +11,11 @@ import javax.validation.Validator
 @UnitTest
 internal class BorrowBookRequestBodyTest {
 
+    val objectMapper = ObjectMapper().apply { findAndRegisterModules() }
+
     @Test fun `can be de-serialized from JSON`() {
         val json = """ { "borrower": "Someone"} """
-        val cut = ObjectMapper().readValue(json, BorrowBookRequestBody::class.java)
+        val cut = objectMapper.readValue(json, BorrowBookRequestBody::class.java)
         assertThat(cut.borrower).isEqualTo("Someone")
     }
 
@@ -22,13 +24,13 @@ internal class BorrowBookRequestBodyTest {
         val validator: Validator = Validation.buildDefaultValidatorFactory().validator
 
         @Test fun `null is not allowed`() {
-            val cut = BorrowBookRequestBody().apply { borrower = null }
+            val cut = BorrowBookRequestBody(null)
             val result = validator.validate(cut).toList()
             assertThat(result[0].message).isEqualTo("must not be blank")
         }
 
         @Test fun `empty is not allowed`() {
-            val cut = BorrowBookRequestBody().apply { borrower = "" }
+            val cut = BorrowBookRequestBody("")
             val result = validator.validate(cut).toList()
             assertThat(result.map { it.message }).containsOnly(
                     "size must be between 1 and 50",
@@ -37,7 +39,7 @@ internal class BorrowBookRequestBodyTest {
         }
 
         @Test fun `blank is not allowed`() {
-            val cut = BorrowBookRequestBody().apply { borrower = " " }
+            val cut = BorrowBookRequestBody(" ")
             val result = validator.validate(cut).toList()
             assertThat(result[0].message).isEqualTo("must not be blank")
         }
@@ -45,14 +47,14 @@ internal class BorrowBookRequestBodyTest {
         @Test fun `values between 1 and 50 characters are valid`() {
             (1..50)
                     .map { "".padEnd(it, 'a') }
-                    .map { BorrowBookRequestBody().apply { borrower = it } }
+                    .map { BorrowBookRequestBody(it) }
                     .map { validator.validate(it).toList() }
                     .forEach { assertThat(it).isEmpty() }
         }
 
         @Test fun `values with more than 50 characters are invalid`() {
             val value = "".padEnd(51, 'a')
-            val cut = BorrowBookRequestBody().apply { borrower = value }
+            val cut = BorrowBookRequestBody(value)
             val result = validator.validate(cut).toList()
             assertThat(result[0].message).isEqualTo("size must be between 1 and 50")
         }

@@ -33,6 +33,7 @@ import java.net.URL
 internal class FunctionalAcceptanceTest {
 
     val objectMapper = ObjectMapper().apply {
+        findAndRegisterModules()
         registerModule(Jackson2HalModule())
         configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
     }

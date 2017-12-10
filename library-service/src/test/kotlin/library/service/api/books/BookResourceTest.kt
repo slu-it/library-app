@@ -10,16 +10,20 @@ import utils.classification.UnitTest
 @UnitTest
 internal class BookResourceTest {
 
-    val objectMapper = ObjectMapper()
+    val objectMapper = ObjectMapper().apply { findAndRegisterModules() }
 
-    @Nested inner class `can be (de)serialized from and to JSON` {
+    @Nested inner class `can be serialized to JSON` {
 
-        @Test fun `empty instance`() {
-            val cut = BookResource()
+        @Test fun `min instance`() {
+            val cut = BookResource(
+                    isbn = "0123456789",
+                    title = "Hello World",
+                    borrowed = null
+            )
             assertJsonSerializable(cut)
         }
 
-        @Test fun `full instance`() {
+        @Test fun `max instance`() {
             val cut = BookResource(
                     isbn = "0123456789",
                     title = "Hello World",

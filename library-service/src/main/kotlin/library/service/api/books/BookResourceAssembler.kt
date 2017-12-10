@@ -4,7 +4,6 @@ import library.service.api.books.BookResource.BorrowedState
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.states.Available
 import library.service.business.books.domain.states.Borrowed
-import library.service.business.books.domain.types.BookId
 import library.service.security.UserContext
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport
@@ -24,36 +23,41 @@ class BookResourceAssembler(
     private val booksController = BooksController::class.java
 
     override fun toResource(bookRecord: BookRecord): BookResource {
-        val book = bookRecord.book
+        val bookResource = createResource(bookRecord)
+        addLinks(bookResource, bookRecord)
+        return bookResource
+    }
 
-        val isbn = book.isbn.toString()
-        val title = book.title.toString()
-        val resource = BookResource(isbn, title)
+    private fun createResource(bookRecord: BookRecord): BookResource {
+        val bookState = bookRecord.state
+        return BookResource(
+                isbn = bookRecord.book.isbn.toString(),
+                title = bookRecord.book.title.toString(),
+                borrowed = when (bookState) {
+                    is Available -> null
+                    is Borrowed -> toBorrowedState(bookState)
+                }
+        )
+    }
 
+    private fun toBorrowedState(bookState: Borrowed) =
+            BorrowedState(by = bookState.by.toString(), on = bookState.on.toString())
+
+    private fun addLinks(resource: BookResource, bookRecord: BookRecord) {
         val bookId = bookRecord.id
         val bookState = bookRecord.state
-        when (bookState) {
-            is Borrowed -> handleBorrowedState(resource, bookId, bookState)
-            is Available -> handleAvailableState(resource, bookId)
-        }
+
         resource.add(linkTo(booksController).slash(bookId).withSelfRel())
 
         if (currentUser.isCurator()) {
             resource.add(linkTo(booksController).slash(bookId).withRel("delete"))
         }
 
-        return resource
-    }
-
-    private fun handleBorrowedState(resource: BookResource, bookId: BookId, bookState: Borrowed) {
-        val borrowedBy = bookState.by.toString()
-        val borrowedOn = bookState.on.toString()
-        resource.borrowed = BorrowedState(borrowedBy, borrowedOn)
-        resource.add(linkTo(booksController).slash(bookId).slash("return").withRel("return"))
-    }
-
-    private fun handleAvailableState(resource: BookResource, bookId: BookId) {
-        resource.add(linkTo(booksController).slash(bookId).slash("borrow").withRel("borrow"))
+        if (bookState is Available) {
+            resource.add(linkTo(booksController).slash(bookId).slash("borrow").withRel("borrow"))
+        } else {
+            resource.add(linkTo(booksController).slash(bookId).slash("return").withRel("return"))
+        }
     }
 
 }
