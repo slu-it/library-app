@@ -31,9 +31,9 @@ class BooksController(
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     fun getBooks(): Resources<BookResource> {
-        val allBooks = collection.getAllBooks()
+        val allBookRecords = collection.getAllBooks()
         val selfLink = linkTo(methodOn(javaClass).getBooks()).withSelfRel()
-        val bookResources = assembler.toResources(allBooks)
+        val bookResources = assembler.toResources(allBookRecords)
         return Resources(bookResources, selfLink)
     }
 
@@ -41,15 +41,15 @@ class BooksController(
     @ResponseStatus(HttpStatus.CREATED)
     fun postBook(@Valid @RequestBody body: CreateBookRequestBody): BookResource {
         val book = Book(Isbn13.parse(body.isbn!!), Title(body.title!!))
-        val persistedBook = collection.addBook(book)
-        return assembler.toResource(persistedBook)
+        val bookRecord = collection.addBook(book)
+        return assembler.toResource(bookRecord)
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun getBook(@PathVariable id: UUID): BookResource {
-        val book = collection.getBook(BookId(id))
-        return assembler.toResource(book)
+        val bookRecord = collection.getBook(BookId(id))
+        return assembler.toResource(bookRecord)
     }
 
     @DeleteMapping("/{id}")
@@ -61,15 +61,15 @@ class BooksController(
     @PostMapping("/{id}/borrow")
     @ResponseStatus(HttpStatus.OK)
     fun postBorrowBook(@PathVariable id: UUID, @Valid @RequestBody body: BorrowBookRequestBody): BookResource {
-        val book = collection.borrowBook(BookId(id), Borrower(body.borrower!!))
-        return assembler.toResource(book)
+        val bookRecord = collection.borrowBook(BookId(id), Borrower(body.borrower!!))
+        return assembler.toResource(bookRecord)
     }
 
     @PostMapping("/{id}/return")
     @ResponseStatus(HttpStatus.OK)
     fun postReturnBook(@PathVariable id: UUID): BookResource {
-        val book = collection.returnBook(BookId(id))
-        return assembler.toResource(book)
+        val bookRecord = collection.returnBook(BookId(id))
+        return assembler.toResource(bookRecord)
     }
 
 }

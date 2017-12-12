@@ -27,6 +27,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import utils.classification.IntegrationTest
@@ -137,6 +138,7 @@ internal class BooksControllerIntTest {
                 }
             """
             mockMvc.perform(request)
+                    .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isOk)
                     .andExpect(content().contentType(HAL_JSON_UTF8))
                     .andExpect(content().json(expectedResponse, true))

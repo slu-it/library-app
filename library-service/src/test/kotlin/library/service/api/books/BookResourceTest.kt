@@ -1,7 +1,6 @@
 package library.service.api.books
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import library.service.api.books.BookResource.BorrowedState
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -27,7 +26,7 @@ internal class BookResourceTest {
             val cut = BookResource(
                     isbn = "0123456789",
                     title = "Hello World",
-                    borrowed = BorrowedState(
+                    borrowed = Borrowed(
                             by = "Someone",
                             on = "2017-08-20T12:34:56.789Z"
                     )

@@ -12,12 +12,10 @@ import org.springframework.hateoas.core.Relation
 data class BookResource(
         val isbn: String,
         val title: String,
-        val borrowed: BorrowedState?
-) : ResourceSupport() {
+        val borrowed: Borrowed?
+) : ResourceSupport()
 
-    data class BorrowedState(
-            val by: String,
-            val on: String
-    )
-
-}
+data class Borrowed(
+        val by: String,
+        val on: String
+)
