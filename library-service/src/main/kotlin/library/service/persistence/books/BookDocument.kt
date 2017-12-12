@@ -6,19 +6,13 @@ import java.util.*
 
 @Document(collection = "books")
 data class BookDocument(
+        @Id val id: UUID?,
+        val isbn: String,
+        val title: String,
+        val borrowed: BorrowedState?
+)
 
-        @Id
-        var id: UUID? = null,
-
-        var isbn: String? = null,
-        var title: String? = null,
-        var borrowed: BorrowedState? = null
-
-) {
-
-    data class BorrowedState(
-            var by: String? = null,
-            var on: String? = null
-    )
-
-}
+data class BorrowedState(
+        val by: String,
+        val on: String
+)
