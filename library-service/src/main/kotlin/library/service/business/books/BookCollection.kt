@@ -39,7 +39,7 @@ class BookCollection(
      * The [Book] is stored in the collection's [BookDataStore] for future
      * usage.
      *
-     * Produces a [BookAdded] domain event.
+     * Dispatches a [BookAdded] domain event.
      *
      * @param book the book to add to the collection
      * @return the [BookRecord] containing the unique ID of the stored book
@@ -48,7 +48,7 @@ class BookCollection(
     fun addBook(book: Book): BookRecord {
         val bookRecord = dataStore.create(book)
 
-        bookAddedEvent(bookRecord).dispatch()
+        dispatch(bookAddedEvent(bookRecord))
         return bookRecord
     }
 
@@ -90,7 +90,7 @@ class BookCollection(
      * The book needs to exist in the collection's [BookDataStore] in order to
      * remove it. If there is no book for the given ID an exception is thrown.
      *
-     * Produces a [BookRemoved] domain event.
+     * Dispatches a [BookRemoved] domain event.
      *
      * @param id the unique ID of the book to delete
      * @throws BookNotFoundException in case there is no book for the given ID
@@ -100,7 +100,7 @@ class BookCollection(
         val bookRecord = getBook(id)
         dataStore.delete(bookRecord)
 
-        bookRemovedEvent(bookRecord).dispatch()
+        dispatch(bookRemovedEvent(bookRecord))
     }
 
     private fun bookRemovedEvent(bookRecord: BookRecord) =
@@ -114,7 +114,7 @@ class BookCollection(
      * borrow it. It also needs to be _available_ for borrowing. If either of
      * those conditions is not met, an exception is thrown.
      *
-     * Produces a [BookBorrowed] domain event.
+     * Dispatches a [BookBorrowed] domain event.
      *
      * @param id the unique ID of the book to borrow
      * @param borrower the [Borrower] who is trying to borrow the book
@@ -128,7 +128,7 @@ class BookCollection(
         bookRecord.borrow(borrower, now())
         val updatedBookRecord = dataStore.update(bookRecord)
 
-        bookBorrowedEvent(bookRecord).dispatch()
+        dispatch(bookBorrowedEvent(bookRecord))
         return updatedBookRecord
     }
 
@@ -142,7 +142,7 @@ class BookCollection(
      * return it. It also needs to be currently _borrowed_. If either of those
      * conditions is not met, an exception is thrown.
      *
-     * Produces a [BookReturned] domain event.
+     * Dispatches a [BookReturned] domain event.
      *
      * @param id the unique ID of the book to borrow
      * @return the returned and updated [BookRecord] instance
@@ -155,14 +155,14 @@ class BookCollection(
         bookRecord.`return`()
         val updatedBookRecord = dataStore.update(bookRecord)
 
-        bookReturnedEvent(bookRecord).dispatch()
+        dispatch(bookReturnedEvent(bookRecord))
         return updatedBookRecord
     }
 
     private fun bookReturnedEvent(bookRecord: BookRecord) =
             BookReturned(timestamp = now(), bookId = bookRecord.id)
 
-    private fun BookEvent.dispatch() = eventDispatcher.dispatch(this)
+    private fun dispatch(event:BookEvent) = eventDispatcher.dispatch(event)
     private fun now() = OffsetDateTime.now(clock)
 
 }
