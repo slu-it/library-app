@@ -39,14 +39,14 @@ private class DockerizedRabbitMQExtension : DockerizedDependencyExtension(
 )
 
 private abstract class DockerizedDependencyExtension(
-        dockerComposeFile: String,
+        private val dockerComposeFile: String,
         private val startupPhrase: String
 ) : BeforeAllCallback, AfterAllCallback {
 
     private val dockerCompose = "docker-compose -f src/test/resources/$dockerComposeFile"
     private val log = ConcurrentLinkedQueue<String>()
 
-    override fun beforeAll(context: ExtensionContext) {
+    override fun beforeAll(context: ExtensionContext) = onlyInFirst(context) {
         execute("$dockerCompose down").waitFor()
         execute("$dockerCompose up")
         if (!waitUntilServiceWasStarted()) {
@@ -54,7 +54,7 @@ private abstract class DockerizedDependencyExtension(
         }
     }
 
-    override fun afterAll(context: ExtensionContext) {
+    override fun afterAll(context: ExtensionContext) = onlyInFirst(context) {
         execute("$dockerCompose down").waitFor()
     }
 
@@ -96,5 +96,16 @@ private abstract class DockerizedDependencyExtension(
     }
 
     private fun now() = System.currentTimeMillis()
+
+    private fun onlyInFirst(context: ExtensionContext, body: () -> Unit) {
+        val firstContext = context.store.get("firstContext", ExtensionContext::class.java)
+        if (firstContext == null || firstContext == context) {
+            context.store.put("firstContext", context)
+            body()
+        }
+    }
+
+    private val ExtensionContext.store: ExtensionContext.Store
+        get() = getStore(ExtensionContext.Namespace.create("DockerizedDependencies[$dockerComposeFile]"))
 
 }

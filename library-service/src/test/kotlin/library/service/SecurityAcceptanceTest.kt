@@ -14,6 +14,7 @@ import library.service.business.books.domain.types.Title
 import library.service.persistence.books.BookRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -57,86 +58,94 @@ internal class SecurityAcceptanceTest {
         bookRepository.deleteAll()
     }
 
-    @Test fun `actuator info endpoint can be accessed by anyone`() {
-        given { auth().none() } `when` { get("/actuator/info") } then { statusCode(200) }
-    }
+    @Nested inner class `actuator endpoints` {
 
-    @Test fun `actuator health endpoint can be accessed by anyone`() {
-        given { auth().none() } `when` { get("/actuator/health") } then { statusCode(200) }
-    }
-
-    @ValueSource(strings = ["beans", "conditions", "configprops", "env", "loggers",
-        "metrics", "scheduledtasks", "trace", "mappings"])
-    @ParameterizedTest fun `any other actuator endpoint can only be accessed by an admin`(endpoint: String) {
-        given { auth().none() }
-                .`when` { get("/actuator/$endpoint") }
-                .then { statusCode(401) }
-        given { auth().basic("user", "user") }
-                .`when` { get("/actuator/$endpoint") }
-                .then { statusCode(403) }
-        given { auth().basic("curator", "curator") }
-                .`when` { get("/actuator/$endpoint") }
-                .then { statusCode(403) }
-        given { auth().basic("admin", "admin") }
-                .`when` { get("/actuator/$endpoint") }
-                .then { statusCode(200) }
-    }
-
-    @ValueSource(strings = ["/api/books", "/api/books/some-id", "/api/books/some-id/borrow", "/api/books/some-id/return"])
-    @ParameterizedTest fun `API endpoints cant be accessed anonymously`(endpoint: String) {
-        given { auth().none() } `when` { get(endpoint) } then { statusCode(401) }
-        given { auth().none() } `when` { post(endpoint) } then { statusCode(401) }
-        given { auth().none() } `when` { put(endpoint) } then { statusCode(401) }
-        given { auth().none() } `when` { delete(endpoint) } then { statusCode(401) }
-        given { auth().none() } `when` { head(endpoint) } then { statusCode(401) }
-        given { auth().none() } `when` { options(endpoint) } then { statusCode(401) }
-        given { auth().none() } `when` { patch(endpoint) } then { statusCode(401) }
-    }
-
-    @CsvSource("user, 403", "curator, 201", "admin, 201")
-    @ParameterizedTest(name = "creating a book as a [{0}] will result in a [{1}] response")
-    fun `books can only be created by curators and admins`(user: String, expectedStatus: Int) {
-        val requestBody = """{ "isbn": "${book.isbn}", "title": "${book.title}" } """
-        given {
-            auth().basic(user, user)
-            header("Content-Type", "application/json")
-            body(requestBody)
-        } `when` { post("/api/books") } then { statusCode(expectedStatus) }
-    }
-
-    @CsvSource("user, 403", "curator, 204", "admin, 204")
-    @ParameterizedTest(name = "deleting a book as a [{0}] will result in a [{1}] response")
-    fun `books can only be deleted by curators and admins`(user: String, expectedStatus: Int) {
-        val bookId = bookDataStore.create(book).id
-        given { auth().basic(user, user) } `when` { delete("/api/books/$bookId") } then { statusCode(expectedStatus) }
-    }
-
-    @CsvSource("user, 200", "curator, 200", "admin, 200")
-    @ParameterizedTest(name = "borrowing a book as a [{0}] will result in a [{1}] response")
-    fun `any user can borrow books`(user: String, expectedStatus: Int) {
-        val bookId = bookDataStore.create(book).id
-        val requestBody = """{ "borrower": "Rob Stark" }"""
-        given {
-            auth().basic(user, user)
-            header("Content-Type", "application/json")
-            body(requestBody)
-        } `when` { post("/api/books/$bookId/borrow") } then { statusCode(expectedStatus) }
-    }
-
-    @CsvSource("user, 200", "curator, 200", "admin, 200")
-    @ParameterizedTest(name = "returning a book as a [{0}] will result in a [{1}] response")
-    fun `any user can return books`(user: String, expectedStatus: Int) {
-        val bookRecord = bookDataStore.create(book).apply {
-            borrow(Borrower("Rob Stark"), OffsetDateTime.now())
+        @Test fun `actuator info endpoint can be accessed by anyone`() {
+            given { auth().none() } `when` { get("/actuator/info") } then { statusCode(200) }
         }
-        bookDataStore.update(bookRecord)
-        given { auth().basic(user, user) } `when` { post("/api/books/${bookRecord.id}/return") } then { statusCode(expectedStatus) }
+
+        @Test fun `actuator health endpoint can be accessed by anyone`() {
+            given { auth().none() } `when` { get("/actuator/health") } then { statusCode(200) }
+        }
+
+        @ValueSource(strings = ["beans", "conditions", "configprops", "env", "loggers",
+            "metrics", "scheduledtasks", "trace", "mappings"])
+        @ParameterizedTest fun `any other actuator endpoint can only be accessed by an admin`(endpoint: String) {
+            given { auth().none() }
+                    .`when` { get("/actuator/$endpoint") }
+                    .then { statusCode(401) }
+            given { auth().basic("user", "user") }
+                    .`when` { get("/actuator/$endpoint") }
+                    .then { statusCode(403) }
+            given { auth().basic("curator", "curator") }
+                    .`when` { get("/actuator/$endpoint") }
+                    .then { statusCode(403) }
+            given { auth().basic("admin", "admin") }
+                    .`when` { get("/actuator/$endpoint") }
+                    .then { statusCode(200) }
+        }
+
     }
 
-    @CsvSource("user, 200", "curator, 200", "admin, 200")
-    @ParameterizedTest(name = "listing all books as a [{0}] will result in a [{1}] response")
-    fun `any user can list all books`(user: String, expectedStatus: Int) {
-        given { auth().basic(user, user) } `when` { get("/api/books") } then { statusCode(expectedStatus) }
+    @Nested inner class `api endpoints` {
+
+        @ValueSource(strings = ["/api/books", "/api/books/some-id", "/api/books/some-id/borrow", "/api/books/some-id/return"])
+        @ParameterizedTest fun `API endpoints cant be accessed anonymously`(endpoint: String) {
+            given { auth().none() } `when` { get(endpoint) } then { statusCode(401) }
+            given { auth().none() } `when` { post(endpoint) } then { statusCode(401) }
+            given { auth().none() } `when` { put(endpoint) } then { statusCode(401) }
+            given { auth().none() } `when` { delete(endpoint) } then { statusCode(401) }
+            given { auth().none() } `when` { head(endpoint) } then { statusCode(401) }
+            given { auth().none() } `when` { options(endpoint) } then { statusCode(401) }
+            given { auth().none() } `when` { patch(endpoint) } then { statusCode(401) }
+        }
+
+        @CsvSource("user, 403", "curator, 201", "admin, 201")
+        @ParameterizedTest(name = "creating a book as a [{0}] will result in a [{1}] response")
+        fun `books can only be created by curators and admins`(user: String, expectedStatus: Int) {
+            val requestBody = """{ "isbn": "${book.isbn}", "title": "${book.title}" } """
+            given {
+                auth().basic(user, user)
+                header("Content-Type", "application/json")
+                body(requestBody)
+            } `when` { post("/api/books") } then { statusCode(expectedStatus) }
+        }
+
+        @CsvSource("user, 403", "curator, 204", "admin, 204")
+        @ParameterizedTest(name = "deleting a book as a [{0}] will result in a [{1}] response")
+        fun `books can only be deleted by curators and admins`(user: String, expectedStatus: Int) {
+            val bookId = bookDataStore.create(book).id
+            given { auth().basic(user, user) } `when` { delete("/api/books/$bookId") } then { statusCode(expectedStatus) }
+        }
+
+        @CsvSource("user, 200", "curator, 200", "admin, 200")
+        @ParameterizedTest(name = "borrowing a book as a [{0}] will result in a [{1}] response")
+        fun `any user can borrow books`(user: String, expectedStatus: Int) {
+            val bookId = bookDataStore.create(book).id
+            val requestBody = """{ "borrower": "Rob Stark" }"""
+            given {
+                auth().basic(user, user)
+                header("Content-Type", "application/json")
+                body(requestBody)
+            } `when` { post("/api/books/$bookId/borrow") } then { statusCode(expectedStatus) }
+        }
+
+        @CsvSource("user, 200", "curator, 200", "admin, 200")
+        @ParameterizedTest(name = "returning a book as a [{0}] will result in a [{1}] response")
+        fun `any user can return books`(user: String, expectedStatus: Int) {
+            val bookRecord = bookDataStore.create(book).apply {
+                borrow(Borrower("Rob Stark"), OffsetDateTime.now())
+            }
+            bookDataStore.update(bookRecord)
+            given { auth().basic(user, user) } `when` { post("/api/books/${bookRecord.id}/return") } then { statusCode(expectedStatus) }
+        }
+
+        @CsvSource("user, 200", "curator, 200", "admin, 200")
+        @ParameterizedTest(name = "listing all books as a [{0}] will result in a [{1}] response")
+        fun `any user can list all books`(user: String, expectedStatus: Int) {
+            given { auth().basic(user, user) } `when` { get("/api/books") } then { statusCode(expectedStatus) }
+        }
+
     }
 
     private fun given(body: RequestSpecification.() -> RequestSpecification): RequestSpecification {
