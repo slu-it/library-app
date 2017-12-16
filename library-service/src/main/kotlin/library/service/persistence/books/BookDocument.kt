@@ -6,7 +6,7 @@ import java.util.*
 
 @Document(collection = "books")
 data class BookDocument(
-        @Id val id: UUID?,
+        @Id val id: UUID,
         val isbn: String,
         val title: String,
         val borrowed: BorrowedState?
