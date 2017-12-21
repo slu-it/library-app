@@ -2,8 +2,10 @@ package library.service.api.books
 
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.given
+import com.nhaarman.mockito_kotlin.willReturn
 import library.service.business.books.BookDataStore
 import library.service.business.books.BookEventDispatcher
+import library.service.business.books.BookIdGenerator
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.types.BookId
@@ -11,6 +13,7 @@ import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
 import library.service.security.UserContext
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -53,9 +56,14 @@ internal class BooksControllerIntTest {
     val correlationId = UUID.randomUUID().toString()
 
     @MockBean lateinit var bookDataStore: BookDataStore
+    @MockBean lateinit var bookIdGenerator: BookIdGenerator
     @MockBean lateinit var bookeEventDispatcher: BookEventDispatcher
 
     @Autowired lateinit var mockMvc: MockMvc
+
+    @BeforeEach fun initMocks() {
+        given { bookDataStore.createOrUpdate(any()) }.willAnswer { it.arguments[0] as BookRecord }
+    }
 
     @Nested inner class `get all books` {
 
@@ -149,12 +157,8 @@ internal class BooksControllerIntTest {
     @Nested inner class `post book` {
 
         @Test fun `returns response containing created book`() {
-            val id = BookId.generate()
-            val idValue = id.toString()
-            given { bookDataStore.create(any()) }.willAnswer {
-                val book = it.arguments[0] as Book
-                BookRecord(id, book)
-            }
+            val bookId = BookId.generate()
+            given { bookIdGenerator.generate() } willReturn { bookId }
 
             val requestBody = """
                 {
@@ -171,13 +175,13 @@ internal class BooksControllerIntTest {
                   "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
                   "_links": {
                     "self": {
-                      "href": "http://localhost/api/books/$idValue"
+                      "href": "http://localhost/api/books/$bookId"
                     },
                     "delete": {
-                      "href": "http://localhost/api/books/$idValue"
+                      "href": "http://localhost/api/books/$bookId"
                     },
                     "borrow": {
-                      "href": "http://localhost/api/books/$idValue/borrow"
+                      "href": "http://localhost/api/books/$bookId/borrow"
                     }
                   }
                 }
@@ -447,7 +451,6 @@ internal class BooksControllerIntTest {
                     title = "Clean Code: A Handbook of Agile Software Craftsmanship"
             )
             given { bookDataStore.findById(id) }.willReturn(book)
-            given { bookDataStore.update(book) }.willReturn(book)
 
             val request = post("/api/books/$idValue/borrow")
                     .contentType(APPLICATION_JSON_UTF8)
@@ -606,7 +609,6 @@ internal class BooksControllerIntTest {
                     borrowedOn = "2017-08-20T12:34:56.789Z"
             )
             given { bookDataStore.findById(id) }.willReturn(book)
-            given { bookDataStore.update(book) }.willReturn(book)
 
             val request = post("/api/books/$idValue/return")
             val expectedResponse = """

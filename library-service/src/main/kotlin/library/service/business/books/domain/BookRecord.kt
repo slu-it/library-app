@@ -88,4 +88,6 @@ class BookRecord(
         return result
     }
 
+    override fun toString() = "BookRecord(id=$id, book=$book, state=$state)"
+
 }

@@ -1,7 +1,6 @@
 package library.service.business.books
 
 import library.service.business.books.domain.BookRecord
-import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.types.BookId
 import java.util.*
 
@@ -12,28 +11,16 @@ import java.util.*
 interface BookDataStore {
 
     /**
-     * Creates a new [BookRecord] based on the given [Book].
+     * Creates or updates the given [BookRecord] in the data store.
      *
-     * Implementations need to generate an unique ID for the new [BookRecord]
-     * and store it in some kind of data store in order to make it retrievable
-     * by functions like [findById] or [findAll] at a later point.
+     * The previous existence of a record has to be verified by the caller.
+     * This method will override any existing data based on the record's
+     * [BookId]!
      *
-     * @param book the [Book] to create
-     * @return the created [BookRecord]
+     * @param bookRecord the [BookRecord] to create or update
+     * @return the created / updated [BookRecord]
      */
-    fun create(book: Book): BookRecord
-
-    /**
-     * Updates the given [BookRecord] in the data store.
-     *
-     * All contained data should be used to override whatever is currently
-     * persisted in the data store. The only thing which is not allowed to
-     * be changed is the book's ID.
-     *
-     * @param bookRecord the [BookRecord] to update
-     * @return the updated [BookRecord]
-     */
-    fun update(bookRecord: BookRecord): BookRecord
+    fun createOrUpdate(bookRecord: BookRecord): BookRecord
 
     /**
      * Deletes the given [BookRecord] from the data store.
@@ -57,5 +44,12 @@ interface BookDataStore {
      * @return the found [BookRecord] as a list
      */
     fun findAll(): List<BookRecord>
+
+    /**
+     * Checks if there exists a [BookRecord] for the given [BookId].
+     *
+     * @return `true` if a record exists, otherwise `false`
+     */
+    fun existsById(bookId: BookId): Boolean
 
 }

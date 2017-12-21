@@ -12,21 +12,6 @@ import library.service.common.Mapper
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import java.util.*
-
-@Component
-class BookToDocumentMapper : Mapper<Book, BookDocument> {
-
-    override fun map(source: Book): BookDocument {
-        return BookDocument(
-                id = UUID.randomUUID(),
-                isbn = "${source.isbn}",
-                title = "${source.title}",
-                borrowed = null
-        )
-    }
-
-}
 
 @Component
 class BookRecordToDocumentMapper : Mapper<BookRecord, BookDocument> {

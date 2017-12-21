@@ -19,6 +19,7 @@ import library.service.business.books.exceptions.BookNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import utils.Books
 import utils.assertThrows
 import utils.classification.UnitTest
 import utils.clockWithFixedTime
@@ -30,36 +31,46 @@ internal class BookCollectionTest {
     val fixedTimestamp = "2017-09-23T12:34:56.789Z"
     val fixedClock = clockWithFixedTime(fixedTimestamp)
 
-    val dataStore: BookDataStore = mock()
+    val dataStore: BookDataStore = mock {
+        on { createOrUpdate(any()) } doAnswer { it.arguments[0] as BookRecord }
+    }
+    val idGenerator: BookIdGenerator = BookIdGenerator(dataStore)
     val eventDispatcher: BookEventDispatcher = mock()
 
-    val cut = BookCollection(fixedClock, dataStore, eventDispatcher)
+    val cut = BookCollection(fixedClock, dataStore, idGenerator, eventDispatcher)
 
     @Nested inner class `adding a book` {
 
-        val id = BookId.generate()
-        val book = Book(Isbn13("0123456789012"), Title("Hello World"))
-        val bookRecord = BookRecord(id, book)
+        @Test fun `generates a new book ID`() {
+            with(cut.addBook(Books.THE_MARTIAN)) {
+                assertThat(id).isNotNull()
+            }
+        }
 
-        @Test fun `creates a new record in the data store`() {
-            given { dataStore.create(book) } willReturn { bookRecord }
-            val addedBook = cut.addBook(book)
-            assertThat(addedBook).isEqualTo(bookRecord)
+        @Test fun `sets the initial state to available`() {
+            with(cut.addBook(Books.THE_MARTIAN)) {
+                assertThat(state).isEqualTo(Available)
+            }
+        }
+
+        @Test fun `stores the book's data`() {
+            with(cut.addBook(Books.THE_MARTIAN)) {
+                assertThat(book).isEqualTo(Books.THE_MARTIAN)
+            }
         }
 
         @Test fun `dispatches a BookAdded event`() {
-            given { dataStore.create(book) } willReturn { bookRecord }
-            cut.addBook(book)
+            val bookRecord = cut.addBook(Books.THE_MARTIAN)
             verify(eventDispatcher).dispatch(check<BookAdded> {
-                assertThat(it.bookId).isEqualTo("$id")
+                assertThat(it.bookId).isEqualTo("${bookRecord.id}")
                 assertThat(it.timestamp).isEqualTo(fixedTimestamp)
             })
         }
 
         @Test fun `does not dispatch any events in case of an exception`() {
-            given { dataStore.create(book) } willThrow { RuntimeException() }
+            given { dataStore.createOrUpdate(any()) } willThrow { RuntimeException() }
             assertThrows(RuntimeException::class) {
-                cut.addBook(book)
+                cut.addBook(Books.THE_MARTIAN)
             }
             verifyZeroInteractions(eventDispatcher)
         }
@@ -147,7 +158,7 @@ internal class BookCollectionTest {
 
         @Test fun `changes its state and updates it in the data store`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
-            given { dataStore.update(bookRecord) } willReturn { bookRecord }
+            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
 
             val borrowedBook = cut.borrowBook(id, Borrower("Someone"))
 
@@ -157,7 +168,7 @@ internal class BookCollectionTest {
 
         @Test fun `dispatches a BookBorrowed event`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
-            given { dataStore.update(bookRecord) } willReturn { bookRecord }
+            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
 
             cut.borrowBook(id, Borrower("Someone"))
 
@@ -202,7 +213,7 @@ internal class BookCollectionTest {
 
         @Test fun `changes its state and updates it in the data store`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
-            given { dataStore.update(bookRecord) } willReturn { bookRecord }
+            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
 
             val returnedBook = cut.returnBook(id)
 
@@ -212,7 +223,7 @@ internal class BookCollectionTest {
 
         @Test fun `dispatches a BookReturned event`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
-            given { dataStore.update(bookRecord) } willReturn { bookRecord }
+            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
 
             cut.returnBook(id)
 

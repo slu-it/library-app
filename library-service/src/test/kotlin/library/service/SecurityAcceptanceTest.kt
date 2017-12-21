@@ -5,13 +5,13 @@ import io.restassured.RestAssured.given
 import io.restassured.response.Response
 import io.restassured.response.ValidatableResponse
 import io.restassured.specification.RequestSpecification
-import library.service.api.books.BookResource
-import library.service.business.books.BookDataStore
+import library.service.business.books.BookCollection
 import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
 import library.service.persistence.books.BookRepository
+import library.service.security.Authorizations
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -23,15 +23,15 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.hateoas.Link
-import org.springframework.hateoas.Resources
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.context.SecurityContextImpl
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.classification.AcceptanceTest
 import utils.extensions.UseDockerToRunMongoDB
 import utils.extensions.UseDockerToRunRabbitMQ
-import java.net.URL
-import java.time.OffsetDateTime
 
 @AcceptanceTest
 @UseDockerToRunMongoDB
@@ -47,7 +47,7 @@ internal class SecurityAcceptanceTest {
     var port: Int = 8080
 
     @Autowired lateinit var bookRepository: BookRepository
-    @Autowired lateinit var bookDataStore: BookDataStore
+    @Autowired lateinit var bookCollection: BookCollection
 
     @BeforeEach fun setupRestAssured() {
         RestAssured.baseURI = "http://localhost"
@@ -114,14 +114,14 @@ internal class SecurityAcceptanceTest {
         @CsvSource("user, 403", "curator, 204", "admin, 204")
         @ParameterizedTest(name = "deleting a book as a [{0}] will result in a [{1}] response")
         fun `books can only be deleted by curators and admins`(user: String, expectedStatus: Int) {
-            val bookId = bookDataStore.create(book).id
+            val bookId = asCurator { bookCollection.addBook(book) }.id
             given { auth().basic(user, user) } `when` { delete("/api/books/$bookId") } then { statusCode(expectedStatus) }
         }
 
         @CsvSource("user, 200", "curator, 200", "admin, 200")
         @ParameterizedTest(name = "borrowing a book as a [{0}] will result in a [{1}] response")
         fun `any user can borrow books`(user: String, expectedStatus: Int) {
-            val bookId = bookDataStore.create(book).id
+            val bookId = asCurator { bookCollection.addBook(book) }.id
             val requestBody = """{ "borrower": "Rob Stark" }"""
             given {
                 auth().basic(user, user)
@@ -133,11 +133,9 @@ internal class SecurityAcceptanceTest {
         @CsvSource("user, 200", "curator, 200", "admin, 200")
         @ParameterizedTest(name = "returning a book as a [{0}] will result in a [{1}] response")
         fun `any user can return books`(user: String, expectedStatus: Int) {
-            val bookRecord = bookDataStore.create(book).apply {
-                borrow(Borrower("Rob Stark"), OffsetDateTime.now())
-            }
-            bookDataStore.update(bookRecord)
-            given { auth().basic(user, user) } `when` { post("/api/books/${bookRecord.id}/return") } then { statusCode(expectedStatus) }
+            val bookId = asCurator { bookCollection.addBook(book) }.id
+            asUser { bookCollection.borrowBook(bookId, Borrower("Rob Stark")) }
+            given { auth().basic(user, user) } `when` { post("/api/books/$bookId/return") } then { statusCode(expectedStatus) }
         }
 
         @CsvSource("user, 200", "curator, 200", "admin, 200")
@@ -160,8 +158,21 @@ internal class SecurityAcceptanceTest {
         return body(this.then())
     }
 
-    private fun toUrl(link: Link) = URL(link.href)
+    private fun <T : Any> asUser(body: () -> T): T = asUserWithRole(Authorizations.USER_ROLE, body)
+    private fun <T : Any> asCurator(body: () -> T): T = asUserWithRole(Authorizations.CURATOR_ROLE, body)
 
-    open class BookListResource : Resources<BookResource>()
+    private fun <T : Any> asUserWithRole(role: String, body: () -> T): T {
+        val originalContext = SecurityContextHolder.getContext()
+        try {
+            val authentication = UsernamePasswordAuthenticationToken("testuser", "password", listOf(SimpleGrantedAuthority(role)))
+            val securityContext = SecurityContextImpl(authentication)
+            SecurityContextHolder.setContext(securityContext)
+            return body()
+        } finally {
+            if (originalContext != null) {
+                SecurityContextHolder.setContext(originalContext)
+            }
+        }
+    }
 
 }

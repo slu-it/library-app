@@ -30,6 +30,7 @@ import java.time.OffsetDateTime
 class BookCollection(
         private val clock: Clock,
         private val dataStore: BookDataStore,
+        private val idGenerator: BookIdGenerator,
         private val eventDispatcher: BookEventDispatcher
 ) {
 
@@ -42,11 +43,12 @@ class BookCollection(
      * Dispatches a [BookAdded] domain event.
      *
      * @param book the book to add to the collection
-     * @return the [BookRecord] containing the unique ID of the stored book
+     * @return the [BookRecord] for the created book data
      */
     @CanOnlyBeExecutedByCurators
     fun addBook(book: Book): BookRecord {
-        val bookRecord = dataStore.create(book)
+        val bookId = idGenerator.generate()
+        val bookRecord = dataStore.createOrUpdate(BookRecord(bookId, book))
 
         dispatch(bookAddedEvent(bookRecord))
         return bookRecord
@@ -124,12 +126,13 @@ class BookCollection(
      */
     @CanBeExecutedByAnyUser
     fun borrowBook(id: BookId, borrower: Borrower): BookRecord {
-        val bookRecord = getBook(id)
-        bookRecord.borrow(borrower, now())
-        val updatedBookRecord = dataStore.update(bookRecord)
+        val bookRecord = getBook(id).apply {
+            borrow(borrower, now())
+        }
+        val updatedRecord = dataStore.createOrUpdate(bookRecord)
 
         dispatch(bookBorrowedEvent(bookRecord))
-        return updatedBookRecord
+        return updatedRecord
     }
 
     private fun bookBorrowedEvent(bookRecord: BookRecord) =
@@ -151,18 +154,19 @@ class BookCollection(
      */
     @CanBeExecutedByAnyUser
     fun returnBook(id: BookId): BookRecord {
-        val bookRecord = getBook(id)
-        bookRecord.`return`()
-        val updatedBookRecord = dataStore.update(bookRecord)
+        val bookRecord = getBook(id).apply {
+            `return`()
+        }
+        val updatedRecord = dataStore.createOrUpdate(bookRecord)
 
         dispatch(bookReturnedEvent(bookRecord))
-        return updatedBookRecord
+        return updatedRecord
     }
 
     private fun bookReturnedEvent(bookRecord: BookRecord) =
             BookReturned(timestamp = now(), bookId = bookRecord.id)
 
-    private fun dispatch(event:BookEvent) = eventDispatcher.dispatch(event)
+    private fun dispatch(event: BookEvent) = eventDispatcher.dispatch(event)
     private fun now() = OffsetDateTime.now(clock)
 
 }
