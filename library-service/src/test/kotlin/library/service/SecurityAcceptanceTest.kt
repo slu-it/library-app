@@ -23,13 +23,10 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.context.SecurityContextImpl
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.classification.AcceptanceTest
+import utils.executeAsUserWithRole
 import utils.extensions.UseDockerToRunMongoDB
 import utils.extensions.UseDockerToRunRabbitMQ
 
@@ -158,21 +155,7 @@ internal class SecurityAcceptanceTest {
         return body(this.then())
     }
 
-    private fun <T : Any> asUser(body: () -> T): T = asUserWithRole(Authorizations.USER_ROLE, body)
-    private fun <T : Any> asCurator(body: () -> T): T = asUserWithRole(Authorizations.CURATOR_ROLE, body)
-
-    private fun <T : Any> asUserWithRole(role: String, body: () -> T): T {
-        val originalContext = SecurityContextHolder.getContext()
-        try {
-            val authentication = UsernamePasswordAuthenticationToken("testuser", "password", listOf(SimpleGrantedAuthority(role)))
-            val securityContext = SecurityContextImpl(authentication)
-            SecurityContextHolder.setContext(securityContext)
-            return body()
-        } finally {
-            if (originalContext != null) {
-                SecurityContextHolder.setContext(originalContext)
-            }
-        }
-    }
+    private fun <T : Any> asUser(body: () -> T): T = executeAsUserWithRole(role = Authorizations.USER_ROLE, body = body)
+    private fun <T : Any> asCurator(body: () -> T): T = executeAsUserWithRole(role = Authorizations.CURATOR_ROLE, body = body)
 
 }
