@@ -131,7 +131,7 @@ class BookCollection(
         }
         val updatedRecord = dataStore.createOrUpdate(bookRecord)
 
-        dispatch(bookBorrowedEvent(bookRecord))
+        dispatch(bookBorrowedEvent(updatedRecord))
         return updatedRecord
     }
 
@@ -159,7 +159,7 @@ class BookCollection(
         }
         val updatedRecord = dataStore.createOrUpdate(bookRecord)
 
-        dispatch(bookReturnedEvent(bookRecord))
+        dispatch(bookReturnedEvent(updatedRecord))
         return updatedRecord
     }
 
