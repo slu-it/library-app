@@ -1,4 +1,4 @@
-package library.service.messaging.books
+package library.service.messaging
 
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
@@ -7,8 +7,6 @@ import library.service.business.books.domain.events.BookBorrowed
 import library.service.business.books.domain.events.BookRemoved
 import library.service.business.books.domain.events.BookReturned
 import library.service.business.books.domain.types.BookId
-import library.service.messaging.MessagingBookEventDispatcher
-import library.service.messaging.MessagingConfiguration
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate

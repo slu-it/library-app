@@ -1,4 +1,4 @@
-package library.service.persistence.books
+package library.service.database
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document

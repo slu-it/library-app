@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured
 import io.restassured.RestAssured.*
 import library.service.api.books.BookResource
-import library.service.persistence.books.BookRepository
+import library.service.database.BookRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

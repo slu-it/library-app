@@ -5,10 +5,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
+import utils.classification.UnitTest
 import java.time.OffsetDateTime
 import java.util.*
 
-
+@UnitTest
 internal class BookEventsTest {
 
     val uuid = UUID.randomUUID()!!

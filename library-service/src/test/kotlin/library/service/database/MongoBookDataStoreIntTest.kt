@@ -1,4 +1,4 @@
-package library.service.persistence.books
+package library.service.database
 
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.composites.Book
@@ -24,7 +24,7 @@ import java.time.ZoneOffset
 @ExtendWith(SpringExtension::class)
 @DataMongoTest
 @UseDockerToRunMongoDB
-@ComponentScan("library.service.persistence.books")
+@ComponentScan("library.service.database")
 internal class MongoBookDataStoreIntTest {
 
     @Autowired lateinit var repository: BookRepository

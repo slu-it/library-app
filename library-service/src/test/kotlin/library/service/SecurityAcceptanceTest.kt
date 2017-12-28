@@ -10,7 +10,7 @@ import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
-import library.service.persistence.books.BookRepository
+import library.service.database.BookRepository
 import library.service.security.Authorizations
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

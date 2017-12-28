@@ -1,4 +1,4 @@
-package library.service.persistence.books
+package library.service.database
 
 import library.service.business.books.domain.states.Available
 import library.service.business.books.domain.states.Borrowed
