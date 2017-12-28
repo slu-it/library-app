@@ -4,14 +4,15 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.willReturn
 import library.service.business.books.BookDataStore
-import library.service.business.books.BookEventDispatcher
 import library.service.business.books.BookIdGenerator
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.composites.Book
+import library.service.business.books.domain.events.BookEvent
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
+import library.service.business.events.EventDispatcher
 import library.service.security.UserContext
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -57,7 +58,7 @@ internal class BooksControllerIntTest {
 
     @MockBean lateinit var bookDataStore: BookDataStore
     @MockBean lateinit var bookIdGenerator: BookIdGenerator
-    @MockBean lateinit var bookeEventDispatcher: BookEventDispatcher
+    @MockBean lateinit var bookeEventDispatcher: EventDispatcher<BookEvent>
 
     @Autowired lateinit var mockMvc: MockMvc
 

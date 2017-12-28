@@ -3,10 +3,7 @@ package library.service.business.books
 import com.nhaarman.mockito_kotlin.*
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.composites.Book
-import library.service.business.books.domain.events.BookAdded
-import library.service.business.books.domain.events.BookBorrowed
-import library.service.business.books.domain.events.BookRemoved
-import library.service.business.books.domain.events.BookReturned
+import library.service.business.books.domain.events.*
 import library.service.business.books.domain.states.Available
 import library.service.business.books.domain.states.Borrowed
 import library.service.business.books.domain.types.BookId
@@ -16,6 +13,7 @@ import library.service.business.books.domain.types.Title
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
+import library.service.business.events.EventDispatcher
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -35,7 +33,7 @@ internal class BookCollectionTest {
         on { createOrUpdate(any()) } doAnswer { it.arguments[0] as BookRecord }
     }
     val idGenerator: BookIdGenerator = BookIdGenerator(dataStore)
-    val eventDispatcher: BookEventDispatcher = mock()
+    val eventDispatcher: EventDispatcher<BookEvent> = mock()
 
     val cut = BookCollection(fixedClock, dataStore, idGenerator, eventDispatcher)
 
