@@ -6,8 +6,9 @@ import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.lang.ArchRule
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import utils.classification.AcceptanceTest
 import utils.classification.IntegrationTest
 import utils.classification.UnitTest
@@ -17,29 +18,16 @@ internal class ArchitectureTest {
 
     val classes = ClassFileImporter().importClasspath()!!
 
-    @Nested inner class `business module` {
-
-        @Test fun `must have no knowledge about the existence of the API module`() = checkThat {
-            noClasses().that()
-                    .resideInAPackage("library.service.business..")
-                    .should().accessClassesThat()
-                    .resideInAPackage("library.service.api..")
-        }
-
-        @Test fun `must have no knowledge about the existence of the persistence module`() = checkThat {
-            noClasses().that()
-                    .resideInAPackage("library.service.business..")
-                    .should().accessClassesThat()
-                    .resideInAPackage("library.service.persistence..")
-        }
-
-        @Test fun `must have no knowledge about the existence of the messaging module`() = checkThat {
-            noClasses().that()
-                    .resideInAPackage("library.service.business..")
-                    .should().accessClassesThat()
-                    .resideInAPackage("library.service.messaging..")
-        }
-
+    @ValueSource(strings = [
+        "library.service.api",
+        "library.service.database",
+        "library.service.messaging"
+    ])
+    @ParameterizedTest fun `business module classes are not allowed to access technical modules`(packageName: String) {
+        noClasses().that()
+                .resideInAPackage("library.service.business..")
+                .should().accessClassesThat()
+                .resideInAPackage("$packageName..")
     }
 
     @Test fun `test classes must be classified`() = checkThat {
