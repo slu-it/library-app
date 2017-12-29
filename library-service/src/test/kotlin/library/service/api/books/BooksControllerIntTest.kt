@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Profile
@@ -36,9 +37,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import utils.classification.IntegrationTest
+import utils.clockWithFixedTime
 import java.time.Clock
 import java.time.OffsetDateTime
-import java.time.ZoneId
 import java.util.*
 
 @IntegrationTest
@@ -51,16 +52,16 @@ internal class BooksControllerIntTest {
     @Profile("books-controller-test")
     @ComponentScan("library.service.api.books", "library.service.business.books")
     class AdditionalConfiguration {
-        @Bean fun clock(): Clock = Clock.fixed(OffsetDateTime.parse("2017-08-20T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
-        @Bean fun correlationIdHolder() = CorrelationIdHolder()
-        @Bean fun userContext() = UserContext()
+        @Bean fun clock(): Clock = clockWithFixedTime("2017-08-20T12:34:56.789Z")
     }
 
     val correlationId = UUID.randomUUID().toString()
 
+    @SpyBean lateinit var correlationIdHolder: CorrelationIdHolder
+    @SpyBean lateinit var userContext: UserContext
     @MockBean lateinit var bookDataStore: BookDataStore
     @MockBean lateinit var bookIdGenerator: BookIdGenerator
-    @MockBean lateinit var bookeEventDispatcher: EventDispatcher<BookEvent>
+    @MockBean lateinit var bookEventDispatcher: EventDispatcher<BookEvent>
 
     @Autowired lateinit var mockMvc: MockMvc
 

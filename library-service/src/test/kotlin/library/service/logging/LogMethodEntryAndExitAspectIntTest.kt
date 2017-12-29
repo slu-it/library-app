@@ -1,10 +1,13 @@
 package library.service.logging
 
+import library.service.logging.LogMethodEntryAndExitAspectIntTest.TestConfiguration
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.*
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testit.testutils.logrecorder.api.LogRecord
@@ -14,14 +17,12 @@ import utils.classification.IntegrationTest
 
 @IntegrationTest
 @ExtendWith(SpringExtension::class)
-@SpringBootTest
-@ActiveProfiles("test", "log-method-entry-and-exit-aspect-test")
+@SpringBootTest(classes = [TestConfiguration::class])
+@ActiveProfiles("test")
 internal class LogMethodEntryAndExitAspectIntTest {
 
-    @Configuration
     @ComponentScan
     @EnableAspectJAutoProxy
-    @Profile("log-method-entry-and-exit-aspect-test")
     class TestConfiguration {
         @Bean fun exampleClass() = ExampleClass()
         @Bean fun annotatedExampleClass() = AnnotatedExampleClass()

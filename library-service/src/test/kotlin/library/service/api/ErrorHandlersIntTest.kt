@@ -37,9 +37,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import utils.classification.IntegrationTest
+import utils.clockWithFixedTime
 import java.time.Clock
-import java.time.OffsetDateTime
-import java.time.ZoneId
 import java.util.*
 
 
@@ -53,7 +52,7 @@ internal class ErrorHandlersIntTest {
     @Profile("error-handlers-test")
     class CustomTestConfiguration {
 
-        @Bean fun clock(): Clock = Clock.fixed(OffsetDateTime.parse("2017-09-01T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
+        @Bean fun clock(): Clock = clockWithFixedTime("2017-09-01T12:34:56.789Z")
         @Bean fun correlationIdHolder() = CorrelationIdHolder()
 
         @RestController
