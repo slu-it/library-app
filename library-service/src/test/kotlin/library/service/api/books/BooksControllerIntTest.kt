@@ -3,6 +3,7 @@ package library.service.api.books
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.willReturn
+import library.service.api.correlation.CorrelationIdHolder
 import library.service.business.books.BookDataStore
 import library.service.business.books.BookIdGenerator
 import library.service.business.books.domain.BookRecord
@@ -48,9 +49,10 @@ internal class BooksControllerIntTest {
 
     @TestConfiguration
     @Profile("books-controller-test")
-    @ComponentScan("library.service.api.books", "library.service.business.books", "library.service.common")
+    @ComponentScan("library.service.api.books", "library.service.business.books")
     class AdditionalConfiguration {
         @Bean fun clock(): Clock = Clock.fixed(OffsetDateTime.parse("2017-08-20T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
+        @Bean fun correlationIdHolder() = CorrelationIdHolder()
         @Bean fun userContext() = UserContext()
     }
 

@@ -1,4 +1,4 @@
-package library.service.common.correlation
+package library.service.api.correlation
 
 import com.nhaarman.mockito_kotlin.*
 import org.assertj.core.api.Assertions.assertThat

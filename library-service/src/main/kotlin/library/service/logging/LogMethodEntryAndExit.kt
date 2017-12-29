@@ -1,4 +1,4 @@
-package library.service.common.logging
+package library.service.logging
 
 /**
  * Annotating a class with this annotation will trigger the logging of public

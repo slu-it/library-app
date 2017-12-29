@@ -1,4 +1,4 @@
-package library.service.common.correlation
+package library.service.api.correlation
 
 import org.slf4j.MDC
 import org.springframework.stereotype.Component

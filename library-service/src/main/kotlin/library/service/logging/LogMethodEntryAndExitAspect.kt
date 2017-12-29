@@ -1,4 +1,4 @@
-package library.service.common.logging
+package library.service.logging
 
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around

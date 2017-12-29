@@ -3,8 +3,7 @@ package library.service.database
 import library.service.business.books.BookDataStore
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.types.BookId
-import library.service.common.Mapper
-import library.service.common.logging.LogMethodEntryAndExit
+import library.service.logging.LogMethodEntryAndExit
 import org.springframework.stereotype.Service
 
 @Service

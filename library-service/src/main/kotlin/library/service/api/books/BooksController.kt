@@ -8,7 +8,7 @@ import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
-import library.service.common.logging.LogMethodEntryAndExit
+import library.service.logging.LogMethodEntryAndExit
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn

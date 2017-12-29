@@ -1,4 +1,4 @@
-package library.service.common.logging
+package library.service.logging
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

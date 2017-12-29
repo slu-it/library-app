@@ -1,6 +1,6 @@
 package library.service.api.index
 
-import library.service.common.correlation.CorrelationIdHolder
+import library.service.api.correlation.CorrelationIdHolder
 import library.service.security.UserContext
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

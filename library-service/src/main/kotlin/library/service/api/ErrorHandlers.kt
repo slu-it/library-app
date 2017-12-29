@@ -3,8 +3,8 @@ package library.service.api
 import library.service.business.exceptions.MalformedValueException
 import library.service.business.exceptions.NotFoundException
 import library.service.business.exceptions.NotPossibleException
-import library.service.common.correlation.CorrelationIdHolder
-import library.service.common.logging.logger
+import library.service.api.correlation.CorrelationIdHolder
+import library.service.logging.logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException

@@ -1,4 +1,4 @@
-package library.service.common.logging
+package library.service.logging
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

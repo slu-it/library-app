@@ -1,4 +1,4 @@
-package library.service.common.correlation
+package library.service.api.correlation
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse

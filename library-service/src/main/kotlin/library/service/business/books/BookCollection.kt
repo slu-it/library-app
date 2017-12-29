@@ -9,7 +9,7 @@ import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
 import library.service.business.events.EventDispatcher
-import library.service.common.logging.LogMethodEntryAndExit
+import library.service.logging.LogMethodEntryAndExit
 import library.service.security.annotations.CanBeExecutedByAnyUser
 import library.service.security.annotations.CanOnlyBeExecutedByCurators
 import org.springframework.stereotype.Service

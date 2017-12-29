@@ -6,6 +6,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.willThrow
 import library.service.api.ErrorHandlersIntTest.CustomTestConfiguration.TestController
 import library.service.api.ErrorHandlersIntTest.CustomTestConfiguration.TestService
+import library.service.api.correlation.CorrelationIdHolder
 import library.service.business.exceptions.MalformedValueException
 import library.service.business.exceptions.NotFoundException
 import library.service.business.exceptions.NotPossibleException
@@ -16,7 +17,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
@@ -51,10 +51,10 @@ internal class ErrorHandlersIntTest {
 
     @TestConfiguration
     @Profile("error-handlers-test")
-    @ComponentScan("library.service.common")
     class CustomTestConfiguration {
 
         @Bean fun clock(): Clock = Clock.fixed(OffsetDateTime.parse("2017-09-01T12:34:56.789Z").toInstant(), ZoneId.of("UTC"))
+        @Bean fun correlationIdHolder() = CorrelationIdHolder()
 
         @RestController
         @Profile("error-handlers-test")

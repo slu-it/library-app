@@ -1,4 +1,4 @@
-package library.service.common.logging
+package library.service.logging
 
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.CommonsRequestLoggingFilter

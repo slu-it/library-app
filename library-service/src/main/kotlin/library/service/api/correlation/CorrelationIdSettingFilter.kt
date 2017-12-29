@@ -1,4 +1,4 @@
-package library.service.common.correlation
+package library.service.api.correlation
 
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.GenericFilterBean

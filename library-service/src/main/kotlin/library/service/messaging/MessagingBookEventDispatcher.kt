@@ -2,7 +2,7 @@ package library.service.messaging
 
 import library.service.business.books.domain.events.BookEvent
 import library.service.business.events.EventDispatcher
-import library.service.common.logging.logger
+import library.service.logging.logger
 import library.service.messaging.MessagingConfiguration.BookEventsExchange
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.stereotype.Component

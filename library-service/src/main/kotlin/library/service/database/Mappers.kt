@@ -8,10 +8,13 @@ import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
-import library.service.common.Mapper
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
+
+interface Mapper<in S : Any, out T : Any> {
+    fun map(source: S): T
+}
 
 @Component
 class BookRecordToDocumentMapper : Mapper<BookRecord, BookDocument> {
