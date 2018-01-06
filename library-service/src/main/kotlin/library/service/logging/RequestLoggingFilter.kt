@@ -1,23 +1,45 @@
 package library.service.logging
 
 import org.springframework.stereotype.Component
-import org.springframework.web.filter.CommonsRequestLoggingFilter
+import org.springframework.web.filter.AbstractRequestLoggingFilter
+import javax.annotation.PostConstruct
+import javax.servlet.Filter
+import javax.servlet.http.HttpServletRequest
 
 /**
- * HTTP servlet filter responsible for logging request entry and exit into
- * the application. The logged information includes:
+ * Servlet [Filter] responsible for logging all request to this service's HTTP
+ * endpoints.
  *
+ * This filter is only active if the log level for this class is set to `DEBUG`
+ * or lower. Log entries are created on the `DEBUG` level.
+ *
+ * The logged information includes:
  * - client info like IP address and used browser
  * - request and response headers
  * - query strings
+ *
+ * @see AbstractRequestLoggingFilter
  */
 @Component
-class RequestLoggingFilter : CommonsRequestLoggingFilter() {
+class RequestLoggingFilter : AbstractRequestLoggingFilter() {
 
-    init {
+    private val log = RequestLoggingFilter::class.logger
+
+    @PostConstruct
+    fun init() {
         isIncludeClientInfo = true
-        isIncludeHeaders = true
         isIncludeQueryString = true
+        isIncludeHeaders = true
+        isIncludePayload = false
+
+        setBeforeMessagePrefix("Received Request [")
+        setBeforeMessageSuffix("]")
+        setAfterMessagePrefix("Processed Request [")
+        setAfterMessageSuffix("]")
     }
+
+    override fun shouldLog(request: HttpServletRequest) = log.isDebugEnabled
+    override fun beforeRequest(request: HttpServletRequest, message: String) = log.debug(message)
+    override fun afterRequest(request: HttpServletRequest, message: String) = log.debug(message)
 
 }

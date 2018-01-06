@@ -1,6 +1,6 @@
 package library.service.logging
 
-import library.service.logging.LogMethodEntryAndExitAspectIntTest.TestConfiguration
+import library.service.logging.MethodEntryExitLoggingIntTest.TestConfiguration
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +19,7 @@ import utils.classification.IntegrationTest
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [TestConfiguration::class])
 @ActiveProfiles("test")
-internal class LogMethodEntryAndExitAspectIntTest {
+internal class MethodEntryExitLoggingIntTest {
 
     @ComponentScan
     @EnableAspectJAutoProxy

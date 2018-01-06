@@ -13,7 +13,7 @@ class MessagingBookEventDispatcher(
         private val exchange: BookEventsExchange
 ) : EventDispatcher<BookEvent> {
 
-    private val log = MessagingBookEventDispatcher::class.logger()
+    private val log = MessagingBookEventDispatcher::class.logger
 
     override fun dispatch(event: BookEvent) {
         log.debug("dispatching event [{}] to exchange [{}]", event, exchange.name)
