@@ -14,6 +14,7 @@ data class BookResource(
         val isbn: String,
         val title: String,
         val authors: List<String>?,
+        val numberOfPages: Int?,
         val borrowed: Borrowed?
 ) : ResourceSupport()
 

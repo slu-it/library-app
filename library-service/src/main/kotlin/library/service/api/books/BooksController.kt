@@ -43,7 +43,8 @@ class BooksController(
         val book = Book(
                 isbn = Isbn13.parse(body.isbn!!),
                 title = Title(body.title!!),
-                authors = emptyList()
+                authors = emptyList(),
+                numberOfPages = null
         )
         val bookRecord = collection.addBook(book)
         return assembler.toResource(bookRecord)

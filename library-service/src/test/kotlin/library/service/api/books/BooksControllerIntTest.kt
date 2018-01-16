@@ -107,6 +107,7 @@ internal class BooksControllerIntTest {
                         "isbn": "${Books.CLEAN_CODE.isbn}",
                         "title": "${Books.CLEAN_CODE.title}",
                         "authors": ["${Books.CLEAN_CODE.authors[0]}"],
+                        "numberOfPages": ${Books.CLEAN_CODE.numberOfPages},
                         "_links": {
                           "self": {
                             "href": "http://localhost/api/books/883a2931-325b-4482-8972-8cb6f7d33816"
@@ -123,6 +124,7 @@ internal class BooksControllerIntTest {
                         "isbn": "${Books.CLEAN_CODER.isbn}",
                         "title": "${Books.CLEAN_CODER.title}",
                         "authors": ["${Books.CLEAN_CODER.authors[0]}"],
+                        "numberOfPages": ${Books.CLEAN_CODER.numberOfPages},
                         "borrowed": {
                           "by": "Uncle Bob",
                           "on": "2017-08-20T12:34:56.789Z"
@@ -283,6 +285,7 @@ internal class BooksControllerIntTest {
                   "isbn": "${Books.CLEAN_CODE.isbn}",
                   "title": "${Books.CLEAN_CODE.title}",
                   "authors": ["${Books.CLEAN_CODE.authors[0]}"],
+                  "numberOfPages": ${Books.CLEAN_CODE.numberOfPages},
                   "_links": {
                     "self": {
                       "href": "http://localhost/api/books/$idValue"
@@ -319,6 +322,7 @@ internal class BooksControllerIntTest {
                   "isbn": "${Books.CLEAN_CODER.isbn}",
                   "title": "${Books.CLEAN_CODER.title}",
                   "authors": ["${Books.CLEAN_CODER.authors[0]}"],
+                  "numberOfPages": ${Books.CLEAN_CODER.numberOfPages},
                   "borrowed": {
                     "by": "Uncle Bob",
                     "on": "2017-08-20T12:34:56.789Z"
@@ -462,6 +466,7 @@ internal class BooksControllerIntTest {
                   "isbn": "${Books.CLEAN_CODE.isbn}",
                   "title": "${Books.CLEAN_CODE.title}",
                   "authors": ["${Books.CLEAN_CODE.authors[0]}"],
+                  "numberOfPages": ${Books.CLEAN_CODE.numberOfPages},
                   "borrowed": {
                     "by": "Uncle Bob",
                     "on": "2017-08-20T12:34:56.789Z"
@@ -617,6 +622,7 @@ internal class BooksControllerIntTest {
                   "isbn": "${Books.CLEAN_CODE.isbn}",
                   "title": "${Books.CLEAN_CODE.title}",
                   "authors": ["${Books.CLEAN_CODE.authors[0]}"],
+                  "numberOfPages": ${Books.CLEAN_CODE.numberOfPages},
                   "_links": {
                     "self": {
                       "href": "http://localhost/api/books/$idValue"

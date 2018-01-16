@@ -23,6 +23,7 @@ class BookRecordToDocumentMapper : Mapper<BookRecord, BookDocument> {
                 isbn = "${source.book.isbn}",
                 title = "${source.book.title}",
                 authors = source.book.authors.map { it.toString() },
+                numberOfPages = source.book.numberOfPages,
                 borrowed = when (bookState) {
                     is Available -> null
                     is Borrowed -> BorrowedState(
@@ -45,7 +46,8 @@ class BookDocumentToRecordMapper : Mapper<BookDocument, BookRecord> {
                 book = Book(
                         isbn = Isbn13(source.isbn),
                         title = Title(source.title),
-                        authors = source.authors?.map { Author(it) } ?: emptyList()
+                        authors = source.authors?.map { Author(it) } ?: emptyList(),
+                        numberOfPages = source.numberOfPages
                 ),
                 initialState = when (borrowed) {
                     null -> Available

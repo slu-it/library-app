@@ -10,6 +10,7 @@ data class BookDocument(
         val isbn: String,
         val title: String,
         val authors: List<String>?,
+        val numberOfPages: Int?,
         val borrowed: BorrowedState?
 )
 

@@ -14,5 +14,6 @@ import library.service.business.books.domain.types.Title
 data class Book(
         val isbn: Isbn13,
         val title: Title,
-        val authors: List<Author>
+        val authors: List<Author>,
+        val numberOfPages: Int?
 )

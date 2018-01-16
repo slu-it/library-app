@@ -21,6 +21,7 @@ internal class BookDocumentToRecordMapperTest {
             isbn = "9780091956141",
             title = "The Martian",
             authors = listOf("Andy Weir"),
+            numberOfPages = 384,
             borrowed = null
     )
     val borrowedBookDocument = BookDocument(
@@ -28,6 +29,7 @@ internal class BookDocumentToRecordMapperTest {
             isbn = "9780091956141",
             title = "The Martian",
             authors = listOf("Andy Weir"),
+            numberOfPages = 384,
             borrowed = BorrowedState(
                     by = "Mark Watney",
                     on = "2035-12-16T12:34:56.789Z"
