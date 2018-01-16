@@ -6,10 +6,7 @@ import io.restassured.response.Response
 import io.restassured.response.ValidatableResponse
 import io.restassured.specification.RequestSpecification
 import library.service.business.books.BookCollection
-import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
 import library.service.database.BookRepository
 import library.service.security.Authorizations
 import org.junit.jupiter.api.AfterEach
@@ -38,6 +35,8 @@ import utils.extensions.UseDockerToRunRabbitMQ
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 internal class SecurityAcceptanceTest {
+
+    // TODO: security test for update / delete of book properties
 
     val book = Books.THE_MARTIAN
 
@@ -87,7 +86,11 @@ internal class SecurityAcceptanceTest {
 
     @Nested inner class `api endpoints` {
 
-        @ValueSource(strings = ["/api/books", "/api/books/some-id", "/api/books/some-id/borrow", "/api/books/some-id/return"])
+        @ValueSource(strings = [
+            "/api/books", "/api/books/some-id",
+            "/api/books/some-id/borrow", "/api/books/some-id/return",
+            "/api/books/some-id/title", "/api/books/some-id/authors", "/api/books/some-id/numberOfPages"
+        ])
         @ParameterizedTest fun `API endpoints cant be accessed anonymously`(endpoint: String) {
             given { auth().none() } `when` { get(endpoint) } then { statusCode(401) }
             given { auth().none() } `when` { post(endpoint) } then { statusCode(401) }

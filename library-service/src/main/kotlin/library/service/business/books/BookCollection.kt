@@ -59,6 +59,30 @@ class BookCollection(
             BookAdded(timestamp = now(), bookId = bookRecord.id, isbn = bookRecord.book.isbn)
 
     /**
+     * Updates a [BookRecord] from the collection by applying the given
+     * update function to it. The [BookRecord] is identified by its unique ID.
+     *
+     * The [BookRecord] is looked up in the collection's [BookDataStore]. If
+     * the [BookDataStore] does not contain a book for that ID, an exception
+     * is thrown.
+     *
+     * @param id the unique ID to look up
+     * @param updateFunction the function used for updating the book record
+     * @throws BookNotFoundException in case there is no book for the given ID
+     */
+    @CanOnlyBeExecutedByCurators
+    fun updateBook(id: BookId, updateFunction: BookRecord.() -> Unit): BookRecord {
+        val bookRecord = getBook(id).apply { updateFunction() }
+        val updatedRecord = dataStore.createOrUpdate(bookRecord)
+
+        dispatch(bookUpdatedEvent(updatedRecord))
+        return updatedRecord
+    }
+
+    private fun bookUpdatedEvent(bookRecord: BookRecord) =
+            BookUpdated(timestamp = now(), bookId = bookRecord.id)
+
+    /**
      * Gets a [BookRecord] from the collection by its unique ID.
      *
      * The [BookRecord] is looked up in the collection's [BookDataStore]. If

@@ -49,7 +49,7 @@ class BookDocumentToRecordMapper : Mapper<BookDocument, BookRecord> {
                         authors = source.authors?.map { Author(it) } ?: emptyList(),
                         numberOfPages = source.numberOfPages
                 ),
-                initialState = when (borrowed) {
+                state = when (borrowed) {
                     null -> Available
                     else -> Borrowed(
                             by = Borrower(borrowed.by),

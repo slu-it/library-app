@@ -2,14 +2,11 @@ package library.service.business.books
 
 import com.nhaarman.mockito_kotlin.*
 import library.service.business.books.domain.BookRecord
-import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.events.*
 import library.service.business.books.domain.states.Available
 import library.service.business.books.domain.states.Borrowed
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
@@ -71,6 +68,50 @@ internal class BookCollectionTest {
                 cut.addBook(Books.THE_MARTIAN)
             }
             verifyZeroInteractions(eventDispatcher)
+        }
+
+    }
+
+    @Nested inner class `updating a book` {
+
+        val id = BookId.generate()
+        val book = Books.THE_DARK_TOWER_VII
+        val bookRecord = BookRecord(id, book)
+
+        val mockFunction: BookRecord.() -> Unit = mock()
+
+        @Test fun `executes update function if book was found in data store`() {
+            given { dataStore.findById(id) } willReturn { bookRecord }
+            cut.updateBook(id, mockFunction)
+            verify(mockFunction).invoke(bookRecord)
+        }
+
+        @Test fun `updates the record in the database`() {
+            given { dataStore.findById(id) } willReturn { bookRecord }
+            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
+
+            val updatedBook = cut.updateBook(id, mockFunction)
+
+            assertThat(updatedBook).isSameAs(bookRecord)
+        }
+
+        @Test fun `dispatches a BookUpdated event`() {
+            given { dataStore.findById(id) } willReturn { bookRecord }
+            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
+
+            cut.updateBook(id, mockFunction)
+
+            verify(eventDispatcher).dispatch(check<BookUpdated> {
+                assertThat(it.bookId).isEqualTo("$id")
+                assertThat(it.timestamp).isEqualTo(fixedTimestamp)
+            })
+        }
+
+        @Test fun `throws exception if it was not found in data store`() {
+            given { dataStore.findById(id) } willReturn { null }
+            assertThrows(BookNotFoundException::class) {
+                cut.updateBook(id, mockFunction)
+            }
         }
 
     }

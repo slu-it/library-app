@@ -65,6 +65,8 @@ internal class FunctionalAcceptanceTest {
         with(createdBook) {
             assertThat(isbn).isEqualTo("9780553573404")
             assertThat(title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
+            assertThat(authors).isEmpty()
+            assertThat(numberOfPages).isNull()
             assertThat(borrowed).isNull()
 
             assertThat(getLink("self")).isNotNull()
@@ -76,6 +78,40 @@ internal class FunctionalAcceptanceTest {
         val bookLink = createdBook.getLink("self")
         deleteBookExpecting(bookLink, 204)
         deleteBookExpecting(bookLink, 404)
+
+    }
+
+    @Test fun `adding a book and updating its data`() {
+
+        // step 1: create the book
+        val createBookRequest = """ {
+                "isbn": "9780553573404",
+                "title": "A Game of Thrones: A Song of Ice and Fire (1)"
+        } """
+        val bookLink = createBook(createBookRequest).getLink("self")
+
+        // step 2: updating all updateable data
+        updateBookTitle(bookLink, """ { "title": "The Updated Title" } """)
+        updateBookAuthors(bookLink, """ { "authors": ["Author #1", "Author #2"] } """)
+        updateBookNumberOfPages(bookLink, """ { "numberOfPages": 42 } """)
+
+        with(getBook(bookLink)) {
+            assertThat(isbn).isEqualTo("9780553573404")
+            assertThat(title).isEqualTo("The Updated Title")
+            assertThat(authors).containsExactly("Author #1", "Author #2")
+            assertThat(numberOfPages).isEqualTo(42)
+        }
+
+        // step 3: removing all removeable data
+        removeBookAuthors(bookLink)
+        removeBookNumberOfPages(bookLink)
+
+        with(getBook(bookLink)) {
+            assertThat(isbn).isEqualTo("9780553573404")
+            assertThat(title).isEqualTo("The Updated Title")
+            assertThat(authors).isEmpty()
+            assertThat(numberOfPages).isNull()
+        }
 
     }
 
@@ -292,7 +328,80 @@ internal class FunctionalAcceptanceTest {
         return objectMapper.readValue(response, BookListResource::class.java)
     }
 
-    private fun toUrl(link: Link) = URL(link.href)
+    private fun getBook(bookLink: Link): BookResource {
+        // @formatter:off
+        val response =
+            `when`()
+                .get(toUrl(bookLink))
+            .then()
+                .statusCode(200)
+                .contentType("application/hal+json;charset=UTF-8")
+            .and()
+                .extract().body().asString()
+        // @formatter:on
+        return objectMapper.readValue(response, BookResource::class.java)
+    }
+
+    private fun updateBookTitle(bookLink: Link, requestBody: String) {
+        // @formatter:off
+        given()
+            .header("Content-Type", "application/json")
+            .body(requestBody)
+        .`when`()
+            .put(toUrl(bookLink, "/title"))
+        .then()
+            .statusCode(200)
+            .contentType("application/hal+json;charset=UTF-8")
+        // @formatter:on
+    }
+
+    private fun updateBookAuthors(bookLink: Link, requestBody: String) {
+        // @formatter:off
+        given()
+            .header("Content-Type", "application/json")
+            .body(requestBody)
+        .`when`()
+            .put(toUrl(bookLink, "/authors"))
+        .then()
+            .statusCode(200)
+            .contentType("application/hal+json;charset=UTF-8")
+        // @formatter:on
+    }
+
+    private fun updateBookNumberOfPages(bookLink: Link, requestBody: String) {
+        // @formatter:off
+        given()
+            .header("Content-Type", "application/json")
+            .body(requestBody)
+        .`when`()
+            .put(toUrl(bookLink, "/numberOfPages"))
+        .then()
+            .statusCode(200)
+            .contentType("application/hal+json;charset=UTF-8")
+        // @formatter:on
+    }
+
+    private fun removeBookAuthors(bookLink: Link) {
+        // @formatter:off
+        `when`()
+            .delete(toUrl(bookLink, "/authors"))
+        .then()
+            .statusCode(200)
+            .contentType("application/hal+json;charset=UTF-8")
+        // @formatter:on
+    }
+
+    private fun removeBookNumberOfPages(bookLink: Link) {
+        // @formatter:off
+        `when`()
+            .delete(toUrl(bookLink, "/numberOfPages"))
+        .then()
+            .statusCode(200)
+            .contentType("application/hal+json;charset=UTF-8")
+        // @formatter:on
+    }
+
+    private fun toUrl(link: Link, postFix: String = "") = URL(link.href + postFix)
 
     open class BookListResource : Resources<BookResource>()
 

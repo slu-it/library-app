@@ -38,6 +38,13 @@ class BookAdded(
     val isbn:String = isbn.toString()
 }
 
+/** A book was updated in the library. */
+class BookUpdated(
+        id: UUID = UUID.randomUUID(),
+        bookId: BookId,
+        timestamp: OffsetDateTime
+) : BookEvent("book-updated", id, bookId, timestamp)
+
 /** A book was permanently removed from the library. */
 class BookRemoved(
         id: UUID = UUID.randomUUID(),

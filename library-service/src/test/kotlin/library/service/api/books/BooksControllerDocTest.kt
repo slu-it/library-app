@@ -43,6 +43,8 @@ internal class BooksControllerDocTest {
 
     @Autowired lateinit var mvc: MockMvc
 
+    // TODO doc-tests for PUT / DELETE of book properties
+
     // POST on /api/books
 
     @Test fun `post book - created`() {

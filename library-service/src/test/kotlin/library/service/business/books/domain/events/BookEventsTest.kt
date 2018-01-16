@@ -20,6 +20,7 @@ internal class BookEventsTest {
 
     val allBookEventTypes = listOf(
             BookAdded(uuid, bookId, timestamp, isbn),
+            BookUpdated(uuid, bookId, timestamp),
             BookRemoved(uuid, bookId, timestamp),
             BookBorrowed(uuid, bookId, timestamp),
             BookReturned(uuid, bookId, timestamp)

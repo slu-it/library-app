@@ -4,10 +4,7 @@ import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.states.Available
 import library.service.business.books.domain.states.BookState
 import library.service.business.books.domain.states.Borrowed
-import library.service.business.books.domain.types.BookId
-import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
+import library.service.business.books.domain.types.*
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import org.assertj.core.api.Assertions.assertThat
@@ -61,6 +58,43 @@ internal class BookRecordTest {
             assertThrows(BookAlreadyBorrowedException::class) {
                 borrowedBook.borrow(borrowed.by, borrowed.on)
             }
+        }
+
+    }
+
+    @Nested inner class `certain book properties can be changed` {
+
+        val book = Book(
+                isbn = Isbn13("0123456789123"),
+                title = Title("Original Book"),
+                authors = listOf(Author("Original Author")),
+                numberOfPages = 128
+        )
+        val bookRecord = BookRecord(id = BookId.generate(), book = book)
+
+        @Test fun `title can be changed`(): Unit = with(bookRecord) {
+            changeTitle(Title("New Title"))
+            assertThat(book.title).isEqualTo(Title("New Title"))
+        }
+
+        @Test fun `authors can be changed`(): Unit = with(bookRecord) {
+            changeAuthors(listOf(Author("New Author")))
+            assertThat(book.authors).containsExactly(Author("New Author"))
+        }
+
+        @Test fun `authors can be removed`(): Unit = with(bookRecord) {
+            changeAuthors(emptyList())
+            assertThat(book.authors).isEmpty()
+        }
+
+        @Test fun `number of pages can be changed`(): Unit = with(bookRecord) {
+            changeNumberOfPages(256)
+            assertThat(book.numberOfPages).isEqualTo(256)
+        }
+
+        @Test fun `number of pages can be removed`(): Unit = with(bookRecord) {
+            changeNumberOfPages(null)
+            assertThat(book.numberOfPages).isNull()
         }
 
     }

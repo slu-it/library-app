@@ -21,7 +21,6 @@ internal class CreateBookRequestBodyTest {
         assertThat(cut.title).isEqualTo("Hello World")
     }
 
-    @TestInstance(TestInstance.Lifecycle.PER_METHOD)
     @Nested inner class `bean validation` {
 
         val validator: Validator = Validation.buildDefaultValidatorFactory().validator

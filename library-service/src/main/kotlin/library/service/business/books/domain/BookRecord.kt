@@ -4,8 +4,10 @@ import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.states.Available
 import library.service.business.books.domain.states.BookState
 import library.service.business.books.domain.states.Borrowed
+import library.service.business.books.domain.types.Author
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
+import library.service.business.books.domain.types.Title
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import java.time.OffsetDateTime
@@ -14,14 +16,42 @@ import java.util.*
 /**
  * Aggregate of a [Book], its unique reference ID ([UUID]) and [state][BookState].
  */
-class BookRecord(
-        val id: BookId,
-        val book: Book,
-        initialState: BookState = Available
-) {
+class BookRecord(id: BookId, book: Book, state: BookState = Available) {
 
-    var state: BookState = initialState
+    val id: BookId = id
+    var book: Book = book
         private set
+    var state: BookState = state
+        private set
+
+    /**
+     * Changes the [Title] of this [BookRecord's][BookRecord] [Book]
+     *
+     * @param title the new [Title]
+     */
+    fun changeTitle(title: Title) {
+        book = book.copy(title = title)
+    }
+
+    /**
+     * Changes the list of [Authors][Author] of this [BookRecord's][BookRecord]
+     * [Book]. Might be empty in order to remove the existing authors.
+     *
+     * @param authors the new list of [Authors][Author]
+     */
+    fun changeAuthors(authors: List<Author>) {
+        book = book.copy(authors = authors.toList())
+    }
+
+    /**
+     * Changes the number of pages of this [BookRecord's][BookRecord] [Book].
+     * Might be null in order to remove the existing number of pages.
+     *
+     * @param numberOfPages the new number of pages
+     */
+    fun changeNumberOfPages(numberOfPages: Int?) {
+        book = book.copy(numberOfPages = numberOfPages)
+    }
 
     /**
      * Tries to borrow this [BookRecord].

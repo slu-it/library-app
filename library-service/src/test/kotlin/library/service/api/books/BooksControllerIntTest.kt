@@ -88,11 +88,11 @@ internal class BooksControllerIntTest {
 
         @Test fun `returns response containing all books`() {
             val availableBook = availableBook(
-                    id = "883a2931-325b-4482-8972-8cb6f7d33816",
+                    id = BookId.from("883a2931-325b-4482-8972-8cb6f7d33816"),
                     book = Books.CLEAN_CODE
             )
             val borrowedBook = borrowedBook(
-                    id = "53397dc0-932d-4198-801a-3e00b2742ba7",
+                    id = BookId.from("53397dc0-932d-4198-801a-3e00b2742ba7"),
                     book = Books.CLEAN_CODER,
                     borrowedBy = "Uncle Bob",
                     borrowedOn = "2017-08-20T12:34:56.789Z"
@@ -273,14 +273,10 @@ internal class BooksControllerIntTest {
 
         @Test fun `returns response containing available book`() {
             val id = BookId.generate()
-            val idValue = id.toString()
-            val availableBook = availableBook(
-                    id = idValue,
-                    book = Books.CLEAN_CODE
-            )
+            val availableBook = availableBook(id = id, book = Books.CLEAN_CODE)
             given { bookDataStore.findById(id) }.willReturn(availableBook)
 
-            val request = get("/api/books/$idValue")
+            val request = get("/api/books/$id")
             val expectedResponse = """
                 {
                   "isbn": "${Books.CLEAN_CODE.isbn}",
@@ -289,13 +285,13 @@ internal class BooksControllerIntTest {
                   "numberOfPages": ${Books.CLEAN_CODE.numberOfPages},
                   "_links": {
                     "self": {
-                      "href": "http://localhost/api/books/$idValue"
+                      "href": "http://localhost/api/books/$id"
                     },
                     "delete": {
-                      "href": "http://localhost/api/books/$idValue"
+                      "href": "http://localhost/api/books/$id"
                     },
                     "borrow": {
-                      "href": "http://localhost/api/books/$idValue/borrow"
+                      "href": "http://localhost/api/books/$id/borrow"
                     }
                   }
                 }
@@ -308,16 +304,15 @@ internal class BooksControllerIntTest {
 
         @Test fun `returns response containing borrowed book`() {
             val id = BookId.generate()
-            val idValue = id.toString()
             val borrowedBook = borrowedBook(
-                    id = idValue,
+                    id = id,
                     book = Books.CLEAN_CODER,
                     borrowedBy = "Uncle Bob",
                     borrowedOn = "2017-08-20T12:34:56.789Z"
             )
             given { bookDataStore.findById(id) }.willReturn(borrowedBook)
 
-            val request = get("/api/books/$idValue")
+            val request = get("/api/books/$id")
             val expectedResponse = """
                 {
                   "isbn": "${Books.CLEAN_CODER.isbn}",
@@ -330,13 +325,13 @@ internal class BooksControllerIntTest {
                   },
                   "_links": {
                     "self": {
-                      "href": "http://localhost/api/books/$idValue"
+                      "href": "http://localhost/api/books/$id"
                     },
                     "delete": {
-                      "href": "http://localhost/api/books/$idValue"
+                      "href": "http://localhost/api/books/$id"
                     },
                     "return": {
-                      "href": "http://localhost/api/books/$idValue/return"
+                      "href": "http://localhost/api/books/$id/return"
                     }
                   }
                 }
@@ -394,14 +389,10 @@ internal class BooksControllerIntTest {
 
         @Test fun `returns empty response if book was found`() {
             val id = BookId.generate()
-            val idValue = id.toString()
-            val book = availableBook(
-                    id = idValue,
-                    book = Books.CLEAN_CODE
-            )
+            val book = availableBook(id = id, book = Books.CLEAN_CODE)
             given { bookDataStore.findById(id) }.willReturn(book)
 
-            mockMvc.perform(delete("/api/books/$idValue"))
+            mockMvc.perform(delete("/api/books/$id"))
                     .andExpect(status().isNoContent)
         }
 
@@ -448,18 +439,367 @@ internal class BooksControllerIntTest {
 
     }
 
+    @Nested inner class `updating book property by ID` {
+
+        val id = BookId.generate()
+        val book = Books.CLEAN_CODE
+        val bookRecord = availableBook(id, book)
+
+        @Nested inner class `title` {
+
+            @Test fun `returns response containing updated book if book was found`() {
+                given { bookDataStore.findById(id) }.willReturn(bookRecord)
+
+                val request = put("/api/books/$id/title")
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(""" { "title": "New Title" } """)
+                val expectedResponse = """
+                    {
+                      "isbn": "${book.isbn}",
+                      "title": "New Title",
+                      "authors": ${book.authors.toJson()},
+                      "numberOfPages": ${book.numberOfPages},
+                      "_links": {
+                        "self": {
+                          "href": "http://localhost/api/books/$id"
+                        },
+                        "delete": {
+                          "href": "http://localhost/api/books/$id"
+                        },
+                        "borrow": {
+                          "href": "http://localhost/api/books/$id/borrow"
+                        }
+                      }
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isOk)
+                        .andExpect(content().contentType(HAL_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+            @Test fun `returns error response (404) if book was not found`() {
+                val unknownId = BookId.generate()
+                val request = put("/api/books/$unknownId/title")
+                        .header("X-Correlation-ID", correlationId)
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(""" { "title": "New Title" } """)
+                val expectedResponse = """
+                    {
+                      "status": 404,
+                      "error": "Not Found",
+                      "timestamp": "2017-08-20T12:34:56.789Z",
+                      "correlationId": "$correlationId",
+                      "message": "The book with ID: $unknownId does not exist!"
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isNotFound)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+            @Test fun `returns error response (400) if request content invalid`() {
+                val idValue = BookId.generate().toString()
+                val request = put("/api/books/$idValue/title")
+                        .header("X-Correlation-ID", correlationId)
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(" { } ")
+                val expectedResponse = """
+                    {
+                      "status": 400,
+                      "error": "Bad Request",
+                      "timestamp": "2017-08-20T12:34:56.789Z",
+                      "correlationId": "$correlationId",
+                      "message": "The request's body is invalid. See details...",
+                      "details": [ "The field 'title' must not be blank." ]
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isBadRequest)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+        }
+
+        @Nested inner class `number of pages` {
+
+            @Test fun `returns response containing updated book if book was found`() {
+                given { bookDataStore.findById(id) }.willReturn(bookRecord)
+
+                val request = put("/api/books/$id/numberOfPages")
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(""" { "numberOfPages": 128 } """)
+                val expectedResponse = """
+                    {
+                      "isbn": "${book.isbn}",
+                      "title": "${book.title}",
+                      "authors": ${book.authors.toJson()},
+                      "numberOfPages": 128,
+                      "_links": {
+                        "self": {
+                          "href": "http://localhost/api/books/$id"
+                        },
+                        "delete": {
+                          "href": "http://localhost/api/books/$id"
+                        },
+                        "borrow": {
+                          "href": "http://localhost/api/books/$id/borrow"
+                        }
+                      }
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isOk)
+                        .andExpect(content().contentType(HAL_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+            @Test fun `returns error response (404) if book was not found`() {
+                val unknownId = BookId.generate()
+                val request = put("/api/books/$unknownId/numberOfPages")
+                        .header("X-Correlation-ID", correlationId)
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(""" { "numberOfPages": 128 } """)
+                val expectedResponse = """
+                    {
+                      "status": 404,
+                      "error": "Not Found",
+                      "timestamp": "2017-08-20T12:34:56.789Z",
+                      "correlationId": "$correlationId",
+                      "message": "The book with ID: $unknownId does not exist!"
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isNotFound)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+            @Test fun `returns error response (400) if request content invalid`() {
+                val idValue = BookId.generate().toString()
+                val request = put("/api/books/$idValue/numberOfPages")
+                        .header("X-Correlation-ID", correlationId)
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(" { } ")
+                val expectedResponse = """
+                    {
+                      "status": 400,
+                      "error": "Bad Request",
+                      "timestamp": "2017-08-20T12:34:56.789Z",
+                      "correlationId": "$correlationId",
+                      "message": "The request's body is invalid. See details...",
+                      "details": [ "The field 'numberOfPages' must not be null." ]
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isBadRequest)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+        }
+
+        @Nested inner class `authors` {
+
+            @Test fun `returns response containing updated book if book was found`() {
+                given { bookDataStore.findById(id) }.willReturn(bookRecord)
+
+                val request = put("/api/books/$id/authors")
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(""" { "authors": ["Foo", "Bar"] } """)
+                val expectedResponse = """
+                    {
+                      "isbn": "${book.isbn}",
+                      "title": "${book.title}",
+                      "authors": ["Foo", "Bar"],
+                      "numberOfPages": ${book.numberOfPages},
+                      "_links": {
+                        "self": {
+                          "href": "http://localhost/api/books/$id"
+                        },
+                        "delete": {
+                          "href": "http://localhost/api/books/$id"
+                        },
+                        "borrow": {
+                          "href": "http://localhost/api/books/$id/borrow"
+                        }
+                      }
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isOk)
+                        .andExpect(content().contentType(HAL_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+            @Test fun `returns error response (404) if book was not found`() {
+                val unknownId = BookId.generate()
+                val request = put("/api/books/$unknownId/authors")
+                        .header("X-Correlation-ID", correlationId)
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(""" { "authors": ["Foo", "Bar"] } """)
+                val expectedResponse = """
+                    {
+                      "status": 404,
+                      "error": "Not Found",
+                      "timestamp": "2017-08-20T12:34:56.789Z",
+                      "correlationId": "$correlationId",
+                      "message": "The book with ID: $unknownId does not exist!"
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isNotFound)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+            @Test fun `returns error response (400) if request content invalid`() {
+                val idValue = BookId.generate().toString()
+                val request = put("/api/books/$idValue/authors")
+                        .header("X-Correlation-ID", correlationId)
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(" { } ")
+                val expectedResponse = """
+                    {
+                      "status": 400,
+                      "error": "Bad Request",
+                      "timestamp": "2017-08-20T12:34:56.789Z",
+                      "correlationId": "$correlationId",
+                      "message": "The request's body is invalid. See details...",
+                      "details": [ "The field 'authors' must not be empty." ]
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isBadRequest)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+        }
+
+    }
+
+    @Nested inner class `delete book property by ID` {
+
+        val id = BookId.generate()
+        val book = Books.CLEAN_CODE
+        val bookRecord = availableBook(id, book)
+
+        @Nested inner class `number of pages` {
+
+            @Test fun `returns response containing updated book if book was found`() {
+                given { bookDataStore.findById(id) }.willReturn(bookRecord)
+
+                val request = delete("/api/books/$id/numberOfPages")
+                val expectedResponse = """
+                    {
+                      "isbn": "${book.isbn}",
+                      "title": "${book.title}",
+                      "authors": ${book.authors.toJson()},
+                      "_links": {
+                        "self": {
+                          "href": "http://localhost/api/books/$id"
+                        },
+                        "delete": {
+                          "href": "http://localhost/api/books/$id"
+                        },
+                        "borrow": {
+                          "href": "http://localhost/api/books/$id/borrow"
+                        }
+                      }
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isOk)
+                        .andExpect(content().contentType(HAL_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+            @Test fun `returns error response (404) if book was not found`() {
+                val unknownId = BookId.generate()
+                val request = delete("/api/books/$unknownId/numberOfPages")
+                        .header("X-Correlation-ID", correlationId)
+                val expectedResponse = """
+                    {
+                      "status": 404,
+                      "error": "Not Found",
+                      "timestamp": "2017-08-20T12:34:56.789Z",
+                      "correlationId": "$correlationId",
+                      "message": "The book with ID: $unknownId does not exist!"
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isNotFound)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+        }
+
+        @Nested inner class `authors` {
+
+            @Test fun `returns response containing updated book if book was found`() {
+                given { bookDataStore.findById(id) }.willReturn(bookRecord)
+
+                val request = delete("/api/books/$id/authors")
+                val expectedResponse = """
+                    {
+                      "isbn": "${book.isbn}",
+                      "title": "${book.title}",
+                      "authors": [],
+                      "numberOfPages": ${book.numberOfPages},
+                      "_links": {
+                        "self": {
+                          "href": "http://localhost/api/books/$id"
+                        },
+                        "delete": {
+                          "href": "http://localhost/api/books/$id"
+                        },
+                        "borrow": {
+                          "href": "http://localhost/api/books/$id/borrow"
+                        }
+                      }
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isOk)
+                        .andExpect(content().contentType(HAL_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+            @Test fun `returns error response (404) if book was not found`() {
+                val unknownId = BookId.generate()
+                val request = delete("/api/books/$unknownId/authors")
+                        .header("X-Correlation-ID", correlationId)
+                val expectedResponse = """
+                    {
+                      "status": 404,
+                      "error": "Not Found",
+                      "timestamp": "2017-08-20T12:34:56.789Z",
+                      "correlationId": "$correlationId",
+                      "message": "The book with ID: $unknownId does not exist!"
+                    }
+                """
+                mockMvc.perform(request)
+                        .andExpect(status().isNotFound)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
+            }
+
+        }
+
+    }
+
     @Nested inner class `borrow book by ID` {
 
         @Test fun `returns response containing updated book if book was found`() {
             val id = BookId.generate()
-            val idValue = id.toString()
-            val book = availableBook(
-                    id = idValue,
-                    book = Books.CLEAN_CODE
-            )
+            val book = availableBook(id = id, book = Books.CLEAN_CODE)
             given { bookDataStore.findById(id) }.willReturn(book)
 
-            val request = post("/api/books/$idValue/borrow")
+            val request = post("/api/books/$id/borrow")
                     .contentType(APPLICATION_JSON_UTF8)
                     .content(""" { "borrower": "Uncle Bob" } """)
             val expectedResponse = """
@@ -474,13 +814,13 @@ internal class BooksControllerIntTest {
                   },
                   "_links": {
                     "self": {
-                      "href": "http://localhost/api/books/$idValue"
+                      "href": "http://localhost/api/books/$id"
                     },
                     "delete": {
-                      "href": "http://localhost/api/books/$idValue"
+                      "href": "http://localhost/api/books/$id"
                     },
                     "return": {
-                      "href": "http://localhost/api/books/$idValue/return"
+                      "href": "http://localhost/api/books/$id/return"
                     }
                   }
                 }
@@ -493,16 +833,15 @@ internal class BooksControllerIntTest {
 
         @Test fun `returns error response (409) if book already borrowed`() {
             val id = BookId.generate()
-            val idValue = id.toString()
             val borrowedBook = borrowedBook(
-                    id = idValue,
+                    id = id,
                     book = Books.CLEAN_CODE,
                     borrowedBy = "Uncle Bob",
                     borrowedOn = "2017-08-20T12:34:56.789Z"
             )
             given { bookDataStore.findById(id) }.willReturn(borrowedBook)
 
-            val request = post("/api/books/$idValue/borrow")
+            val request = post("/api/books/$id/borrow")
                     .header("X-Correlation-ID", correlationId)
                     .contentType(APPLICATION_JSON_UTF8)
                     .content(""" { "borrower": "Uncle Bob" } """)
@@ -512,7 +851,7 @@ internal class BooksControllerIntTest {
                   "error": "Conflict",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$correlationId",
-                  "message": "The book with ID: $idValue is already borrowed!"
+                  "message": "The book with ID: $id is already borrowed!"
                 }
             """
             mockMvc.perform(request)
@@ -608,16 +947,15 @@ internal class BooksControllerIntTest {
 
         @Test fun `returns response containing updated book if book was found`() {
             val id = BookId.generate()
-            val idValue = id.toString()
             val book = borrowedBook(
-                    id = idValue,
+                    id = id,
                     book = Books.CLEAN_CODE,
                     borrowedBy = "Uncle Bob",
                     borrowedOn = "2017-08-20T12:34:56.789Z"
             )
             given { bookDataStore.findById(id) }.willReturn(book)
 
-            val request = post("/api/books/$idValue/return")
+            val request = post("/api/books/$id/return")
             val expectedResponse = """
                 {
                   "isbn": "${Books.CLEAN_CODE.isbn}",
@@ -626,13 +964,13 @@ internal class BooksControllerIntTest {
                   "numberOfPages": ${Books.CLEAN_CODE.numberOfPages},
                   "_links": {
                     "self": {
-                      "href": "http://localhost/api/books/$idValue"
+                      "href": "http://localhost/api/books/$id"
                     },
                     "delete": {
-                      "href": "http://localhost/api/books/$idValue"
+                      "href": "http://localhost/api/books/$id"
                     },
                     "borrow": {
-                      "href": "http://localhost/api/books/$idValue/borrow"
+                      "href": "http://localhost/api/books/$id/borrow"
                     }
                   }
                 }
@@ -645,14 +983,10 @@ internal class BooksControllerIntTest {
 
         @Test fun `returns error response (409) if book already returned`() {
             val id = BookId.generate()
-            val idValue = id.toString()
-            val availableBook = availableBook(
-                    id = idValue,
-                    book = Books.CLEAN_CODE
-            )
+            val availableBook = availableBook(id = id, book = Books.CLEAN_CODE)
             given { bookDataStore.findById(id) }.willReturn(availableBook)
 
-            val request = post("/api/books/$idValue/return")
+            val request = post("/api/books/$id/return")
                     .header("X-Correlation-ID", correlationId)
             val expectedResponse = """
                 {
@@ -660,7 +994,7 @@ internal class BooksControllerIntTest {
                   "error": "Conflict",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$correlationId",
-                  "message": "The book with ID: $idValue was already returned!"
+                  "message": "The book with ID: $id was already returned!"
                 }
             """
             mockMvc.perform(request)
@@ -709,14 +1043,9 @@ internal class BooksControllerIntTest {
 
     }
 
-    private fun borrowedBook(id: String, book: Book, borrowedBy: String, borrowedOn: String): BookRecord {
-        val bookEntity = availableBook(id, book)
-        bookEntity.borrow(Borrower(borrowedBy), OffsetDateTime.parse(borrowedOn))
-        return bookEntity
-    }
-
-    private fun availableBook(id: String, book: Book): BookRecord {
-        return BookRecord(BookId.from(id), book)
+    private fun availableBook(id: BookId, book: Book) = BookRecord(id, book)
+    private fun borrowedBook(id: BookId, book: Book, borrowedBy: String, borrowedOn: String) = availableBook(id, book).apply {
+        borrow(Borrower(borrowedBy), OffsetDateTime.parse(borrowedOn))
     }
 
     private fun List<Author>.toJson() = joinToString(separator = "\", \"", prefix = "[\"", postfix = "\"]")
