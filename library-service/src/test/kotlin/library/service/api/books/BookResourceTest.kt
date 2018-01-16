@@ -17,6 +17,17 @@ internal class BookResourceTest {
             val cut = BookResource(
                     isbn = "0123456789",
                     title = "Hello World",
+                    authors = null,
+                    borrowed = null
+            )
+            assertJsonSerializable(cut)
+        }
+
+        @Test fun `empty author instance`() {
+            val cut = BookResource(
+                    isbn = "0123456789",
+                    title = "Hello World",
+                    authors = emptyList(),
                     borrowed = null
             )
             assertJsonSerializable(cut)
@@ -26,6 +37,7 @@ internal class BookResourceTest {
             val cut = BookResource(
                     isbn = "0123456789",
                     title = "Hello World",
+                    authors = listOf("Author #1", "Author #2"),
                     borrowed = Borrowed(
                             by = "Someone",
                             on = "2017-08-20T12:34:56.789Z"

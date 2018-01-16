@@ -1,5 +1,6 @@
 package library.service.business.books.domain.composites
 
+import library.service.business.books.domain.types.Author
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
 
@@ -8,8 +9,10 @@ import library.service.business.books.domain.types.Title
  *
  * @see Isbn13
  * @see Title
+ * @see Author
  */
 data class Book(
         val isbn: Isbn13,
-        val title: Title
+        val title: Title,
+        val authors: List<Author>
 )

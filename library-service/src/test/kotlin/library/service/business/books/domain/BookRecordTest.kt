@@ -21,7 +21,7 @@ import java.time.OffsetDateTime
 @UnitTest
 internal class BookRecordTest {
 
-    val book = Book(Isbn13("9780007507672"), Title("A Knight of the Seven Kingdoms"))
+    val book = Books.A_KNIGHT_OF_THE_SEVEN_KINGDOMS
     val bookId = BookId.generate()
 
     val borrowed = Borrowed(Borrower("Duncan the Tall"), OffsetDateTime.now())

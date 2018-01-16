@@ -9,6 +9,7 @@ data class BookDocument(
         @Id val id: UUID,
         val isbn: String,
         val title: String,
+        val authors: List<String>?,
         val borrowed: BorrowedState?
 )
 

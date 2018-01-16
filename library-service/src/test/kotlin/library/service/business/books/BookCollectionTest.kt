@@ -78,7 +78,7 @@ internal class BookCollectionTest {
     @Nested inner class `getting a book` {
 
         val id = BookId.generate()
-        val book = Book(Isbn13("0123456789012"), Title("Hello World"))
+        val book = Books.THE_DARK_TOWER_I
         val bookRecord = BookRecord(id, book)
 
         @Test fun `returns it if it was found in data store`() {
@@ -99,8 +99,8 @@ internal class BookCollectionTest {
     @Nested inner class `getting all books` {
 
         @Test fun `delegates directly to data store`() {
-            val bookRecord1 = BookRecord(BookId.generate(), Book(Isbn13("0123456789012"), Title("Hello World #1")))
-            val bookRecord2 = BookRecord(BookId.generate(), Book(Isbn13("1234567890123"), Title("Hello World #2")))
+            val bookRecord1 = BookRecord(BookId.generate(), Books.THE_DARK_TOWER_II)
+            val bookRecord2 = BookRecord(BookId.generate(), Books.THE_DARK_TOWER_III)
             given { dataStore.findAll() } willReturn { listOf(bookRecord1, bookRecord2) }
 
             val allBooks = cut.getAllBooks()
@@ -113,7 +113,7 @@ internal class BookCollectionTest {
     @Nested inner class `removing a book` {
 
         val id = BookId.generate()
-        val book = Book(Isbn13("0123456789012"), Title("Hello World"))
+        val book = Books.THE_DARK_TOWER_IV
         val bookRecord = BookRecord(id, book)
 
         @Test fun `deletes it from the data store if found`() {
@@ -151,7 +151,7 @@ internal class BookCollectionTest {
     @Nested inner class `borrowing a book` {
 
         val id = BookId.generate()
-        val book = Book(Isbn13("0123456789012"), Title("Hello World"))
+        val book = Books.THE_DARK_TOWER_V
         val bookRecord = BookRecord(id, book)
 
         @Test fun `changes its state and updates it in the data store`() {
@@ -204,7 +204,7 @@ internal class BookCollectionTest {
     @Nested inner class `returning a book` {
 
         val id = BookId.generate()
-        val book = Book(Isbn13("0123456789012"), Title("Hello World"))
+        val book = Books.THE_DARK_TOWER_VI
         val bookRecord = BookRecord(id, book).apply {
             borrow(Borrower("Someone"), OffsetDateTime.now())
         }

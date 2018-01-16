@@ -11,8 +11,6 @@ import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.events.BookEvent
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
 import library.service.business.events.EventDispatcher
 import library.service.security.UserContext
 import org.junit.jupiter.api.BeforeEach
@@ -36,6 +34,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import utils.Books
 import utils.classification.IntegrationTest
 import utils.clockWithFixedTime
 import java.time.Clock
@@ -89,13 +88,11 @@ internal class BooksControllerIntTest {
         @Test fun `returns response containing all books`() {
             val availableBook = availableBook(
                     id = "883a2931-325b-4482-8972-8cb6f7d33816",
-                    isbn = "9780132350884",
-                    title = "Clean Code: A Handbook of Agile Software Craftsmanship"
+                    book = Books.CLEAN_CODE
             )
             val borrowedBook = borrowedBook(
                     id = "53397dc0-932d-4198-801a-3e00b2742ba7",
-                    isbn = "9780137081073",
-                    title = "The Clean Coder: A Code of Conduct for Professional Programmers",
+                    book = Books.CLEAN_CODER,
                     borrowedBy = "Uncle Bob",
                     borrowedOn = "2017-08-20T12:34:56.789Z"
             )
@@ -107,8 +104,9 @@ internal class BooksControllerIntTest {
                   "_embedded": {
                     "books": [
                       {
-                        "isbn": "9780132350884",
-                        "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+                        "isbn": "${Books.CLEAN_CODE.isbn}",
+                        "title": "${Books.CLEAN_CODE.title}",
+                        "authors": ["${Books.CLEAN_CODE.authors[0]}"],
                         "_links": {
                           "self": {
                             "href": "http://localhost/api/books/883a2931-325b-4482-8972-8cb6f7d33816"
@@ -122,8 +120,9 @@ internal class BooksControllerIntTest {
                         }
                       },
                       {
-                        "isbn": "9780137081073",
-                        "title": "The Clean Coder: A Code of Conduct for Professional Programmers",
+                        "isbn": "${Books.CLEAN_CODER.isbn}",
+                        "title": "${Books.CLEAN_CODER.title}",
+                        "authors": ["${Books.CLEAN_CODER.authors[0]}"],
                         "borrowed": {
                           "by": "Uncle Bob",
                           "on": "2017-08-20T12:34:56.789Z"
@@ -177,6 +176,7 @@ internal class BooksControllerIntTest {
                 {
                   "isbn": "9780132350884",
                   "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+                  "authors": [],
                   "_links": {
                     "self": {
                       "href": "http://localhost/api/books/$bookId"
@@ -273,16 +273,16 @@ internal class BooksControllerIntTest {
             val idValue = id.toString()
             val availableBook = availableBook(
                     id = idValue,
-                    isbn = "9780132350884",
-                    title = "Clean Code: A Handbook of Agile Software Craftsmanship"
+                    book = Books.CLEAN_CODE
             )
             given { bookDataStore.findById(id) }.willReturn(availableBook)
 
             val request = get("/api/books/$idValue")
             val expectedResponse = """
                 {
-                  "isbn": "9780132350884",
-                  "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+                  "isbn": "${Books.CLEAN_CODE.isbn}",
+                  "title": "${Books.CLEAN_CODE.title}",
+                  "authors": ["${Books.CLEAN_CODE.authors[0]}"],
                   "_links": {
                     "self": {
                       "href": "http://localhost/api/books/$idValue"
@@ -307,8 +307,7 @@ internal class BooksControllerIntTest {
             val idValue = id.toString()
             val borrowedBook = borrowedBook(
                     id = idValue,
-                    isbn = "9780137081073",
-                    title = "The Clean Coder: A Code of Conduct for Professional Programmers",
+                    book = Books.CLEAN_CODER,
                     borrowedBy = "Uncle Bob",
                     borrowedOn = "2017-08-20T12:34:56.789Z"
             )
@@ -317,8 +316,9 @@ internal class BooksControllerIntTest {
             val request = get("/api/books/$idValue")
             val expectedResponse = """
                 {
-                  "isbn": "9780137081073",
-                  "title": "The Clean Coder: A Code of Conduct for Professional Programmers",
+                  "isbn": "${Books.CLEAN_CODER.isbn}",
+                  "title": "${Books.CLEAN_CODER.title}",
+                  "authors": ["${Books.CLEAN_CODER.authors[0]}"],
                   "borrowed": {
                     "by": "Uncle Bob",
                     "on": "2017-08-20T12:34:56.789Z"
@@ -392,8 +392,7 @@ internal class BooksControllerIntTest {
             val idValue = id.toString()
             val book = availableBook(
                     id = idValue,
-                    isbn = "9780132350884",
-                    title = "Clean Code: A Handbook of Agile Software Craftsmanship"
+                    book = Books.CLEAN_CODE
             )
             given { bookDataStore.findById(id) }.willReturn(book)
 
@@ -451,8 +450,7 @@ internal class BooksControllerIntTest {
             val idValue = id.toString()
             val book = availableBook(
                     id = idValue,
-                    isbn = "9780132350884",
-                    title = "Clean Code: A Handbook of Agile Software Craftsmanship"
+                    book = Books.CLEAN_CODE
             )
             given { bookDataStore.findById(id) }.willReturn(book)
 
@@ -461,8 +459,9 @@ internal class BooksControllerIntTest {
                     .content(""" { "borrower": "Uncle Bob" } """)
             val expectedResponse = """
                 {
-                  "isbn": "9780132350884",
-                  "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+                  "isbn": "${Books.CLEAN_CODE.isbn}",
+                  "title": "${Books.CLEAN_CODE.title}",
+                  "authors": ["${Books.CLEAN_CODE.authors[0]}"],
                   "borrowed": {
                     "by": "Uncle Bob",
                     "on": "2017-08-20T12:34:56.789Z"
@@ -491,8 +490,7 @@ internal class BooksControllerIntTest {
             val idValue = id.toString()
             val borrowedBook = borrowedBook(
                     id = idValue,
-                    isbn = "9780132350884",
-                    title = "Clean Code: A Handbook of Agile Software Craftsmanship",
+                    book = Books.CLEAN_CODE,
                     borrowedBy = "Uncle Bob",
                     borrowedOn = "2017-08-20T12:34:56.789Z"
             )
@@ -607,8 +605,7 @@ internal class BooksControllerIntTest {
             val idValue = id.toString()
             val book = borrowedBook(
                     id = idValue,
-                    isbn = "9780132350884",
-                    title = "Clean Code: A Handbook of Agile Software Craftsmanship",
+                    book = Books.CLEAN_CODE,
                     borrowedBy = "Uncle Bob",
                     borrowedOn = "2017-08-20T12:34:56.789Z"
             )
@@ -617,8 +614,9 @@ internal class BooksControllerIntTest {
             val request = post("/api/books/$idValue/return")
             val expectedResponse = """
                 {
-                  "isbn": "9780132350884",
-                  "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+                  "isbn": "${Books.CLEAN_CODE.isbn}",
+                  "title": "${Books.CLEAN_CODE.title}",
+                  "authors": ["${Books.CLEAN_CODE.authors[0]}"],
                   "_links": {
                     "self": {
                       "href": "http://localhost/api/books/$idValue"
@@ -643,8 +641,7 @@ internal class BooksControllerIntTest {
             val idValue = id.toString()
             val availableBook = availableBook(
                     id = idValue,
-                    isbn = "9780132350884",
-                    title = "Clean Code: A Handbook of Agile Software Craftsmanship"
+                    book = Books.CLEAN_CODE
             )
             given { bookDataStore.findById(id) }.willReturn(availableBook)
 
@@ -705,14 +702,14 @@ internal class BooksControllerIntTest {
 
     }
 
-    private fun borrowedBook(id: String, isbn: String, title: String, borrowedBy: String, borrowedOn: String): BookRecord {
-        val bookEntity = availableBook(id, isbn, title)
+    private fun borrowedBook(id: String, book: Book, borrowedBy: String, borrowedOn: String): BookRecord {
+        val bookEntity = availableBook(id, book)
         bookEntity.borrow(Borrower(borrowedBy), OffsetDateTime.parse(borrowedOn))
         return bookEntity
     }
 
-    private fun availableBook(id: String, isbn: String, title: String): BookRecord {
-        return BookRecord(BookId.from(id), Book(Isbn13(isbn), Title(title)))
+    private fun availableBook(id: String, book: Book): BookRecord {
+        return BookRecord(BookId.from(id), book)
     }
 
 }

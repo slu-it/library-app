@@ -40,7 +40,11 @@ class BooksController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun postBook(@Valid @RequestBody body: CreateBookRequestBody): BookResource {
-        val book = Book(Isbn13.parse(body.isbn!!), Title(body.title!!))
+        val book = Book(
+                isbn = Isbn13.parse(body.isbn!!),
+                title = Title(body.title!!),
+                authors = emptyList()
+        )
         val bookRecord = collection.addBook(book)
         return assembler.toResource(bookRecord)
     }

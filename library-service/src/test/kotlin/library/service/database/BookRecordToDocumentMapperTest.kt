@@ -32,6 +32,7 @@ internal class BookRecordToDocumentMapperTest {
         with(cut.map(BookRecord(bookId, book))) {
             assertThat(isbn).isEqualTo("9780261102361")
             assertThat(title).isEqualTo("The Lord of the Rings 2. The Two Towers")
+            assertThat(authors).containsExactly("J.R.R. Tolkien")
         }
     }
 

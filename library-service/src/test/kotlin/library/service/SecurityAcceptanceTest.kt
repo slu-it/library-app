@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import utils.Books
 import utils.classification.AcceptanceTest
 import utils.executeAsUserWithRole
 import utils.extensions.UseDockerToRunMongoDB
@@ -38,7 +39,7 @@ import utils.extensions.UseDockerToRunRabbitMQ
 @ActiveProfiles("test")
 internal class SecurityAcceptanceTest {
 
-    val book = Book(Isbn13("9780553573404"), Title("A Game of Thrones: A Song of Ice and Fire (1)"))
+    val book = Books.THE_MARTIAN
 
     @LocalServerPort
     var port: Int = 8080

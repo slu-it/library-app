@@ -1,14 +1,12 @@
 package library.service.api.books
 
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.given
 import library.service.business.books.BookCollection
 import library.service.business.books.domain.BookRecord
-import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.states.Borrowed
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
@@ -26,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import utils.Books
 import utils.classification.IntegrationTest
 import utils.document
 import java.time.OffsetDateTime
@@ -48,7 +47,7 @@ internal class BooksControllerDocTest {
 
     @Test fun `post book - created`() {
         val createdBook = availableBook()
-        given { bookCollection.addBook(createdBook.book) }.willReturn(createdBook)
+        given { bookCollection.addBook(any()) }.willReturn(createdBook)
 
         val request = post("/api/books")
                 .contentType("application/json")
@@ -214,10 +213,7 @@ internal class BooksControllerDocTest {
     private fun borrower() = Borrower("slu")
 
     private fun availableBook(id: BookId = BookId.generate()): BookRecord {
-        val isbn = Isbn13("9780132350882")
-        val title = Title("Clean Code: A Handbook of Agile Software Craftsmanship")
-        val book = Book(isbn, title)
-        return BookRecord(id, book)
+        return BookRecord(id, Books.CLEAN_CODE)
     }
 
 }

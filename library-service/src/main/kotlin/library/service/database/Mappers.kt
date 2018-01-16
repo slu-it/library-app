@@ -4,10 +4,7 @@ import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.states.Available
 import library.service.business.books.domain.states.Borrowed
-import library.service.business.books.domain.types.BookId
-import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
+import library.service.business.books.domain.types.*
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -25,6 +22,7 @@ class BookRecordToDocumentMapper : Mapper<BookRecord, BookDocument> {
                 id = source.id.toUuid(),
                 isbn = "${source.book.isbn}",
                 title = "${source.book.title}",
+                authors = source.book.authors.map { it.toString() },
                 borrowed = when (bookState) {
                     is Available -> null
                     is Borrowed -> BorrowedState(
@@ -46,7 +44,8 @@ class BookDocumentToRecordMapper : Mapper<BookDocument, BookRecord> {
                 id = BookId(source.id),
                 book = Book(
                         isbn = Isbn13(source.isbn),
-                        title = Title(source.title)
+                        title = Title(source.title),
+                        authors = source.authors?.map { Author(it) } ?: emptyList()
                 ),
                 initialState = when (borrowed) {
                     null -> Available
