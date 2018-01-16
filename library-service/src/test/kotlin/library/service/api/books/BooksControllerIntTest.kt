@@ -9,6 +9,7 @@ import library.service.business.books.BookIdGenerator
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.events.BookEvent
+import library.service.business.books.domain.types.Author
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.events.EventDispatcher
@@ -106,7 +107,7 @@ internal class BooksControllerIntTest {
                       {
                         "isbn": "${Books.CLEAN_CODE.isbn}",
                         "title": "${Books.CLEAN_CODE.title}",
-                        "authors": ["${Books.CLEAN_CODE.authors[0]}"],
+                        "authors": ${Books.CLEAN_CODE.authors.toJson()},
                         "numberOfPages": ${Books.CLEAN_CODE.numberOfPages},
                         "_links": {
                           "self": {
@@ -123,7 +124,7 @@ internal class BooksControllerIntTest {
                       {
                         "isbn": "${Books.CLEAN_CODER.isbn}",
                         "title": "${Books.CLEAN_CODER.title}",
-                        "authors": ["${Books.CLEAN_CODER.authors[0]}"],
+                        "authors": ${Books.CLEAN_CODER.authors.toJson()},
                         "numberOfPages": ${Books.CLEAN_CODER.numberOfPages},
                         "borrowed": {
                           "by": "Uncle Bob",
@@ -284,7 +285,7 @@ internal class BooksControllerIntTest {
                 {
                   "isbn": "${Books.CLEAN_CODE.isbn}",
                   "title": "${Books.CLEAN_CODE.title}",
-                  "authors": ["${Books.CLEAN_CODE.authors[0]}"],
+                  "authors": ${Books.CLEAN_CODE.authors.toJson()},
                   "numberOfPages": ${Books.CLEAN_CODE.numberOfPages},
                   "_links": {
                     "self": {
@@ -321,7 +322,7 @@ internal class BooksControllerIntTest {
                 {
                   "isbn": "${Books.CLEAN_CODER.isbn}",
                   "title": "${Books.CLEAN_CODER.title}",
-                  "authors": ["${Books.CLEAN_CODER.authors[0]}"],
+                  "authors": ${Books.CLEAN_CODER.authors.toJson()},
                   "numberOfPages": ${Books.CLEAN_CODER.numberOfPages},
                   "borrowed": {
                     "by": "Uncle Bob",
@@ -465,7 +466,7 @@ internal class BooksControllerIntTest {
                 {
                   "isbn": "${Books.CLEAN_CODE.isbn}",
                   "title": "${Books.CLEAN_CODE.title}",
-                  "authors": ["${Books.CLEAN_CODE.authors[0]}"],
+                  "authors": ${Books.CLEAN_CODE.authors.toJson()},
                   "numberOfPages": ${Books.CLEAN_CODE.numberOfPages},
                   "borrowed": {
                     "by": "Uncle Bob",
@@ -621,7 +622,7 @@ internal class BooksControllerIntTest {
                 {
                   "isbn": "${Books.CLEAN_CODE.isbn}",
                   "title": "${Books.CLEAN_CODE.title}",
-                  "authors": ["${Books.CLEAN_CODE.authors[0]}"],
+                  "authors": ${Books.CLEAN_CODE.authors.toJson()},
                   "numberOfPages": ${Books.CLEAN_CODE.numberOfPages},
                   "_links": {
                     "self": {
@@ -717,5 +718,7 @@ internal class BooksControllerIntTest {
     private fun availableBook(id: String, book: Book): BookRecord {
         return BookRecord(BookId.from(id), book)
     }
+
+    private fun List<Author>.toJson() = joinToString(separator = "\", \"", prefix = "[\"", postfix = "\"]")
 
 }

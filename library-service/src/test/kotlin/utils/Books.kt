@@ -12,6 +12,7 @@ object Books {
     private val ANDY_WEIR = Author("Andy Weir")
     private val GEORGE_RR_MARTIN = Author("George R.R. Martin")
     private val ROBERT_MARTIN = Author("Robert C. Martin")
+    private val DEAB_WAMPLER = Author("Dean Wampler")
 
     val THE_LORD_OF_THE_RINGS_1 = Book(
             isbn = Isbn13("9780261102354"),
@@ -92,7 +93,7 @@ object Books {
     val CLEAN_CODE = Book(
             isbn = Isbn13("9780132350884"),
             title = Title("Clean Code: A Handbook of Agile Software Craftsmanship"),
-            authors = listOf(ROBERT_MARTIN),
+            authors = listOf(ROBERT_MARTIN, DEAB_WAMPLER),
             numberOfPages = 462
     )
     val CLEAN_CODER = Book(
