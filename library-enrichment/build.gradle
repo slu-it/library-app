@@ -36,6 +36,10 @@ compileTestKotlin {
 	kotlinOptions.jvmTarget = "1.8"
 }
 
+springBoot  {
+    buildInfo()
+}
+
 repositories {
 	mavenCentral()
 	maven { url "https://repo.spring.io/snapshot" }
@@ -49,6 +53,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 	compile("org.springframework.boot:spring-boot-starter-aop")
 	compile("org.springframework.boot:spring-boot-starter-amqp")
+    compile("org.springframework.boot:spring-boot-starter-security")
 	compile("org.springframework.boot:spring-boot-starter-web")
 
 	compile("com.fasterxml.jackson.module:jackson-module-kotlin")

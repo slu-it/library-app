@@ -9,6 +9,11 @@ logging:
     library.enrichment: debug
     utils.feign: debug
 
+users:
+  admin:
+    username: "admin"
+    password: "admin"
+
 spring:
   main:
     banner-mode: "off"

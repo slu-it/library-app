@@ -6,6 +6,6 @@ applications:
     instances: 1
     memory: 768M
     disk_quota: 256M
-    no-route: true
+    host: nt-ca-aqe-library-enrichment
     services:
       - rabbit-mq
