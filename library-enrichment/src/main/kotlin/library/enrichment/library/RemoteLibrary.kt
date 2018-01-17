@@ -10,11 +10,17 @@ class RemoteLibrary(
 ) : Library {
 
     override fun updateBookData(bookId: String, updateData: BookData) {
-        val payload = UpdateBookPayload(
-                authors = updateData.authors,
-                numberOfPages = updateData.numberOfPages
-        )
-        libraryClient.updateBook(bookId, payload)
+
+        val authors = updateData.authors
+        if (authors.isNotEmpty()) {
+            libraryClient.updateAuthors(bookId, UpdateAuthors(authors))
+        }
+
+        val numberOfPages = updateData.numberOfPages
+        if (numberOfPages != null) {
+            libraryClient.updateNumberOfPages(bookId, UpdateNumberOfPages(numberOfPages))
+        }
+
     }
 
 }

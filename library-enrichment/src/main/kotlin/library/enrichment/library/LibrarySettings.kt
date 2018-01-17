@@ -8,4 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 class LibrarySettings {
     lateinit var url: String
     lateinit var logLevel: Logger.Level
+    lateinit var username: String
+    lateinit var password: String
 }

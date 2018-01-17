@@ -1,6 +1,7 @@
 package library.enrichment.library
 
 import feign.Feign
+import feign.auth.BasicAuthRequestInterceptor
 import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import feign.slf4j.Slf4jLogger
@@ -20,6 +21,7 @@ class LibraryConfiguration {
                 .decoder(JacksonDecoder())
                 .logger(Slf4jLogger("utils.feign.library"))
                 .logLevel(settings.logLevel)
+                .requestInterceptor(BasicAuthRequestInterceptor(settings.username, settings.password))
                 .target(target)
     }
 

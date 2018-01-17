@@ -1,0 +1,11 @@
+---
+applications:
+  - name: library-enrichment
+    buildpack: https://github.com/cloudfoundry/java-buildpack.git#v4.7.1
+    path: build/libs/library-enrichment.jar
+    instances: 1
+    memory: 768M
+    disk_quota: 256M
+    no-route: true
+    services:
+      - rabbit-mq
