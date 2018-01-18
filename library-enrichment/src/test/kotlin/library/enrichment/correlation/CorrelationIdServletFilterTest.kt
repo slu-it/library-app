@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse
 internal class CorrelationIdServletFilterTest {
 
     val correlationIdHolder: CorrelationIdHolder = mock()
-    val cut = CorrelationIdSettingFilter(correlationIdHolder)
+    val cut = CorrelationIdServletFilter(correlationIdHolder)
 
     val request: HttpServletRequest = mock()
     val response: HttpServletResponse = mock()

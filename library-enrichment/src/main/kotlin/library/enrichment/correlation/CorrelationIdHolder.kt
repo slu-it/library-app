@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
  *
  * The correlation ID is a unique string marking logs, exceptions etc as
  * belonging to the same logical operation. It is usually set by the
- * [CorrelationIdSettingFilter] as part of the service's HTTP request and
+ * [CorrelationIdServletFilter] as part of the service's HTTP request and
  * response handling or by the
  */
 @Component

@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse
  * library.
  */
 @Component
-class CorrelationIdSettingFilter(
+class CorrelationIdServletFilter(
         private val correlationIdHolder: CorrelationIdHolder
 ) : GenericFilterBean() {
 
