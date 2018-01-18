@@ -10,7 +10,7 @@ import library.service.business.books.domain.types.Borrower
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
 import library.service.business.books.exceptions.BookAlreadyReturnedException
 import library.service.business.books.exceptions.BookNotFoundException
-import library.service.api.correlation.CorrelationIdHolder
+import library.service.correlation.CorrelationIdHolder
 import library.service.security.UserContext
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

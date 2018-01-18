@@ -1,6 +1,6 @@
 package library.service.logging
 
-import library.service.api.correlation.CorrelationIdHolder
+import library.service.correlation.CorrelationIdHolder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

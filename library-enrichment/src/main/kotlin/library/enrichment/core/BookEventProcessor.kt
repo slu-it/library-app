@@ -1,15 +1,17 @@
 package library.enrichment.core
 
-import library.enrichment.common.logging.logger
+import library.enrichment.logging.LogMethodEntryAndExit
+import library.enrichment.logging.logger
 import org.springframework.stereotype.Component
 
 @Component
+@LogMethodEntryAndExit
 class BookEventProcessor(
-        private val library: Library,
-        private val dataSources: List<BookDataSource>
+        private val dataSources: List<BookDataSource>,
+        private val library: Library
 ) {
 
-    private val log = BookEventProcessor::class.logger()
+    private val log = BookEventProcessor::class.logger
 
     fun bookWasAdded(event: BookAddedEvent) {
         log.info("processing book added event: {}", event)

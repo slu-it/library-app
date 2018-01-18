@@ -34,10 +34,12 @@ fun readFile(filePath: String): String {
     }
 }
 
-
 fun <T : Throwable> assertThrows(expectedType: KClass<T>, executable: () -> Unit): T {
     return Assertions.assertThrows(expectedType.java, executable)
 }
+
+
+fun LogRecord.firstEntry() = entries.findFirst().orElseThrow { IllegalStateException("no log entries") }
 
 fun LogRecord.warningMessages() = getEntries(LogLevel.WARN)
         .map { it.message }

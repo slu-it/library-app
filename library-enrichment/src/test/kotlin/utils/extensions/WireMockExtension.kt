@@ -2,7 +2,7 @@ package utils.extensions
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
-import library.enrichment.common.logging.logger
+import library.enrichment.logging.logger
 import org.junit.jupiter.api.extension.*
 
 @Retention
@@ -15,7 +15,7 @@ class WireMockExtension : BeforeAllCallback, BeforeEachCallback, AfterAllCallbac
     private companion object {
         val EXTENSION_NAMESPACE = ExtensionContext.Namespace.create("WireMockExtension")
         val SERVER_PROPERTY = "server"
-        val log = WireMockExtension::class.logger()
+        val log = WireMockExtension::class.logger
     }
 
     override fun beforeAll(context: ExtensionContext) = onlyForInitialContext(context) { store ->

@@ -1,0 +1,15 @@
+info:
+  application: "Library Enrichment (Unsecured)"
+
+management:
+  endpoints:
+    enabled-by-default: true
+    jmx:
+      enabled: true
+      expose: '*'
+    web:
+      enabled: true
+      expose: '*'
+  endpoint:
+    health:
+      show-details: true

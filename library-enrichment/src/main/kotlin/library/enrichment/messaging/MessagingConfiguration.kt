@@ -1,8 +1,6 @@
 package library.enrichment.messaging
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import library.enrichment.core.BookEventProcessor
-import library.enrichment.core.BookAddedEvent
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
@@ -18,10 +16,9 @@ import org.springframework.stereotype.Component
 @Configuration
 internal class MessagingConfiguration(
         private val connectionFactory: ConnectionFactory,
-        private val objectMapper: ObjectMapper,
-        private val processor: BookEventProcessor,
         private val exchange: BookEventExchange,
-        private val queue: BookAddedEventQueue
+        private val queue: BookAddedEventQueue,
+        private val bookAddedMessageListener: BookAddedMessageListener
 ) {
 
     @Bean fun messageConverter(objectMapper: ObjectMapper): MessageConverter
@@ -34,14 +31,9 @@ internal class MessagingConfiguration(
     @Bean fun bookAddedEventBinding(): Binding
             = BindingBuilder.bind(queue).to(exchange).with("book-added")
 
-    @Bean fun bookAddedEventMessageContainer(): SimpleMessageListenerContainer {
-        val listener = JsonConvertingMessageListener(objectMapper, BookAddedEvent::class) {
-            processor.bookWasAdded(it)
-        }
-        return SimpleMessageListenerContainer(connectionFactory).apply {
-            setQueueNames(queue.name)
-            setMessageListener(listener)
-        }
+    @Bean fun bookAddedEventMessageContainer() = SimpleMessageListenerContainer(connectionFactory).apply {
+        setQueueNames(queue.name)
+        setMessageListener(bookAddedMessageListener)
     }
 
     @Component

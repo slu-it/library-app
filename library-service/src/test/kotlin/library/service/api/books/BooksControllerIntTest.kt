@@ -3,7 +3,7 @@ package library.service.api.books
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.willReturn
-import library.service.api.correlation.CorrelationIdHolder
+import library.service.correlation.CorrelationIdHolder
 import library.service.business.books.BookDataStore
 import library.service.business.books.BookIdGenerator
 import library.service.business.books.domain.BookRecord
