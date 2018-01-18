@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component
 
 @Component
 @LogMethodEntryAndExit
-class BookEventProcessor(
+class BookEventHandler(
         private val dataSources: List<BookDataSource>,
         private val library: Library
 ) {
 
-    private val log = BookEventProcessor::class.logger
+    private val log = BookEventHandler::class.logger
 
-    fun bookWasAdded(event: BookAddedEvent) {
+    fun handle(event: BookAddedEvent) {
         log.info("processing book added event: {}", event)
 
         val bookDataSets = gatherBookDataFromSources(event.isbn)
