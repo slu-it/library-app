@@ -18,7 +18,7 @@ internal class MessagingConfiguration(
         private val connectionFactory: ConnectionFactory,
         private val exchange: BookEventExchange,
         private val queue: BookAddedEventQueue,
-        private val messageListener: BookAddedMessageListener
+        private val bookAddedMessageListener: BookAddedMessageListener
 ) {
 
     @Bean fun messageConverter(objectMapper: ObjectMapper): MessageConverter
@@ -33,7 +33,7 @@ internal class MessagingConfiguration(
 
     @Bean fun bookAddedEventMessageContainer() = SimpleMessageListenerContainer(connectionFactory).apply {
         setQueueNames(queue.name)
-        setMessageListener(messageListener)
+        setMessageListener(bookAddedMessageListener)
     }
 
     @Component
