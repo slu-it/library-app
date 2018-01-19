@@ -12,12 +12,13 @@ import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageProperties
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
+import utils.testObjectMapper
 
 
 internal class BookAddedMessageListenerTest {
 
     val correlationIdHolder: CorrelationIdHolder = mock()
-    val objectMapper: ObjectMapper = ObjectMapper().apply { findAndRegisterModules() }
+    val objectMapper = testObjectMapper()
     val handler: BookEventHandler = mock()
 
     val cut = BookAddedMessageListener(correlationIdHolder, objectMapper, handler)

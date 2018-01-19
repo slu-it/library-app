@@ -1,6 +1,5 @@
 package library.enrichment.gateways.library
 
-import library.enrichment.core.BookData
 import library.enrichment.core.Library
 import org.springframework.stereotype.Component
 
@@ -9,18 +8,12 @@ class LibraryAccessor(
         private val libraryClient: LibraryClient
 ) : Library {
 
-    override fun updateBookData(bookId: String, updateData: BookData) {
+    override fun updateAuthors(bookId: String, authors: List<String>) {
+        libraryClient.updateAuthors(bookId, UpdateAuthors(authors))
+    }
 
-        val authors = updateData.authors
-        if (authors.isNotEmpty()) {
-            libraryClient.updateAuthors(bookId, UpdateAuthors(authors))
-        }
-
-        val numberOfPages = updateData.numberOfPages
-        if (numberOfPages != null) {
-            libraryClient.updateNumberOfPages(bookId, UpdateNumberOfPages(numberOfPages))
-        }
-
+    override fun updateNumberOfPages(bookId: String, numberOfPages: Int) {
+        libraryClient.updateNumberOfPages(bookId, UpdateNumberOfPages(numberOfPages))
     }
 
 }

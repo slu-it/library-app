@@ -1,5 +1,6 @@
 package library.enrichment.core
 
 interface Library {
-    fun updateBookData(bookId: String, updateData: BookData)
+    fun updateAuthors(bookId: String, authors: List<String>)
+    fun updateNumberOfPages(bookId: String, numberOfPages: Int)
 }

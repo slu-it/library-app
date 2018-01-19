@@ -1,5 +1,6 @@
 package utils
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import library.enrichment.Application
 import org.junit.jupiter.api.Assertions
 import org.testit.testutils.logrecorder.api.LogLevel
@@ -38,6 +39,7 @@ fun <T : Throwable> assertThrows(expectedType: KClass<T>, executable: () -> Unit
     return Assertions.assertThrows(expectedType.java, executable)
 }
 
+fun testObjectMapper() = ObjectMapper().apply { findAndRegisterModules() }
 
 fun LogRecord.firstEntry() = entries.findFirst().orElseThrow { IllegalStateException("no log entries") }
 

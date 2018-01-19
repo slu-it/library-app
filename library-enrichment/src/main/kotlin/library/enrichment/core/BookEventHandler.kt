@@ -18,8 +18,12 @@ class BookEventHandler(
 
         val bookDataSets = gatherBookDataFromSources(event.isbn)
         if (bookDataSets.isNotEmpty()) {
-            val mergedUpdateData = merge(bookDataSets)
-            library.updateBookData(event.bookId, mergedUpdateData)
+            chooseAuthors(bookDataSets)?.let {
+                library.updateAuthors(event.bookId, it)
+            }
+            chooseNumberOfPages(bookDataSets)?.let {
+                library.updateNumberOfPages(event.bookId, it)
+            }
         }
     }
 
@@ -30,15 +34,9 @@ class BookEventHandler(
         }
     }
 
-    private fun merge(dataSets: List<BookData>) = BookData(
-            authors = chooseAuthors(dataSets),
-            numberOfPages = chooseNumberOfPages(dataSets)
-    )
-
     private fun chooseAuthors(dataSets: Iterable<BookData>) = dataSets
             .map { it.authors }
             .firstOrNull { it.isNotEmpty() }
-            ?: emptyList()
 
     private fun chooseNumberOfPages(dataSets: Iterable<BookData>) = dataSets
             .mapNotNull { it.numberOfPages }

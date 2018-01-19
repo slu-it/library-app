@@ -1,14 +1,14 @@
 package library.enrichment.core
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import utils.testObjectMapper
 import java.util.*
 
 
 internal class BookAddedEventTest {
 
-    val objectMapper = ObjectMapper().apply { findAndRegisterModules() }
+    val objectMapper = testObjectMapper()
 
     @Test fun `can be de-serialized from JSON`() {
         val id = UUID.randomUUID()
