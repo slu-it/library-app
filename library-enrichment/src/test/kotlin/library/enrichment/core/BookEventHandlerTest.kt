@@ -3,9 +3,11 @@ package library.enrichment.core
 import com.nhaarman.mockito_kotlin.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import utils.classification.UnitTest
 import java.util.*
 
 
+@UnitTest
 internal class BookEventHandlerTest {
 
     val event = BookAddedEvent(

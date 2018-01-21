@@ -2,10 +2,12 @@ package library.enrichment.core
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import utils.classification.UnitTest
 import utils.testObjectMapper
 import java.util.*
 
 
+@UnitTest
 internal class BookAddedEventTest {
 
     val objectMapper = testObjectMapper()

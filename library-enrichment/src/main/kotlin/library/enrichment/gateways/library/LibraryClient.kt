@@ -3,16 +3,15 @@ package library.enrichment.gateways.library
 import feign.Headers
 import feign.Param
 import feign.RequestLine
-import feign.Response
 
 @Headers("Content-Type: application/json")
 interface LibraryClient {
 
     @RequestLine("PUT /api/books/{bookId}/authors")
-    fun updateAuthors(@Param("bookId") bookId: String, payload: UpdateAuthors): Response
+    fun updateAuthors(@Param("bookId") bookId: String, payload: UpdateAuthors)
 
     @RequestLine("PUT /api/books/{bookId}/numberOfPages")
-    fun updateNumberOfPages(@Param("bookId") bookId: String, payload: UpdateNumberOfPages): Response
+    fun updateNumberOfPages(@Param("bookId") bookId: String, payload: UpdateNumberOfPages)
 
 }
 

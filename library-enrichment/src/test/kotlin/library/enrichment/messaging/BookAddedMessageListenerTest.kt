@@ -1,6 +1,5 @@
 package library.enrichment.messaging
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockito_kotlin.*
 import library.enrichment.core.BookAddedEvent
 import library.enrichment.core.BookEventHandler
@@ -12,9 +11,11 @@ import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageProperties
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
+import utils.classification.UnitTest
 import utils.testObjectMapper
 
 
+@UnitTest
 internal class BookAddedMessageListenerTest {
 
     val correlationIdHolder: CorrelationIdHolder = mock()
