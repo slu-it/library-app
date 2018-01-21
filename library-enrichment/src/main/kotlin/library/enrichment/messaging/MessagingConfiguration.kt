@@ -1,6 +1,7 @@
 package library.enrichment.messaging
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import library.enrichment.correlation.CorrelationIdMessagePostProcessor
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
@@ -18,6 +19,7 @@ internal class MessagingConfiguration(
         private val connectionFactory: ConnectionFactory,
         private val exchange: BookEventExchange,
         private val queue: BookAddedEventQueue,
+        private val correlationIdMessagePostProcessor: CorrelationIdMessagePostProcessor,
         private val bookAddedMessageListener: BookAddedMessageListener
 ) {
 
@@ -34,6 +36,7 @@ internal class MessagingConfiguration(
     @Bean fun bookAddedEventMessageContainer() = SimpleMessageListenerContainer(connectionFactory).apply {
         setQueueNames(queue.name)
         setMessageListener(bookAddedMessageListener)
+        setAfterReceivePostProcessors(correlationIdMessagePostProcessor)
     }
 
     @Component

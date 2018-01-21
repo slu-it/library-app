@@ -1,11 +1,12 @@
 package library.enrichment.messaging
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.given
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.willThrow
 import library.enrichment.core.BookAddedEvent
 import library.enrichment.core.BookEventHandler
-import library.enrichment.correlation.CorrelationIdHolder
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageProperties
@@ -18,11 +19,10 @@ import utils.testObjectMapper
 @UnitTest
 internal class BookAddedMessageListenerTest {
 
-    val correlationIdHolder: CorrelationIdHolder = mock()
     val objectMapper = testObjectMapper()
     val handler: BookEventHandler = mock()
 
-    val cut = BookAddedMessageListener(correlationIdHolder, objectMapper, handler)
+    val cut = BookAddedMessageListener(objectMapper, handler)
 
     val event = BookAddedEvent(
             id = "event-id",
@@ -34,26 +34,6 @@ internal class BookAddedMessageListenerTest {
         val message = toMessage(event)
         cut.onMessage(message)
         verify(handler).handle(event)
-    }
-
-    @Nested inner class `correlation ids` {
-
-        @Test fun `if the message has no correlation id one will be generated`() {
-            val message = toMessage(event, null)
-
-            cut.onMessage(message)
-
-            verify(correlationIdHolder).set(check {
-                assertThat(it).isNotBlank()
-            })
-        }
-
-        @Test fun `if the message has a correlation id it will be used`() {
-            val message = toMessage(event, "correlation-id")
-            cut.onMessage(message)
-            verify(correlationIdHolder).set("correlation-id")
-        }
-
     }
 
     @RecordLoggers(BookAddedMessageListener::class)
