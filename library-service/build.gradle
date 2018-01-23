@@ -73,6 +73,8 @@ dependencies {
         exclude group: 'junit'
     }
     testCompile("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testCompile("org.springframework.security:spring-security-test")
+
 
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
     testCompile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
