@@ -7,6 +7,9 @@ import feign.RequestLine
 @Headers("Content-Type: application/json")
 interface LibraryClient {
 
+    @RequestLine("GET /api")
+    fun ping()
+
     @RequestLine("PUT /api/books/{bookId}/authors")
     fun updateAuthors(@Param("bookId") bookId: String, payload: UpdateAuthors)
 

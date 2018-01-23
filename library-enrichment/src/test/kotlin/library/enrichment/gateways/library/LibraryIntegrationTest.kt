@@ -2,10 +2,12 @@ package library.enrichment.gateways.library
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import feign.FeignException
 import library.enrichment.correlation.CorrelationIdHolder
 import library.enrichment.correlation.CorrelationIdRequestInterceptor
 import library.enrichment.gateways.library.LibraryIntegrationTest.CustomConfiguration
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -34,6 +36,7 @@ internal class LibraryIntegrationTest {
 
     @Autowired lateinit var settings: LibrarySettings
     @Autowired lateinit var accessor: LibraryAccessor
+    @Autowired lateinit var client: LibraryClient
     @Autowired lateinit var correlationIdHolder: CorrelationIdHolder
 
     lateinit var correlationId: String
@@ -43,6 +46,29 @@ internal class LibraryIntegrationTest {
 
         correlationId = UUID.randomUUID().toString()
         correlationIdHolder.set(correlationId)
+    }
+
+    @Nested inner class `pinging service` {
+
+        @Test fun `sends correct request to library`(wireMock: WireMockServer): Unit = with(wireMock) {
+            givenThat(get(urlEqualTo("/api"))
+                    .willReturn(aResponse().withStatus(200)))
+            client.ping()
+            verify(getRequestedFor(urlEqualTo("/api"))
+                    .withHeader("Content-Type", equalTo("application/json"))
+                    .withHeader("Authorization", equalTo("Basic Y3VyYXRvcjpjdXJhdG9y"))
+                    .withHeader("X-Correlation-ID", equalTo(correlationId)))
+        }
+
+        @ValueSource(ints = [400, 401, 403, 404, 500])
+        @ParameterizedTest fun `throws exception in case of bad response`(status: Int, wireMock: WireMockServer): Unit = with(wireMock) {
+            givenThat(get(urlEqualTo("/api"))
+                    .willReturn(aResponse().withStatus(status)))
+            assertThrows(FeignException::class.java) {
+                client.ping()
+            }
+        }
+
     }
 
     @Nested inner class `updating authors` {
@@ -73,8 +99,8 @@ internal class LibraryIntegrationTest {
         }
 
         @RecordLoggers(LibraryAccessor::class)
-        @ValueSource(ints = [400,401,403,404,500])
-        @ParameterizedTest fun `logs failed requests`(status:Int, wireMock: WireMockServer, log: LogRecord): Unit = with(wireMock) {
+        @ValueSource(ints = [400, 401, 403, 404, 500])
+        @ParameterizedTest fun `logs failed requests`(status: Int, wireMock: WireMockServer, log: LogRecord): Unit = with(wireMock) {
             givenThat(put(urlEqualTo("/api/books/${bookId}/authors"))
                     .willReturn(aResponse().withStatus(status)))
             accessor.updateAuthors(bookId, authors)
@@ -112,8 +138,8 @@ internal class LibraryIntegrationTest {
         }
 
         @RecordLoggers(LibraryAccessor::class)
-        @ValueSource(ints = [400,401,403,404,500])
-        @ParameterizedTest fun `logs failed requests`(status:Int, wireMock: WireMockServer, log: LogRecord): Unit = with(wireMock) {
+        @ValueSource(ints = [400, 401, 403, 404, 500])
+        @ParameterizedTest fun `logs failed requests`(status: Int, wireMock: WireMockServer, log: LogRecord): Unit = with(wireMock) {
             givenThat(put(urlEqualTo("/api/books/${bookId}/numberOfPages"))
                     .willReturn(aResponse().withStatus(status)))
             accessor.updateNumberOfPages(bookId, numberOfPages)
