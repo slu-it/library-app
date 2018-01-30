@@ -1,0 +1,77 @@
+{
+    "provider": {
+        "name": "library-service"
+    },
+    "consumer": {
+        "name": "library-enrichment"
+    },
+    "interactions": [
+        {
+            "description": "update authors of a book",
+            "request": {
+                "method": "PUT",
+                "path": "/api/books/3c15641e-2598-41f5-9097-b37e2d768be5/authors",
+                "headers": {
+                    "X-Correlation-Id": "5d59f7da-f52f-46df-85c5-2d97b3b42aad"
+                },
+                "body": {
+                    "authors": [
+                        "J.R.R. Tolkien",
+                        "Jim Butcher"
+                    ]
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "X-Correlation-Id": "5d59f7da-f52f-46df-85c5-2d97b3b42aad"
+                }
+            },
+            "providerState": "A book with the ID 3c15641e-2598-41f5-9097-b37e2d768be5 exists"
+        },
+        {
+            "description": "update number of pages of a book",
+            "request": {
+                "method": "PUT",
+                "path": "/api/books/3c15641e-2598-41f5-9097-b37e2d768be5/numberOfPages",
+                "headers": {
+                    "X-Correlation-Id": "5d59f7da-f52f-46df-85c5-2d97b3b42aad"
+                },
+                "body": {
+                    "numberOfPages": 256
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "X-Correlation-Id": "5d59f7da-f52f-46df-85c5-2d97b3b42aad"
+                }
+            },
+            "providerState": "A book with the ID 3c15641e-2598-41f5-9097-b37e2d768be5 exists"
+        },
+        {
+            "description": "service ping",
+            "request": {
+                "method": "GET",
+                "path": "/api",
+                "headers": {
+                    "X-Correlation-Id": "5d59f7da-f52f-46df-85c5-2d97b3b42aad"
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "X-Correlation-Id": "5d59f7da-f52f-46df-85c5-2d97b3b42aad"
+                }
+            }
+        }
+    ],
+    "metadata": {
+        "pact-specification": {
+            "version": "2.0.0"
+        },
+        "pact-jvm": {
+            "version": "3.5.12"
+        }
+    }
+}
