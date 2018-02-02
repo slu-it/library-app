@@ -80,7 +80,7 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
     testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
-    testRuntime("org.junit.jupiter:junit-vintage-engine:${junitVintageVersion}")
+    testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
 }
 
 test {
