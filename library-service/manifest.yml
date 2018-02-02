@@ -8,5 +8,6 @@ applications:
     disk_quota: 256M
     host: nt-ca-aqe-library-service
     services:
+      - metrics-forwarder
       - mongo-db
       - rabbit-mq
