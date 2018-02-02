@@ -42,7 +42,7 @@ internal class LibraryContractTest {
     @Autowired lateinit var correlationIdHolder: CorrelationIdHolder
 
     @BeforeEach fun setUp() {
-        setPactContractFolder("../library-service/src/test/pacts")
+        setPactContractFolder("../library-service/src/test/pacts/http")
         correlationIdHolder.set(correlationId)
     }
 

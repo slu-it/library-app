@@ -1,4 +1,4 @@
-package library.service
+package library.service.api
 
 import au.com.dius.pact.provider.junit.Provider
 import au.com.dius.pact.provider.junit.State
@@ -27,11 +27,11 @@ import utils.classification.AcceptanceTest
 @AcceptanceTest
 @RunWith(SpringRestPactRunner::class)
 @Provider("library-service")
-@PactFolder("src/test/pacts")
+@PactFolder("src/test/pacts/http")
 @VerificationReports("console")
 @SpringBootTest(webEnvironment = DEFINED_PORT)
 @ActiveProfiles("test", "unsecured")
-class ContractAcceptanceTest {
+class ApiContractTest {
 
     @MockBean lateinit var dataStore: BookDataStore
     @MockBean lateinit var eventDispatcher: EventDispatcher<BookEvent>
