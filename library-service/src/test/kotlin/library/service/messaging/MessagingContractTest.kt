@@ -36,7 +36,7 @@ class MessagingContractTest {
     var target: Target = AmqpTarget(packagesToScan)
 
     @PactVerifyProvider("'The Martian' was added event")
-    fun `verify 'The Martian' was added event`(): String {
+    fun verifyTheMartianWasAddedEvent(): String {
         val event = BookAdded(
                 id = UUID.randomUUID(),
                 bookId = BookId.generate(),
