@@ -6,7 +6,9 @@ import library.service.business.books.domain.events.*
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Isbn13
 import library.service.correlation.CorrelationIdMessagePostProcessor
+import library.service.metrics.DomainEventSendCounter
 import org.junit.jupiter.api.DynamicTest.dynamicTest
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import utils.classification.UnitTest
@@ -19,7 +21,8 @@ internal class MessagingBookEventDispatcherTest {
     val rabbitTemplate = mock<RabbitTemplate>()
     val exchange = MessagingConfiguration.BookEventsExchange()
     val postProcessor = mock<CorrelationIdMessagePostProcessor>()
-    val cut = MessagingBookEventDispatcher(rabbitTemplate, exchange, postProcessor)
+    val eventCounter: DomainEventSendCounter = mock()
+    val cut = MessagingBookEventDispatcher(rabbitTemplate, exchange, postProcessor, eventCounter)
 
     val uuid = UUID.randomUUID()!!
     val bookId = BookId.generate()
@@ -39,6 +42,12 @@ internal class MessagingBookEventDispatcherTest {
             cut.dispatch(it)
             verify(rabbitTemplate).convertAndSend(exchange.name, it.type, it, postProcessor)
         }
+    }
+
+    @Test fun `send events are counted`() {
+        val event = BookAdded(uuid, bookId, timestamp, isbn)
+        cut.dispatch(event)
+        verify(eventCounter).increment(event)
     }
 
 }
