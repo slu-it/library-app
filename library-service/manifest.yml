@@ -1,7 +1,7 @@
 ---
 applications:
   - name: library-service
-    buildpack: https://github.com/cloudfoundry/java-buildpack.git#v4.7.1
+    buildpack: https://github.com/cloudfoundry/java-buildpack.git#v4.8
     path: build/libs/library-service.jar
     instances: 1
     memory: 768M
