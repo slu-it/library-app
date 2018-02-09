@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.given
 import library.service.business.books.BookCollection
 import library.service.business.books.domain.BookRecord
+import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.states.Borrowed
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
@@ -43,8 +44,6 @@ internal class BooksControllerDocTest {
 
     @Autowired lateinit var mvc: MockMvc
 
-    // TODO doc-tests for PUT / DELETE of book properties
-
     // POST on /api/books
 
     @Test fun `post book - created`() {
@@ -73,6 +72,83 @@ internal class BooksControllerDocTest {
                 .andExpect(status().isBadRequest)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andDo(document("error-example"))
+    }
+
+    // PUT on /api/books/{bookId}/authors
+
+    @Test fun `put book authors - ok`() {
+        val book = Books.CLEAN_CODE
+        val bookRecord = availableBook(book = book)
+        given { bookCollection.updateBook(any(), any()) }.willReturn(bookRecord)
+
+        val authorsValue = book.authors.joinToString(prefix = "\"", separator = "\", \"", postfix = "\"")
+        val request = put("/api/books/3c15641e-2598-41f5-9097-b37e2d768be5/authors")
+                .contentType("application/json")
+                .content("""{ "authors": [$authorsValue] }""")
+        mvc.perform(request)
+                .andExpect(status().isOk)
+                .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+                .andDo(document("putBookAuthors-ok"))
+    }
+
+    // DELETE on /api/books/{bookId}/authors
+
+    @Test fun `delete book authors - ok`() {
+        val book = Books.CLEAN_CODE.copy(authors = emptyList())
+        val bookRecord = availableBook(book = book)
+        given { bookCollection.updateBook(any(), any()) }.willReturn(bookRecord)
+
+        mvc.perform(delete("/api/books/3c15641e-2598-41f5-9097-b37e2d768be5/authors"))
+                .andExpect(status().isOk)
+                .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+                .andDo(document("deleteBookAuthors-ok"))
+    }
+
+    // PUT on /api/books/{bookId}/numberOfPages
+
+    @Test fun `put book number of pages - ok`() {
+        val book = Books.CLEAN_CODE
+        val bookRecord = availableBook(book = book)
+        given { bookCollection.updateBook(any(), any()) }.willReturn(bookRecord)
+
+        val numberOfPages = book.numberOfPages
+        val request = put("/api/books/3c15641e-2598-41f5-9097-b37e2d768be5/numberOfPages")
+                .contentType("application/json")
+                .content("""{ "numberOfPages": $numberOfPages }""")
+        mvc.perform(request)
+                .andExpect(status().isOk)
+                .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+                .andDo(document("putBookNumberOfPages-ok"))
+    }
+
+    // DELETE on /api/books/{bookId}/numberOfPages
+
+    @Test fun `delete book number of pages - ok`() {
+        val book = Books.CLEAN_CODE.copy(numberOfPages = null)
+        val bookRecord = availableBook(book = book)
+        given { bookCollection.updateBook(any(), any()) }.willReturn(bookRecord)
+
+        mvc.perform(delete("/api/books/3c15641e-2598-41f5-9097-b37e2d768be5/numberOfPages"))
+                .andExpect(status().isOk)
+                .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+                .andDo(document("deleteBookNumberOfPages-ok"))
+    }
+
+    // PUT on /api/books/{bookId}/title
+
+    @Test fun `put book title - ok`() {
+        val book = Books.CLEAN_CODE
+        val bookRecord = availableBook(book = book)
+        given { bookCollection.updateBook(any(), any()) }.willReturn(bookRecord)
+
+        val title = book.title
+        val request = put("/api/books/3c15641e-2598-41f5-9097-b37e2d768be5/title")
+                .contentType("application/json")
+                .content("""{ "title": "$title" }""")
+        mvc.perform(request)
+                .andExpect(status().isOk)
+                .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+                .andDo(document("putBookTitle-ok"))
     }
 
     // GET on /api/books
@@ -214,8 +290,9 @@ internal class BooksControllerDocTest {
 
     private fun borrower() = Borrower("slu")
 
-    private fun availableBook(id: BookId = BookId.generate()): BookRecord {
-        return BookRecord(id, Books.CLEAN_CODE)
-    }
+    private fun availableBook(
+            id: BookId = BookId.generate(),
+            book: Book = Books.CLEAN_CODE
+    ) = BookRecord(id, book)
 
 }

@@ -14,6 +14,9 @@ REST conventions in its use of HTTP verbs.
 | `POST`
 | Used to create a new resource or execute and action.
 
+| `PUT`
+| Used to (partially) update a resource.
+
 | `DELETE`
 | Used to delete a resource.
 |===
@@ -98,6 +101,45 @@ This will create a new book in the library's collection. The response to this
 request will contain the stored data and links to available action resources.
 
 include::{snippets}/books/postBook-created/http-response.adoc[]
+
+==== Updating a Book
+
+In order to update properties of a book, the consumer can `PUT` the new
+property value on a corresponding path.
+
+Currently only the following properties can be updated:
+
+- authors
+- numberOfPages
+- title
+
+===== Authors
+
+The `authors` can be updated with a `PUT` on `/api/books/{bookId}/authors`:
+
+include::{snippets}/books/putBookAuthors-ok/http-request.adoc[]
+
+The data can be removed completely by sending a `DELETE` to the same endpoint
+like this:
+
+include::{snippets}/books/deleteBookAuthors-ok/http-request.adoc[]
+
+===== Number of Pages
+
+The `numberOfPages` can be updated with a `PUT` on `/api/books/{bookId}/numberOfPages`:
+
+include::{snippets}/books/putBookNumberOfPages-ok/http-request.adoc[]
+
+The data can be removed completely by sending a `DELETE` to the same endpoint
+like this:
+
+include::{snippets}/books/deleteBookNumberOfPages-ok/http-request.adoc[]
+
+===== Title
+
+The `title can be updated with a `PUT` on `/api/books/{bookId}/title`:
+
+include::{snippets}/books/putBookTitle-ok/http-request.adoc[]
 
 ==== Listing all existing Books
 
