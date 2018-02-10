@@ -6,6 +6,7 @@ import io.restassured.response.Response
 import io.restassured.response.ValidatableResponse
 import io.restassured.specification.RequestSpecification
 import library.service.business.books.BookCollection
+import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.database.BookRepository
 import library.service.security.Authorizations
@@ -35,8 +36,6 @@ import utils.extensions.UseDockerToRunRabbitMQ
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 internal class SecurityAcceptanceTest {
-
-    // TODO: security test for update / delete of book properties
 
     val book = Books.THE_MARTIAN
 
@@ -102,7 +101,7 @@ internal class SecurityAcceptanceTest {
         }
 
         @CsvSource("user, 403", "curator, 201", "admin, 201")
-        @ParameterizedTest(name = "creating a book as a [{0}] will result in a [{1}] response")
+        @ParameterizedTest(name = "creating a book as a {0} will result in a {1} response")
         fun `books can only be created by curators and admins`(user: String, expectedStatus: Int) {
             val requestBody = """{ "isbn": "${book.isbn}", "title": "${book.title}" } """
             given {
@@ -112,15 +111,74 @@ internal class SecurityAcceptanceTest {
             } `when` { post("/api/books") } then { statusCode(expectedStatus) }
         }
 
+        @Nested inner class `book properties can only be updated by curators and admins` {
+
+            lateinit var bookId: BookId
+
+            @BeforeEach fun addBook() {
+                bookId = asCurator { bookCollection.addBook(book) }.id
+            }
+
+            @CsvSource("user, 403", "curator, 200", "admin, 200")
+            @ParameterizedTest(name = "updating a book's authors as a {0} will result in a {1} response")
+            fun `change authors property`(user: String, expectedStatus: Int) {
+                val requestBody = """{ "authors": ["Foo", "Bar"] } """
+                given {
+                    auth().basic(user, user)
+                    header("Content-Type", "application/json")
+                    body(requestBody)
+                } `when` { put("/api/books/$bookId/authors") } then { statusCode(expectedStatus) }
+            }
+
+            @CsvSource("user, 403", "curator, 200", "admin, 200")
+            @ParameterizedTest(name = "updating a book's number of pages as a {0} will result in a {1} response")
+            fun `change number of pages property`(user: String, expectedStatus: Int) {
+                val requestBody = """{ "numberOfPages": 128 } """
+                given {
+                    auth().basic(user, user)
+                    header("Content-Type", "application/json")
+                    body(requestBody)
+                } `when` { put("/api/books/$bookId/numberOfPages") } then { statusCode(expectedStatus) }
+            }
+
+            @CsvSource("user, 403", "curator, 200", "admin, 200")
+            @ParameterizedTest(name = "updating a book's title as a {0} will result in a {1} response")
+            fun `change title property`(user: String, expectedStatus: Int) {
+                val requestBody = """{ "title": "Foo Bar" } """
+                given {
+                    auth().basic(user, user)
+                    header("Content-Type", "application/json")
+                    body(requestBody)
+                } `when` { put("/api/books/$bookId/title") } then { statusCode(expectedStatus) }
+            }
+
+            @CsvSource("user, 403", "curator, 200", "admin, 200")
+            @ParameterizedTest(name = "removing a book's authors as a {0} will result in a {1} response")
+            fun `remove authors property`(user: String, expectedStatus: Int) {
+                given {
+                    auth().basic(user, user)
+                } `when` { delete("/api/books/$bookId/authors") } then { statusCode(expectedStatus) }
+            }
+
+            @CsvSource("user, 403", "curator, 200", "admin, 200")
+            @ParameterizedTest(name = "removing a book's number of pages as a {0} will result in a {1} response")
+            fun `remove number of pages property`(user: String, expectedStatus: Int) {
+                given {
+                    auth().basic(user, user)
+                } `when` { delete("/api/books/$bookId/numberOfPages") } then { statusCode(expectedStatus) }
+            }
+
+        }
+
         @CsvSource("user, 403", "curator, 204", "admin, 204")
-        @ParameterizedTest(name = "deleting a book as a [{0}] will result in a [{1}] response")
+        @ParameterizedTest(name = "deleting a book as a {0} will result in a {1} response")
         fun `books can only be deleted by curators and admins`(user: String, expectedStatus: Int) {
             val bookId = asCurator { bookCollection.addBook(book) }.id
             given { auth().basic(user, user) } `when` { delete("/api/books/$bookId") } then { statusCode(expectedStatus) }
         }
 
         @CsvSource("user, 200", "curator, 200", "admin, 200")
-        @ParameterizedTest(name = "borrowing a book as a [{0}] will result in a [{1}] response")
+        @ParameterizedTest(name = "borrowing a book as a {0} will result in a {1} response")
         fun `any user can borrow books`(user: String, expectedStatus: Int) {
             val bookId = asCurator { bookCollection.addBook(book) }.id
             val requestBody = """{ "borrower": "Rob Stark" }"""
@@ -132,7 +190,7 @@ internal class SecurityAcceptanceTest {
         }
 
         @CsvSource("user, 200", "curator, 200", "admin, 200")
-        @ParameterizedTest(name = "returning a book as a [{0}] will result in a [{1}] response")
+        @ParameterizedTest(name = "returning a book as a {0} will result in a {1} response")
         fun `any user can return books`(user: String, expectedStatus: Int) {
             val bookId = asCurator { bookCollection.addBook(book) }.id
             asUser { bookCollection.borrowBook(bookId, Borrower("Rob Stark")) }
@@ -140,7 +198,7 @@ internal class SecurityAcceptanceTest {
         }
 
         @CsvSource("user, 200", "curator, 200", "admin, 200")
-        @ParameterizedTest(name = "listing all books as a [{0}] will result in a [{1}] response")
+        @ParameterizedTest(name = "listing all books as a {0} will result in a {1} response")
         fun `any user can list all books`(user: String, expectedStatus: Int) {
             given { auth().basic(user, user) } `when` { get("/api/books") } then { statusCode(expectedStatus) }
         }
