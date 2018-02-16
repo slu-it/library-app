@@ -18,8 +18,9 @@ import library.service.business.books.domain.types.BookId
 import library.service.business.events.EventDispatcher
 import org.junit.runner.RunWith
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import utils.Books
 import utils.classification.AcceptanceTest
@@ -29,16 +30,19 @@ import utils.classification.AcceptanceTest
 @Provider("library-service")
 @PactFolder("src/test/pacts/http")
 @VerificationReports("console")
-@SpringBootTest(webEnvironment = DEFINED_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test", "unsecured")
 class ApiContractTest {
 
     @MockBean lateinit var dataStore: BookDataStore
     @MockBean lateinit var eventDispatcher: EventDispatcher<BookEvent>
 
-    @JvmField
-    @TestTarget
-    final var target: Target = HttpTarget("http", "localhost", 8080, "/", true)
+    @TestTarget lateinit var target: Target
+
+    @LocalServerPort
+    fun init(port: Int) {
+        target = HttpTarget("http", "localhost", port, "/", true)
+    }
 
     @State("A book with the ID 3c15641e-2598-41f5-9097-b37e2d768be5 exists")
     fun `book with fixed ID exists`() {
