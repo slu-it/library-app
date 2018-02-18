@@ -2,7 +2,7 @@ package library.enrichment.messaging
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import library.enrichment.core.BookAddedEvent
-import library.enrichment.core.BookEventHandler
+import library.enrichment.core.BookAddedEventHandler
 import library.enrichment.logging.logger
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageListener
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class BookAddedMessageListener(
         private val objectMapper: ObjectMapper,
-        private val handler: BookEventHandler
+        private val handler: BookAddedEventHandler
 ) : MessageListener {
 
     private val log = BookAddedMessageListener::class.logger

@@ -6,7 +6,7 @@ import au.com.dius.pact.model.PactSpecVersion
 import com.nhaarman.mockito_kotlin.check
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
-import library.enrichment.core.BookEventHandler
+import library.enrichment.core.BookAddedEventHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.amqp.core.Message
@@ -24,7 +24,7 @@ internal class BookAddedMessageContractTest {
     val bookId = "9bf258be-19d4-4338-b172-60a1b7ef076b"
 
     val objectMapper = testObjectMapper()
-    val handler: BookEventHandler = mock()
+    val handler: BookAddedEventHandler = mock()
     val cut = BookAddedMessageListener(objectMapper, handler)
 
     @Test fun `book-added contract`() {

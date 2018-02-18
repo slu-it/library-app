@@ -5,7 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.willThrow
 import library.enrichment.core.BookAddedEvent
-import library.enrichment.core.BookEventHandler
+import library.enrichment.core.BookAddedEventHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.amqp.core.Message
@@ -20,7 +20,7 @@ import utils.testObjectMapper
 internal class BookAddedMessageListenerTest {
 
     val objectMapper = testObjectMapper()
-    val handler: BookEventHandler = mock()
+    val handler: BookAddedEventHandler = mock()
 
     val cut = BookAddedMessageListener(objectMapper, handler)
 
