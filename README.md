@@ -1,28 +1,45 @@
-# AQE Library Application
+# Library Application
 
-This application provides simple library functionality:
+This is a showcase application. It aims to demonstrate several software engineering
+practices and a lot of current technology. The application itself is book management
+system which allows for:
 
-- management of books:
-  - add books
-  - get books
-  - get all books
-  - delete books
-- borrow books
-- return books
+- adding of new books
+- listing of books
+- borrowing of books
+- returning of borrowed books
 
-Currently only the backend service is implemented, but a frontend will follow
-soon(ish).
+The application is divided into several modules:
 
-## Interesting Things to Learn from `library-service`
+- The `library-service` is the main backend application. It manages the data,
+dispatches domain events and manages consistency.
+- The `library-enrichment` is a background service which reacts to `book-added`
+domain events by looking up additional information about newly added books. If
+it finds any, it will update the book record via the `library-service`.
+- The `library-ui` is a client side frontend for the `library-service`. It allows
+for the management of the library as well as the borrowing and returning
+of books by customers.
 
-- Kotlin
-- Spring Boot
-- Hexagonal architecture
+## Technology Showcases
+
+- Kotlin (`library-service` and `library-enrichment`)
+- Spring Boot 2 (`library-service` and `library-enrichment`)
+- JUnit 5 with custom extensions (`library-service` and `library-enrichment`)
+- MongoDB with Spring Data (`library-service`)
+- AMQP with RabbitMQ (`library-service` and `library-enrichment`)
+- Hypermedia APIs with Spring HATEOAS (`library-service`)
+- Test-driven API documentation with Spring REST Docs (`library-service`)
+- Documentation generation with Asciidoctor (`library-service`)
+- Declarative REST Clients with Feign (`library-enrichment`)
+- Contract Testing with PACT (`library-service` and `library-enrichment`)
+
+## Software Engineering Practices
+
+- Modular Application Design
 - Object Oriented Design
-- Documenting an API with Spring REST Docs
-- Testing Spring Boot Applications with JUnit 5
-  - Unit Testing
-  - Integration Testing
-  - System Testing
-- HATEOAS / HAL based Hypermedia APIs
-- MongoDB
+- Hexagonal Architectures
+- Clean Code
+- Testable Architecture / Design
+- Test Automation
+ - Unit, Integration and Acceptance Tests
+ - Testing application slices
