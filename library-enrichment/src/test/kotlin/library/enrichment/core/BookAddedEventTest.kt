@@ -4,17 +4,17 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import utils.classification.UnitTest
 import utils.testObjectMapper
-import java.util.*
 
 
 @UnitTest
 internal class BookAddedEventTest {
 
+    val id = "8669efc6-cde3-401b-98f6-6a32f621ea9c"
+    val bookId = "9e8f2a6a-1dc9-4965-8525-cf42efc1d767"
+
     val objectMapper = testObjectMapper()
 
     @Test fun `can be de-serialized from JSON`() {
-        val id = UUID.randomUUID()
-        val bookId = UUID.randomUUID()
         val json = """
             {
               "id": "$id",
@@ -23,18 +23,20 @@ internal class BookAddedEventTest {
             }
             """
         val event = objectMapper.readValue(json, BookAddedEvent::class.java)
-        assertThat(event.id).isEqualTo(id.toString())
-        assertThat(event.bookId).isEqualTo(bookId.toString())
-        assertThat(event.isbn).isEqualTo("1234567890123")
+        with(event) {
+            assertThat(id).isEqualTo(id)
+            assertThat(bookId).isEqualTo(bookId)
+            assertThat(isbn).isEqualTo("1234567890123")
+        }
     }
 
     @Test fun `unknown properties are ignored`() {
         val json = """
             {
-              "id": "${UUID.randomUUID()}",
-              "bookId": "${UUID.randomUUID()}",
+              "id": "$id",
+              "bookId": "$bookId",
               "isbn": "1234567890123",
-              "foo": "bar"
+              "unknown": "property"
             }
             """
         objectMapper.readValue(json, BookAddedEvent::class.java)
