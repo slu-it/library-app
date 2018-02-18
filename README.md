@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nt-ca-aqe/library-app.svg?branch=master)](https://travis-ci.org/nt-ca-aqe/library-app)
+
 # Library Application
 
 This is a showcase application. It aims to demonstrate several software engineering
