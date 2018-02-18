@@ -4,6 +4,7 @@ import au.com.dius.pact.consumer.*
 import au.com.dius.pact.consumer.dsl.PactDslResponse
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider
 import au.com.dius.pact.model.MockProviderConfig
+import au.com.dius.pact.model.PactSpecVersion
 import au.com.dius.pact.model.RequestResponsePact
 import org.assertj.core.api.Assertions.assertThat
 
@@ -17,7 +18,7 @@ fun pactWith(provider: String, body: PactDslWithProvider.() -> PactDslResponse):
 }
 
 infix fun RequestResponsePact.execute(test: (MockServer) -> Unit) {
-    val config = MockProviderConfig.createDefault()
+    val config = MockProviderConfig.createDefault(PactSpecVersion.V3)
     val result = runConsumerTest(this, config, TestRun(test))
     if (result is PactVerificationResult.Error) {
         throw AssertionError(result.error)

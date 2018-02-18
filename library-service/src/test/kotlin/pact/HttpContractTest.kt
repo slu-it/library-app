@@ -45,9 +45,9 @@ class HttpContractTest {
         target = HttpTarget("http", "localhost", port, "/", true)
     }
 
-    @State("A book with the ID 3c15641e-2598-41f5-9097-b37e2d768be5 exists")
-    fun `book with fixed ID exists`() {
-        val bookId = BookId.from("3c15641e-2598-41f5-9097-b37e2d768be5")
+    @State("A book with the ID {bookId} exists")
+    fun `book with fixed ID exists`(params: Map<String, String>) {
+        val bookId = BookId.from(params["bookId"]!!)
         val bookRecord = BookRecord(bookId, Books.THE_MARTIAN)
         given { dataStore.findById(bookId) }.willReturn { bookRecord }
         given { dataStore.createOrUpdate(any()) }.willAnswer { it.arguments[0] as BookRecord }

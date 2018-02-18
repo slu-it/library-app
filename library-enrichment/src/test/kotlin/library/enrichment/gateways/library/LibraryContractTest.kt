@@ -59,7 +59,7 @@ internal class LibraryContractTest {
     }
 
     @Test fun `updating the authors of a book`() = pactWith(provider) {
-        given("A book with the ID 3c15641e-2598-41f5-9097-b37e2d768be5 exists")
+        given("A book with the ID {bookId} exists", mapOf("bookId" to "3c15641e-2598-41f5-9097-b37e2d768be5"))
                 .uponReceiving("update authors of a book")
                 .method("PUT")
                 .path("/api/books/$bookId/authors")
@@ -73,7 +73,7 @@ internal class LibraryContractTest {
     }
 
     @Test fun `updating the number of pages of a book`() = pactWith(provider) {
-        given("A book with the ID 3c15641e-2598-41f5-9097-b37e2d768be5 exists")
+        given("A book with the ID {bookId} exists", mapOf("bookId" to "3c15641e-2598-41f5-9097-b37e2d768be5"))
                 .uponReceiving("update number of pages of a book")
                 .method("PUT")
                 .path("/api/books/$bookId/numberOfPages")

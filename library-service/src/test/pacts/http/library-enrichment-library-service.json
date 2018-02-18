@@ -27,7 +27,14 @@
                     "X-Correlation-Id": "5d59f7da-f52f-46df-85c5-2d97b3b42aad"
                 }
             },
-            "providerState": "A book with the ID 3c15641e-2598-41f5-9097-b37e2d768be5 exists"
+            "providerStates": [
+                {
+                    "name": "A book with the ID {bookId} exists",
+                    "params": {
+                        "bookId": "3c15641e-2598-41f5-9097-b37e2d768be5"
+                    }
+                }
+            ]
         },
         {
             "description": "update number of pages of a book",
@@ -47,7 +54,14 @@
                     "X-Correlation-Id": "5d59f7da-f52f-46df-85c5-2d97b3b42aad"
                 }
             },
-            "providerState": "A book with the ID 3c15641e-2598-41f5-9097-b37e2d768be5 exists"
+            "providerStates": [
+                {
+                    "name": "A book with the ID {bookId} exists",
+                    "params": {
+                        "bookId": "3c15641e-2598-41f5-9097-b37e2d768be5"
+                    }
+                }
+            ]
         },
         {
             "description": "service ping",
@@ -68,7 +82,7 @@
     ],
     "metadata": {
         "pact-specification": {
-            "version": "2.0.0"
+            "version": "3.0.0"
         },
         "pact-jvm": {
             "version": "3.5.12"
