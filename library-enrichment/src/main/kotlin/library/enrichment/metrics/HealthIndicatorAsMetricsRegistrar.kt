@@ -1,11 +1,29 @@
 package library.enrichment.metrics
 
+import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.MeterRegistry
 import org.springframework.boot.actuate.health.HealthIndicator
 import org.springframework.boot.actuate.health.Status
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
+/**
+ * This component exposes all available [HealthIndicator] beans as [Gauge]
+ * metrics on a scale from `0.00` (DOWN) to `1.00` (UP).
+ *
+ * The metrics name is derived from the [HealthIndicator's][HealthIndicator] name:
+ * `health.indicators.${name}`. Where the name is simple the [HealthIndicator]
+ * class' name up to `HealthIndicator` in lower case.
+ *
+ * **Examples: **
+ *
+ * - `DataSourceHealthIndicator` would have the metrics name `health.indicators.datasource`
+ * - `ElasticsearchHealthIndicator` would have the metrics name `health.indicators.elasticsearch`
+ *
+ * @see HealthIndicator
+ * @see Gauge
+ * @see MeterRegistry
+ */
 @Component
 internal class HealthIndicatorAsMetricsRegistrar(
         private val registry: MeterRegistry,

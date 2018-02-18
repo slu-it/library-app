@@ -22,6 +22,7 @@ internal class ArchitectureTest {
         "library.enrichment.correlation",
         "library.enrichment.gateways",
         "library.enrichment.messaging",
+        "library.enrichment.metrics",
         "library.enrichment.security"
     ])
     @ParameterizedTest fun `core module classes are not allowed to access technical modules`(packageName: String) {
@@ -29,6 +30,7 @@ internal class ArchitectureTest {
                 .resideInAPackage("library.enrichment.core..")
                 .should().accessClassesThat()
                 .resideInAPackage("$packageName..")
+                .check(classes)
     }
 
     @Test fun `test classes must be classified`() = checkThat {

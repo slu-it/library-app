@@ -8,23 +8,35 @@ import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageListener
 import org.springframework.stereotype.Component
 
+/**
+ * This [MessageListener] is responsible for handling `book-added` messages.
+ *
+ * It tries to read the incoming [Message] as a [BookAddedEvent] and invokes
+ * the corresponding [BookAddedEventHandler]. If any exceptions occurs during
+ * processing of either the [Message] or the [BookAddedEvent], that exception
+ * is logged and otherwise ignored. There is no retry or other specialized
+ * error handling in place!
+ *
+ * @see MessageListener
+ * @see Message
+ * @see BookAddedEvent
+ * @see BookAddedEventHandler
+ */
 @Component
-class BookAddedMessageListener(
+internal class BookAddedEventMessageListener(
         private val objectMapper: ObjectMapper,
         private val handler: BookAddedEventHandler
 ) : MessageListener {
 
-    private val log = BookAddedMessageListener::class.logger
+    private val log = BookAddedEventMessageListener::class.logger
 
     override fun onMessage(message: Message) = try {
-        tryOnMessage(message)
+        readEventFrom(message) {
+            handler.handle(it)
+        }
     } catch (e: Exception) {
         val correlationId = message.messageProperties.correlationId
         log.warn("could not process message [$correlationId] because of an exception", e)
-    }
-
-    private fun tryOnMessage(message: Message) = readEventFrom(message) {
-        handler.handle(it)
     }
 
     private fun readEventFrom(message: Message, eventProcessor: (BookAddedEvent) -> Unit) {

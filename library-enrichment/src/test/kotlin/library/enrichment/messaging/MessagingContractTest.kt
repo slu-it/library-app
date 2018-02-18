@@ -16,7 +16,7 @@ import utils.testObjectMapper
 
 
 @UnitTest
-internal class BookAddedMessageContractTest {
+internal class MessagingContractTest {
 
     val pactContractFolder = "../library-service/src/test/pacts/message"
 
@@ -25,7 +25,7 @@ internal class BookAddedMessageContractTest {
 
     val objectMapper = testObjectMapper()
     val handler: BookAddedEventHandler = mock()
-    val cut = BookAddedMessageListener(objectMapper, handler)
+    val cut = BookAddedEventMessageListener(objectMapper, handler)
 
     @Test fun `book-added contract`() {
         val pact = MessagePactBuilder

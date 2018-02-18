@@ -17,12 +17,12 @@ import utils.testObjectMapper
 
 
 @UnitTest
-internal class BookAddedMessageListenerTest {
+internal class BookAddedEventMessageListenerTest {
 
     val objectMapper = testObjectMapper()
     val handler: BookAddedEventHandler = mock()
 
-    val cut = BookAddedMessageListener(objectMapper, handler)
+    val cut = BookAddedEventMessageListener(objectMapper, handler)
 
     val event = BookAddedEvent(
             id = "event-id",
@@ -36,7 +36,7 @@ internal class BookAddedMessageListenerTest {
         verify(handler).handle(event)
     }
 
-    @RecordLoggers(BookAddedMessageListener::class)
+    @RecordLoggers(BookAddedEventMessageListener::class)
     @Test fun `any exception during message handling is logged`(log: LogRecord) {
         val message = toMessage(event, "correlation-id")
         given { handler.handle(event) } willThrow { RuntimeException() }

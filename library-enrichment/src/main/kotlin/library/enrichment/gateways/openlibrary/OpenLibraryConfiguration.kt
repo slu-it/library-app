@@ -20,6 +20,9 @@ class OpenLibraryConfiguration {
                 .decoder(JacksonDecoder())
                 .logger(Slf4jLogger("utils.feign.openlibrary"))
                 .logLevel(settings.logLevel)
+                .requestInterceptor {
+                    it.header("User-Agent", "Mozilla/5.0")
+                }
                 .target(target)
     }
 
