@@ -1,4 +1,4 @@
-package library.service.api
+package pact
 
 import au.com.dius.pact.provider.junit.Provider
 import au.com.dius.pact.provider.junit.State
@@ -11,6 +11,7 @@ import au.com.dius.pact.provider.spring.SpringRestPactRunner
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.willReturn
+import library.service.Application
 import library.service.business.books.BookDataStore
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.events.BookEvent
@@ -23,16 +24,16 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import utils.Books
-import utils.classification.AcceptanceTest
+import utils.classification.IntegrationTest
 
-@AcceptanceTest
+@IntegrationTest
 @RunWith(SpringRestPactRunner::class)
 @Provider("library-service")
 @PactFolder("src/test/pacts/http")
 @VerificationReports("console")
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(classes = [Application::class], webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test", "unsecured")
-class ApiContractTest {
+class HttpContractTest {
 
     @MockBean lateinit var dataStore: BookDataStore
     @MockBean lateinit var eventDispatcher: EventDispatcher<BookEvent>

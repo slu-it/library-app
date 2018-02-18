@@ -1,4 +1,4 @@
-package library.service.messaging
+package pact
 
 import au.com.dius.pact.provider.PactVerifyProvider
 import au.com.dius.pact.provider.junit.PactRunner
@@ -11,6 +11,7 @@ import au.com.dius.pact.provider.junit.target.TestTarget
 import com.fasterxml.jackson.databind.ObjectMapper
 import library.service.business.books.domain.events.BookAdded
 import library.service.business.books.domain.types.BookId
+import library.service.messaging.MessagingConfiguration
 import org.junit.runner.RunWith
 import org.springframework.amqp.core.MessageProperties
 import utils.Books
@@ -23,9 +24,7 @@ import java.util.*
 @Provider("library-service")
 @PactFolder("src/test/pacts/message")
 @VerificationReports("console")
-class MessagingContractTest {
-
-    val packagesToScan = listOf(javaClass.`package`.name + ".*")
+class MessageContractTest {
 
     val configuration = MessagingConfiguration()
     val objectMapper = ObjectMapper().apply { findAndRegisterModules() }
@@ -33,7 +32,7 @@ class MessagingContractTest {
 
     @JvmField
     @TestTarget
-    var target: Target = AmqpTarget(packagesToScan)
+    var target: Target = AmqpTarget(listOf(javaClass.name + ".*"))
 
     @PactVerifyProvider("'The Martian' was added event")
     fun verifyTheMartianWasAddedEvent(): String {
