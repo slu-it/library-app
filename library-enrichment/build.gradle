@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		kotlinVersion = '1.2.10'
+		kotlinVersion = '1.2.21'
 		springBootVersion = '2.0.0.M7'
 		junitPlatformVersion = '1.0.2'
 		junitJupiterVersion = '5.0.3'
@@ -30,10 +30,16 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 
 sourceCompatibility = 1.8
 compileKotlin {
-	kotlinOptions.jvmTarget = "1.8"
+	kotlinOptions {
+		jvmTarget = "1.8"
+		languageVersion = "1.2"
+	}
 }
 compileTestKotlin {
-	kotlinOptions.jvmTarget = "1.8"
+	kotlinOptions {
+		jvmTarget = "1.8"
+		languageVersion = "1.2"
+	}
 }
 
 springBoot  {
@@ -48,6 +54,8 @@ repositories {
 
 dependencies {
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
+	compile("org.jetbrains.kotlin:kotlin-stdlib-jre7:${kotlinVersion}")
+	compile("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 
 	compile("org.springframework.boot:spring-boot-starter-actuator")
