@@ -25,7 +25,9 @@ internal class MessagingContractTest {
 
     val objectMapper = testObjectMapper()
     val handler: BookAddedEventHandler = mock()
-    val cut = BookAddedEventMessageListener(objectMapper, handler)
+    val counter: ProcessedMessagesCounter = mock()
+
+    val cut = BookAddedEventMessageListener(objectMapper, handler, counter)
 
     @Test fun `book-added contract`() {
         val pact = MessagePactBuilder

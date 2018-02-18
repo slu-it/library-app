@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
  * A [BookDataSource] using `openlibrary.org` as its source of information.
  */
 @Service
-@Order(2)
+@Order(1)
 class OpenLibraryAccessor(
         private val client: OpenLibraryClient
 ) : BookDataSource {

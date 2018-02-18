@@ -1,5 +1,7 @@
-rabbit-mq:
-  image: rabbitmq:3.6-management
-  ports:
-    - "5672:5672"
-    - "15672:15672"
+version: "3"
+services:
+  rabbit-mq:
+    image: rabbitmq:3.6-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"

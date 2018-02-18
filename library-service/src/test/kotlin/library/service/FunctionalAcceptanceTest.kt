@@ -3,12 +3,12 @@ package library.service
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured
-import io.restassured.RestAssured.*
+import io.restassured.RestAssured.`when`
+import io.restassured.RestAssured.given
 import library.service.api.books.BookResource
 import library.service.database.BookRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,14 +39,11 @@ internal class FunctionalAcceptanceTest {
         configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 
+    @Autowired lateinit var bookRepository: BookRepository
+
     @LocalServerPort
-    var port: Int = 8080
-
-    @Autowired
-    lateinit var bookRepository: BookRepository
-
-    @BeforeEach fun setupRestAssured() {
-        baseURI = "http://localhost"
+    fun setupRestAssured(port: Int) {
+        RestAssured.baseURI = "http://localhost"
         RestAssured.port = port
     }
 

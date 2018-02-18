@@ -39,13 +39,11 @@ internal class SecurityAcceptanceTest {
 
     val book = Books.THE_MARTIAN
 
-    @LocalServerPort
-    var port: Int = 8080
-
     @Autowired lateinit var bookRepository: BookRepository
     @Autowired lateinit var bookCollection: BookCollection
 
-    @BeforeEach fun setupRestAssured() {
+    @LocalServerPort
+    fun setupRestAssured(port: Int) {
         RestAssured.baseURI = "http://localhost"
         RestAssured.port = port
     }

@@ -20,11 +20,11 @@ internal class DomainEventSendCounterTest {
         cut.increment(secondEvent)
         cut.increment(secondEvent)
 
-        assertThat(counter("first-type").count()).isEqualTo(1.0)
-        assertThat(counter("second-type").count()).isEqualTo(2.0)
+        assertThat(currentCount("first-type")).isEqualTo(1)
+        assertThat(currentCount("second-type")).isEqualTo(2)
     }
 
-    fun counter(type: String) = registry.counter("library.events.send", "type", type)
+    fun currentCount(type: String) = registry.counter("library.events.send", "type", type).count().toLong()
 
     data class SomeDomainEvent(
             override val type: String,

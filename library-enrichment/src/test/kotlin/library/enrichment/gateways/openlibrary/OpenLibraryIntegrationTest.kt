@@ -42,10 +42,10 @@ internal class OpenLibraryIntegrationTest {
     }
 
     @Test fun `representative response is processed correctly`(wireMock: WireMockServer) {
-        wireMock.stubBookSearchResponse("0261102354", 200) {
-            fromFile("200_isbn_0261102354.json")
+        wireMock.stubBookSearchResponse("9780261102354", 200) {
+            fromFile("200_isbn_9780261102354.json")
         }
-        val bookData = getBookData("0261102354")
+        val bookData = getBookData("9780261102354")
         with(bookData) {
             assertThat(authors).containsExactly("J. R. R. Tolkien")
             assertThat(numberOfPages).isEqualTo(576)

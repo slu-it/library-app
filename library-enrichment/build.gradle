@@ -53,8 +53,6 @@ repositories {
 }
 
 dependencies {
-	compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
-	compile("org.jetbrains.kotlin:kotlin-stdlib-jre7:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 
@@ -73,11 +71,11 @@ dependencies {
 	testCompile("com.nhaarman:mockito-kotlin-kt1.1:1.5.0")
 	testCompile("info.novatec.testit:testutils-logrecorder-logback:0.3.3")
 
-	testCompile("org.springframework.boot:spring-boot-starter-test") {
-		exclude group: 'junit'
-	}
+	testCompile("org.springframework.boot:spring-boot-starter-test")
 
+	testCompile("org.awaitility:awaitility:3.0.0")
 	testCompile("com.tngtech.archunit:archunit-junit:0.4.0")
+    testCompile("io.rest-assured:rest-assured:3.0.6")
 	testCompile("com.github.tomakehurst:wiremock-standalone:2.10.1")
 	testCompile("au.com.dius:pact-jvm-consumer_2.12:3.5.12")
 	testCompile("au.com.dius:pact-jvm-consumer-junit_2.12:3.5.12")
