@@ -24,9 +24,9 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import utils.Books
-import utils.classification.IntegrationTest
+import utils.classification.ContractTest
 
-@IntegrationTest
+@ContractTest
 @RunWith(SpringRestPactRunner::class)
 @Provider("library-service")
 @PactFolder("src/test/pacts/http")

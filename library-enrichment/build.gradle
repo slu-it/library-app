@@ -83,26 +83,26 @@ dependencies {
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 }
 
-test {
+task unitTest(type: Test) {
     useJUnitPlatform() { includeTags 'unit-test' }
-    testLogging { events "skipped", "failed" }
+    testLogging { events "passed", "skipped", "failed" }
 }
 
 task integrationTest(type: Test) {
+    dependsOn unitTest
     useJUnitPlatform() { includeTags 'integration-test' }
-    testLogging { events "skipped", "failed" }
-    dependsOn test
+    testLogging { events "passed", "skipped", "failed" }
 }
 
 task acceptanceTest(type: Test) {
-    useJUnitPlatform() { includeTags 'acceptance-test' }
-    testLogging { events "skipped", "failed" }
     dependsOn integrationTest
+    useJUnitPlatform() { includeTags 'acceptance-test' }
+    testLogging { events "passed", "skipped", "failed" }
 }
 
 task aggregateTestReports(type: TestReport) {
     destinationDir = test.reports.html.destination
-    reportOn test, integrationTest, acceptanceTest
+    reportOn unitTest, integrationTest, acceptanceTest
 }
 
 task buildDocker(type: Docker, dependsOn: build) {
@@ -118,4 +118,5 @@ task buildDocker(type: Docker, dependsOn: build) {
     entryPoint(['java', '-Djava.security.egd=file:/dev/./urandom', '-jar', '/app.jar'])
 }
 
+tasks.check.dependsOn.remove(test)
 tasks.check.dependsOn acceptanceTest

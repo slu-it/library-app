@@ -15,11 +15,11 @@ import library.service.messaging.MessagingConfiguration
 import org.junit.runner.RunWith
 import org.springframework.amqp.core.MessageProperties
 import utils.Books
-import utils.classification.UnitTest
+import utils.classification.ContractTest
 import java.time.OffsetDateTime
 import java.util.*
 
-@UnitTest
+@ContractTest
 @RunWith(PactRunner::class)
 @Provider("library-service")
 @PactFolder("src/test/pacts/message")

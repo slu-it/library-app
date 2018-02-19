@@ -18,7 +18,6 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
-        classpath("org.junit.platform:junit-platform-gradle-plugin:${junitPlatformVersion}")
         classpath("se.transmode.gradle:gradle-docker:${dockerPluginVersion}")
         classpath("org.asciidoctor:asciidoctor-gradle-plugin:${asciidoctorVersion}")
     }
@@ -29,7 +28,6 @@ apply plugin: 'kotlin'
 apply plugin: 'kotlin-spring'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: "org.asciidoctor.convert"
 
 sourceCompatibility = 1.8
@@ -46,7 +44,7 @@ compileTestKotlin {
     }
 }
 
-springBoot  {
+springBoot {
     buildInfo()
 }
 
@@ -96,14 +94,36 @@ dependencies {
     testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
 }
 
-test {
-    outputs.dir snippetsDir
+task unitTest(type: Test) {
+    useJUnitPlatform() { includeTags 'unit-test' }
+    testLogging { events "passed", "skipped", "failed" }
+}
+
+task integrationTest(type: Test) {
+    dependsOn unitTest
+    useJUnitPlatform() { includeTags 'integration-test' }
+    testLogging { events "passed", "skipped", "failed" }
+}
+
+task acceptanceTest(type: Test) {
+    dependsOn integrationTest
+    useJUnitPlatform() { includeTags 'acceptance-test' }
+    testLogging { events "passed", "skipped", "failed" }
+}
+
+task contractTest(type: Test) {
+    dependsOn acceptanceTest
+    useJUnitPlatform() { includeTags 'contract-test' }
+    testLogging { events "passed", "skipped", "failed" }
+}
+
+task aggregateTestReports(type: TestReport) {
+    destinationDir = test.reports.html.destination
+    reportOn unitTest, integrationTest, acceptanceTest, contractTest
 }
 
 asciidoctor {
-    dependsOn test
-    inputs.dir snippetsDir
-
+    dependsOn acceptanceTest
     setOptions([
             'doctype': 'book',
             'backend': 'html5'
@@ -136,3 +156,6 @@ task buildDocker(type: Docker, dependsOn: build) {
     }
     entryPoint(['java', '-Djava.security.egd=file:/dev/./urandom', '-jar', '/app.jar'])
 }
+
+tasks.check.dependsOn.remove(test)
+tasks.check.dependsOn contractTest

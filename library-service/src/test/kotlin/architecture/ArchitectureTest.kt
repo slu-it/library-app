@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import utils.classification.AcceptanceTest
+import utils.classification.ContractTest
 import utils.classification.IntegrationTest
 import utils.classification.UnitTest
 
@@ -51,6 +52,7 @@ internal class ArchitectureTest {
                 javaClass.isEquivalentTo(UnitTest::class.java) -> true
                 javaClass.isEquivalentTo(IntegrationTest::class.java) -> true
                 javaClass.isEquivalentTo(AcceptanceTest::class.java) -> true
+                javaClass.isEquivalentTo(ContractTest::class.java) -> true
                 else -> false
             }
         }
