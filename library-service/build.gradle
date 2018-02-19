@@ -2,9 +2,9 @@ buildscript {
     ext {
         kotlinVersion = '1.2.10'
         springBootVersion = '2.0.0.M7'
-        junitPlatformVersion = '1.0.3'
-        junitJupiterVersion = '5.0.3'
-        junitVintageVersion = '4.12.3'
+        junitPlatformVersion = '1.1.0'
+        junitJupiterVersion = '5.1.0'
+        junitVintageVersion = '5.1.0'
         dockerPluginVersion = '1.2'
         asciidoctorVersion = '1.5.3'
         snippetsDir = file('build/generated-snippets')
