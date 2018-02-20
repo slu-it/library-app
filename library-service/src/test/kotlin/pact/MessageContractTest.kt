@@ -1,41 +1,34 @@
 package pact
 
-import au.com.dius.pact.provider.PactVerifyProvider
-import au.com.dius.pact.provider.junit.PactRunner
-import au.com.dius.pact.provider.junit.Provider
-import au.com.dius.pact.provider.junit.VerificationReports
-import au.com.dius.pact.provider.junit.loader.PactFolder
-import au.com.dius.pact.provider.junit.target.AmqpTarget
-import au.com.dius.pact.provider.junit.target.Target
-import au.com.dius.pact.provider.junit.target.TestTarget
 import com.fasterxml.jackson.databind.ObjectMapper
 import library.service.business.books.domain.events.BookAdded
 import library.service.business.books.domain.types.BookId
 import library.service.messaging.MessagingConfiguration
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.TestFactory
 import org.springframework.amqp.core.MessageProperties
+import org.testit.pact.provider.junit.PactFileLoader
+import org.testit.pact.provider.junit.message.ComparableMessage
+import org.testit.pact.provider.junit.message.MessagePactTestFactory
+import org.testit.pact.provider.junit.message.MessageProducer
 import utils.Books
 import utils.classification.ContractTest
 import java.time.OffsetDateTime
 import java.util.*
 
 @ContractTest
-@RunWith(PactRunner::class)
-@Provider("library-service")
-@PactFolder("src/test/pacts/message")
-@VerificationReports("console")
 class MessageContractTest {
 
     val configuration = MessagingConfiguration()
     val objectMapper = ObjectMapper().apply { findAndRegisterModules() }
     val messageConverter = configuration.messageConverter(objectMapper)
 
-    @JvmField
-    @TestTarget
-    var target: Target = AmqpTarget(listOf(javaClass.name + ".*"))
+    val testFactory = MessagePactTestFactory(PactFileLoader("src/test/pacts/message"), "library-service")
 
-    @PactVerifyProvider("'The Martian' was added event")
-    fun verifyTheMartianWasAddedEvent(): String {
+    @TestFactory fun `library-enrichment consumer contract tests`() =
+            testFactory.createTests("library-enrichment", this)
+
+    @MessageProducer("'The Martian' was added event")
+    fun verifyTheMartianWasAddedEvent(): ComparableMessage {
         val event = BookAdded(
                 id = UUID.randomUUID(),
                 bookId = BookId.generate(),
@@ -43,7 +36,7 @@ class MessageContractTest {
                 timestamp = OffsetDateTime.now()
         )
         val message = messageConverter.toMessage(event, MessageProperties())
-        return String(message.body)
+        return ComparableMessage(message.body)
     }
 
 }

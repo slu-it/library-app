@@ -51,12 +51,11 @@ springBoot {
 repositories {
     mavenCentral()
     maven { url "https://repo.spring.io/milestone" }
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jre7:${kotlinVersion}")
-    compile("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 
     compile("org.springframework.boot:spring-boot-starter-actuator")
@@ -80,8 +79,7 @@ dependencies {
     testCompile("com.tngtech.archunit:archunit-junit:0.5.0")
     testCompile("io.rest-assured:rest-assured:3.0.6")
     testCompile("info.novatec.testit:testutils-logrecorder-logback:0.3.3")
-    testCompile('au.com.dius:pact-jvm-provider-junit_2.12:3.5.12')
-    testCompile('au.com.dius:pact-jvm-provider-spring_2.12:3.5.12')
+    testCompile("info.novatec.testit:pact-provider-junit5:0.1.0")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("org.springframework.restdocs:spring-restdocs-mockmvc")
