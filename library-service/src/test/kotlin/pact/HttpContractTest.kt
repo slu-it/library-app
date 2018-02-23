@@ -17,9 +17,10 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.testit.pact.provider.junit.PactFileLoader
-import org.testit.pact.provider.junit.http.ProviderState
-import org.testit.pact.provider.junit.http.RequestResponsePactTestFactory
+import org.testit.pact.provider.http.ProviderState
+import org.testit.pact.provider.http.RequestResponsePacts
+import org.testit.pact.provider.junit.PactTestFactory
+import org.testit.pact.provider.sources.LocalFiles
 import utils.Books
 import utils.classification.ContractTest
 
@@ -32,15 +33,15 @@ class HttpContractTest {
     @MockBean lateinit var dataStore: BookDataStore
     @MockBean lateinit var eventDispatcher: EventDispatcher<BookEvent>
 
-    val testFactory = RequestResponsePactTestFactory(PactFileLoader("src/test/pacts/http"), "library-service")
+    val pacts = RequestResponsePacts(LocalFiles("src/test/pacts/http"), "library-service")
 
     @LocalServerPort
     fun init(port: Int) {
-        testFactory.httpTarget.port = { port }
+        pacts.target.port = { port }
     }
 
-    @TestFactory fun `library enrichment contract tests`() =
-            testFactory.createTests("library-enrichment", this)
+    @TestFactory fun `library enrichment contract tests`() = PactTestFactory(pacts)
+            .createTests("library-enrichment", this)
 
     @ProviderState("A book with the ID {bookId} exists")
     fun `book with fixed ID exists`(params: Map<String, String>) {

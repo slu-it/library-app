@@ -6,10 +6,11 @@ import library.service.business.books.domain.types.BookId
 import library.service.messaging.MessagingConfiguration
 import org.junit.jupiter.api.TestFactory
 import org.springframework.amqp.core.MessageProperties
-import org.testit.pact.provider.junit.PactFileLoader
-import org.testit.pact.provider.junit.message.ComparableMessage
-import org.testit.pact.provider.junit.message.MessagePactTestFactory
-import org.testit.pact.provider.junit.message.MessageProducer
+import org.testit.pact.provider.junit.PactTestFactory
+import org.testit.pact.provider.message.ActualMessage
+import org.testit.pact.provider.message.MessagePacts
+import org.testit.pact.provider.message.MessageProducer
+import org.testit.pact.provider.sources.LocalFiles
 import utils.Books
 import utils.classification.ContractTest
 import java.time.OffsetDateTime
@@ -22,13 +23,13 @@ class MessageContractTest {
     val objectMapper = ObjectMapper().apply { findAndRegisterModules() }
     val messageConverter = configuration.messageConverter(objectMapper)
 
-    val testFactory = MessagePactTestFactory(PactFileLoader("src/test/pacts/message"), "library-service")
+    val pacts = MessagePacts(LocalFiles("src/test/pacts/message"), "library-service")
 
-    @TestFactory fun `library-enrichment consumer contract tests`() =
-            testFactory.createTests("library-enrichment", this)
+    @TestFactory fun `library-enrichment consumer contract tests`() = PactTestFactory(pacts)
+            .createTests("library-enrichment", this)
 
     @MessageProducer("'The Martian' was added event")
-    fun verifyTheMartianWasAddedEvent(): ComparableMessage {
+    fun `verify The Martian was added event`(): ActualMessage {
         val event = BookAdded(
                 id = UUID.randomUUID(),
                 bookId = BookId.generate(),
@@ -36,7 +37,7 @@ class MessageContractTest {
                 timestamp = OffsetDateTime.now()
         )
         val message = messageConverter.toMessage(event, MessageProperties())
-        return ComparableMessage(message.body)
+        return ActualMessage(message.body)
     }
 
 }
