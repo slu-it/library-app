@@ -8,7 +8,7 @@ import { BookServiceMock } from '../service/book.service.mock';
 import { MOCK_BOOK } from '../model/book-mock';
 import { BookResource } from '../model/book-resource';
 
-describe('BookListItemComponent', () => {
+xdescribe('BookListItemComponent', () => {
   let component: BookListItemComponent;
   let fixture: ComponentFixture<BookListItemComponent>;
 

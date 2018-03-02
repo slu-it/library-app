@@ -18,9 +18,10 @@ export class LoginComponent {
 
   userdata: UserFormData = new UserFormData('', '');
   message: string = '';
+  private _store: Storage;
 
   constructor(private _router:Router, private loginService:LoginService) {
-
+    this._store = sessionStorage;
   }
 
   public login(): void {
@@ -29,10 +30,18 @@ export class LoginComponent {
     this.loginService.login(this.userdata).subscribe(
       (user:User) => {
         console.info(user);
-        this._router.navigate(['']);
+        this._store.setItem("lib-auth", user.username);
+        this._router.navigateByUrl('');
       },
       (error: Response) => { console.info(error.statusText); this.message = 'Wrong user/password'}
     );
+  }
+
+  public logout(): void {
+    console.info('Logging out');
+    this.loginService.logout();
+    this._store.removeItem('lib-auth');
+    this._router.navigateByUrl('login');
   }
 
 }

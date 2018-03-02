@@ -23,6 +23,7 @@
       <div class="col-auto">
         <button id="filter" type="submit" class="btn btn-success m-md-2">Filter</button>
         <button id="reset" type="button" (click)="onRefresh()" class="btn btn-secondary m-md-2">Reset</button>
+        <button id="create" type="button" class="btn btn-secondary m-md-2" *ngIf="createAuthorized()" routerLink="create">Add New Book</button>
       </div>
 
     </form>

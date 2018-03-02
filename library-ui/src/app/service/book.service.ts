@@ -21,13 +21,13 @@ export class BookService {
    */
   public findAllBooks(): Observable<BookListResource> {
     return this._httpClient
-      .get(environment.libraryService + 'books')
+      .get(environment.libraryService + 'api/books')
       .map(data => Object.assign(new BookListResource(), data));
   }
 
   public createBook(createBookResource: CreateBookResource): Observable<BookResource> {
     return this._httpClient
-      .post(environment.libraryService + 'books', createBookResource)
+      .post(environment.libraryService + 'api/books', createBookResource)
       .map(data => Object.assign(new BookResource(), data));
   }
 

@@ -5,12 +5,14 @@
   <div class="card-body">
     <mat-icon *ngIf="book._links.return" class="material-icons md-48">remove_shopping_cart</mat-icon>
     <mat-icon *ngIf="book._links.borrow" class="material-icons md-48">shopping_cart</mat-icon>
+    <p *ngIf="book.authors.length > 0" class="card-text">Authors: {{book.authors}}</p>
+    <p *ngIf="book.numberOfPages > 0" class="card-text">Pages: {{book.numberOfPages}}</p>
     <p class="card-text">ISBN: {{book.isbn}}</p>
     <p *ngIf="book.borrowed"
        class="card-text">Borrowed by {{book.borrowed.by | uppercase}} on {{book.borrowed.on | date: "dd.MM.yyyy HH:mm"}}</p>
     <a id="borrow-{{index}}" *ngIf="book._links.borrow && !borrowActive" href="#" class="btn btn-primary" (click)="onBorrow()">Borrow</a>
     <a id="return-{index}}" *ngIf="book._links.return && !returnActive" href="#" class="btn btn-primary" (click)="onReturn()">Return</a>
-    <a id="delete-{{index}}" *ngIf="!borrowActive && !returnActive" href="#" class="btn btn-primary" (click)="onDelete()">Delete</a>
+    <a id="delete-{{index}}" *ngIf="book._links.delete && !borrowActive && !returnActive" href="#" class="btn btn-primary" (click)="onDelete()">Delete</a>
 
     <div *ngIf="borrowActive">
       <hr>

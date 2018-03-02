@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import {BookService} from "../service/book.service";
 import {BookResource} from "../model/book-resource";
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorResource } from '../model/error-resource';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { BookListResource } from '../model/book-list-resource';
+import {ApiService} from "../service/api.service";
 
 @Component({
   selector: 'lib-book-list',
@@ -20,10 +20,17 @@ export class BookListComponent implements OnInit {
 
   private _storage = localStorage;
 
-  constructor(private _bookService: BookService, private _route: ActivatedRoute, private _snackBar: MatSnackBar) { }
+  private _createAuthorized: boolean;
+
+  constructor(
+    private _bookService: BookService,
+    private _apiService: ApiService,
+    private _route: ActivatedRoute,
+    private _snackBar: MatSnackBar) { }
 
   ngOnInit() {
     console.log('ngOnInit');
+    this.loadApiResource();
     this.restoreFilter();
     this.filterList(this._route.snapshot.data['bookList']);
   }
@@ -41,6 +48,10 @@ export class BookListComponent implements OnInit {
 
   refreshList(update: boolean) {
     this.loadList();
+  }
+
+  createAuthorized(): boolean {
+    return this._createAuthorized;
   }
 
   private storeFilter() {
@@ -86,6 +97,17 @@ export class BookListComponent implements OnInit {
         this._snackBar.open('Error loading books: ' + err.message, 'dismiss', {
           duration: 10000
         });
+      }
+    );
+  }
+
+  private loadApiResource() {
+    this._apiService.getApiResource().subscribe(
+      api => {
+        this._createAuthorized = api._links.addBook != undefined;
+      },
+      (err: HttpErrorResponse) => {
+        console.log(`Backend returned code ${err.status}, body was: ${err.error}`);
       }
     );
   }

@@ -4,6 +4,6 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false,
-  libraryService: 'https://nt-ca-aqe-library-service.cfapps.io/api/'
+  production: true,
+  libraryService: 'https://nt-ca-aqe-library-service.cfapps.io/'
 };

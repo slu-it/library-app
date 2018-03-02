@@ -10,17 +10,27 @@ import {BookResource} from "../model/book-resource";
 @Injectable()
 export class LoginService {
 
+  private _userAuth: string;
+
   constructor(private http: HttpClient) {
   }
 
   login(userdata: UserFormData): Observable<User> {
 
+    this._userAuth = btoa(userdata.username + ':' + userdata.password);
+    console.log('login#userAuth: ' + this._userAuth);
     return this.http.get(
       environment.libraryService + 'userinfo',
       { headers: new HttpHeaders()
-          .append("Authorization", "Basic " + btoa(userdata.username + ':' + userdata.password))
-          .append("X-Requested-With", "XMLHttpRequest")
-          .append('Content-Type', 'application/json')
       }).map(data => Object.assign(new User(), data));
+  }
+
+  logout() {
+    console.log('logout()');
+    this._userAuth = null;
+  }
+
+  public getUserAuth(): string {
+    return this._userAuth;
   }
 }

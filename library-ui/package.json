@@ -5,7 +5,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "yarn install && npm run prod && npm run test && npm run zip",
+    "build": "yarn install && npm run prod && npm run zip",
+    "build:test": "yarn install && npm run prod && npm run test && npm run zip",
     "build:pcfdev": "yarn install && npm run pcfdev && npm run zip",
     "serve": "ng serve --open",
     "serve:pcfdev": "ng serve --env=pcfdev --open",

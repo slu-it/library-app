@@ -26,6 +26,7 @@
       "environmentSource": "environments/environment.ts",
       "environments": {
         "default": "environments/environment.ts",
+        "dev": "environments/environment.dev.ts",
         "prod": "environments/environment.prod.ts",
         "pcf": "environments/environment.pcf.ts",
         "pcfdev": "environments/environment.pcfdev.ts",

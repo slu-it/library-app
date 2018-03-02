@@ -9,7 +9,7 @@
 
     <div class="form-group">
       <label for="isbn">ISBN</label>
-      <input type="text" class="form-control" id="isbn" required minlength="10" maxlength="13" pattern="[0-9]{10,13}"
+      <input type="text" class="form-control" id="isbn" required minlength="10" maxlength="13" pattern="978[0-9]{13}|[0-9]{10}"
              [(ngModel)]="book.isbn" name="isbn" #isbn="ngModel">
     </div>
 
