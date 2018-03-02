@@ -25,9 +25,11 @@
       "scripts": [],
       "environmentSource": "environments/environment.ts",
       "environments": {
-        "dev": "environments/environment.ts",
+        "default": "environments/environment.ts",
         "prod": "environments/environment.prod.ts",
-        "aws": "environments/environment.aws.ts"
+        "pcf": "environments/environment.pcf.ts",
+        "pcfdev": "environments/environment.pcfdev.ts",
+        "localhost": "environments/environment.localhost.ts"
       }
     }
   ],

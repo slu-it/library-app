@@ -4,8 +4,7 @@ import { BookService } from '../service/book.service';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorResource } from '../model/error-resource';
-import { ErrorMessage } from '../shared/error-message';
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'lib-book-create',
@@ -16,7 +15,7 @@ export class BookCreateComponent implements OnInit {
 
   public book: CreateBookResource;
 
-  constructor(private _bookService: BookService, private _router: Router, private _snackBar: MdSnackBar) { }
+  constructor(private _bookService: BookService, private _router: Router, private _snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.book = new CreateBookResource('', '')
@@ -24,7 +23,6 @@ export class BookCreateComponent implements OnInit {
 
   onSubmit() {
     this._bookService.createBook(this.book).subscribe(
-
         data => {
           this._router.navigate(['']);
           this._snackBar.open('Successfully created book', 'dismiss', {

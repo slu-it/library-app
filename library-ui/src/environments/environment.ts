@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  libraryService: 'http://localhost:8080/api/'
+  libraryService: 'https://nt-ca-aqe-library-service.cfapps.io/api/'
 };

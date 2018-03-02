@@ -23,12 +23,6 @@ export class BookService {
     return this._httpClient
       .get(environment.libraryService + 'books')
       .map(data => Object.assign(new BookListResource(), data));
-    /*return Observable.create((observer: Observer<BookListResource>) => {
-      observer.next( Object.assign(new BookListResource(),
-        MOCK_BOOK_LIST
-      ));
-      observer.complete();
-    })*/
   }
 
   public createBook(createBookResource: CreateBookResource): Observable<BookResource> {

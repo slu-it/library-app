@@ -10,12 +10,22 @@ import { HttpClientModule } from '@angular/common/http';
 import { BookCreateComponent } from './book-create/book-create.component';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MdButtonModule, MdCheckboxModule, MdIconModule, MdSnackBarModule } from '@angular/material';
+import {
+  MatButtonModule,
+  MatCheckboxModule,
+  MatIconModule,
+  MatSnackBarModule
+} from '@angular/material';
 import { LoadBooksResolver } from './resolver/load-books-resolver';
+import { LoginComponent } from './login/login.component';
+import { LoginService } from './login/login.service';
+import { NotAuthorizedComponent } from './not-authorised-component/not-authorized.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    LoginComponent,
+    NotAuthorizedComponent,
     BookListComponent,
     BookListItemComponent,
     BookCreateComponent
@@ -26,12 +36,12 @@ import { LoadBooksResolver } from './resolver/load-books-resolver';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    MdIconModule,
-    MdSnackBarModule,
-    MdButtonModule,
-    MdCheckboxModule
+    MatIconModule,
+    MatSnackBarModule,
+    MatButtonModule,
+    MatCheckboxModule
   ],
-  providers: [LoadBooksResolver, BookService],
+  providers: [LoadBooksResolver, BookService, LoginService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

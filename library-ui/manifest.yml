@@ -1,0 +1,8 @@
+applications:
+- name: library-ui
+  buildpack: https://github.com/cloudfoundry/staticfile-buildpack.git#v1.4.21
+  instances: 1
+  memory: 64M
+  host: nt-ca-aqe-library
+  disk_quota: 256M
+  stack: cflinuxfs2

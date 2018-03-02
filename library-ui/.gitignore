@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+yarn.lock
 
 # dependencies
 /node_modules
@@ -33,6 +34,7 @@ npm-debug.log
 testem.log
 /typings
 yarn-error.log
+package-lock.json
 
 # e2e
 /e2e/*.js

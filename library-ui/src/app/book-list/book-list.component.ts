@@ -3,7 +3,7 @@ import {BookService} from "../service/book.service";
 import {BookResource} from "../model/book-resource";
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorResource } from '../model/error-resource';
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { BookListResource } from '../model/book-list-resource';
 
@@ -20,7 +20,7 @@ export class BookListComponent implements OnInit {
 
   private _storage = localStorage;
 
-  constructor(private _bookService: BookService, private _route: ActivatedRoute, private _snackBar: MdSnackBar) { }
+  constructor(private _bookService: BookService, private _route: ActivatedRoute, private _snackBar: MatSnackBar) { }
 
   ngOnInit() {
     console.log('ngOnInit');

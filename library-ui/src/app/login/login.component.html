@@ -1,0 +1,15 @@
+<div class="container">
+  <h1>Login</h1>
+<form role="form" (ngSubmit)="login()" method="post">
+  <div class="form-group">
+    <label for="username">Username:</label>
+    <input type="text" class="form-control" id="username" name="username" [(ngModel)]="userdata.username" required/>
+  </div>
+  <div class="form-group">
+    <label for="password">Password:</label>
+    <input type="password" class="form-control" id="password" name="password" [(ngModel)]="userdata.password" required/>
+  </div>
+  <button type="submit" class="btn btn-default">Submit</button>
+  <span>{{message}}</span>
+</form>
+</div>
