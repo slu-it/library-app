@@ -18,6 +18,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.User
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import java.util.*
+
 
 @Configuration
 @Profile("!unsecured")
@@ -32,7 +37,7 @@ class SecurityConfiguration(
     private val healthEndpoint = HealthEndpoint::class.java
 
     override fun configure(http: HttpSecurity): Unit = with(http) {
-        csrf().disable()
+        csrf().disable().cors()
         httpBasic()
         sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         authorizeRequests {
@@ -52,6 +57,21 @@ class SecurityConfiguration(
     }
 
     @Bean override fun authenticationManagerBean(): AuthenticationManager = super.authenticationManagerBean()
+
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = mutableListOf(
+                "http://localhost:4200",
+                "http://nt-ca-aqe-library.local.pcfdev.io",
+                "https://nt-ca-aqe-library.cfapps.io")
+        configuration.allowedMethods = mutableListOf("GET", "POST", "PUT", "DELETE")
+        configuration.allowedHeaders = mutableListOf("*")
+        configuration.allowCredentials = true
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
+    }
 
     private fun UserSettings.UserCredentials.toUser(vararg roles: String) = User
             .withDefaultPasswordEncoder()
