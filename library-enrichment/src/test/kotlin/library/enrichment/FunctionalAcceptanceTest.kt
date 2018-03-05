@@ -29,6 +29,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.classification.AcceptanceTest
 import utils.extensions.UseDockerToRunRabbitMQ
 import utils.readFile
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.*
 
 
 @AcceptanceTest
@@ -64,7 +66,7 @@ internal class FunctionalAcceptanceTest {
         )))
 
         await("message being processed")
-                .atMost(FIVE_SECONDS)
+                .atMost(30, SECONDS)
                 .until { messagesCounter.total > 0 }
 
         verify(libraryClient).updateAuthors(bookId, UpdateAuthors(listOf("J. R. R. Tolkien")))
