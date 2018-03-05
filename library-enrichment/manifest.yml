@@ -1,12 +1,11 @@
 ---
 applications:
   - name: library-enrichment
-    buildpack: https://github.com/cloudfoundry/java-buildpack.git#v4.8
+    buildpack: https://github.com/cloudfoundry/java-buildpack.git#v4.9
     path: build/libs/library-enrichment.jar
     instances: 1
     memory: 768M
     disk_quota: 256M
     host: nt-ca-aqe-library-enrichment
     services:
-      - metrics-forwarder
       - rabbit-mq

@@ -1,13 +1,12 @@
 ---
 applications:
   - name: library-service
-    buildpack: https://github.com/cloudfoundry/java-buildpack.git#v4.8
+    buildpack: https://github.com/cloudfoundry/java-buildpack.git#v4.9
     path: build/libs/library-service.jar
     instances: 1
     memory: 768M
     disk_quota: 256M
     host: nt-ca-aqe-library-service
     services:
-      - metrics-forwarder
       - mongo-db
       - rabbit-mq
