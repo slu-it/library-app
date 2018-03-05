@@ -40,16 +40,15 @@ spring:
 management:
   endpoints:
     enabled-by-default: false
-    jmx:
-      enabled: false
     web:
-      expose: '*'
+      exposure:
+        include: '*'
   endpoint:
     beans:
       enabled: true
     health:
       enabled: true
-      show-details: true
+      show-details: always
     conditions:
       enabled: true
     configprops:
@@ -64,7 +63,7 @@ management:
       enabled: true
     scheduledtasks:
       enabled: true
-    trace:
+    httptrace:
       enabled: true
     mappings:
       enabled: true

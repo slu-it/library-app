@@ -1,6 +1,6 @@
 package library.service.security
 
-import org.springframework.boot.actuate.autoconfigure.security.EndpointRequest
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
 import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.boot.actuate.info.InfoEndpoint
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -21,7 +21,6 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import java.util.*
 
 
 @Configuration
