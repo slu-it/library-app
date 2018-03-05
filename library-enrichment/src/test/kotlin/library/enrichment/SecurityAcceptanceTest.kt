@@ -21,7 +21,6 @@ import utils.classification.AcceptanceTest
 import utils.extensions.UseDockerToRunRabbitMQ
 
 @AcceptanceTest
-@UseDockerToRunRabbitMQ
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -42,11 +41,12 @@ internal class SecurityAcceptanceTest {
         }
 
         @Test fun `actuator health endpoint can be accessed by anyone`() {
-            given { auth().none() } `when` { get("/actuator/health") } then { statusCode(200) }
+            // status 503 because RabbitMQ won't be available
+            given { auth().none() } `when` { get("/actuator/health") } then { statusCode(503) }
         }
 
         @ValueSource(strings = ["beans", "conditions", "configprops", "env", "loggers",
-            "metrics", "scheduledtasks", "trace", "mappings"])
+            "metrics", "scheduledtasks", "httptrace", "mappings"])
         @ParameterizedTest fun `any other actuator endpoint can only be accessed by an admin`(endpoint: String) {
             given { auth().none() }
                     .`when` { get("/actuator/$endpoint") }

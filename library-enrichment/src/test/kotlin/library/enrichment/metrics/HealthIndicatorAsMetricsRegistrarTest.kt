@@ -23,8 +23,8 @@ internal class HealthIndicatorAsMetricsRegistrarTest {
 
     @CsvSource("up, 1.00", "down, 0.00", "outofservice, 0.00", "unknown, 0.00")
     @ParameterizedTest fun `health indicators are registered as gauges`(name: String, expectedValue: Double) {
-        val value = meterRegistry.find("health.indicators.$name").gauge().map { it.value() }
-        assertThat(value).hasValue(expectedValue)
+        val value = meterRegistry.find("health.indicators.$name").gauge()?.value()
+        assertThat(value).isEqualTo(expectedValue)
     }
 
     class UpHealthIndicator : HealthIndicator {
