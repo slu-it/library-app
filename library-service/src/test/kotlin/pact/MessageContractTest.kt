@@ -25,8 +25,8 @@ class MessageContractTest {
 
     val pacts = MessagePacts(LocalFiles("src/test/pacts/message"), "library-service")
 
-    @TestFactory fun `library-enrichment consumer contract tests`() = PactTestFactory(pacts)
-            .createTests("library-enrichment", this)
+    @TestFactory fun `library-enrichment consumer contract tests`() =
+            PactTestFactory.createTests(pacts, "library-enrichment", this)
 
     @MessageProducer("'The Martian' was added event")
     fun `verify The Martian was added event`(): ActualMessage {

@@ -40,8 +40,8 @@ class HttpContractTest {
         pacts.target.port = { port }
     }
 
-    @TestFactory fun `library enrichment contract tests`() = PactTestFactory(pacts)
-            .createTests("library-enrichment", this)
+    @TestFactory fun `library enrichment contract tests`() =
+            PactTestFactory.createTests(pacts, "library-enrichment", this)
 
     @ProviderState("A book with the ID {bookId} exists")
     fun `book with fixed ID exists`(params: Map<String, String>) {
