@@ -28,9 +28,10 @@ import java.util.*
 @Profile("!unsecured")
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@EnableConfigurationProperties(UserSettings::class)
+@EnableConfigurationProperties(UserSettings::class, CorsSettings::class)
 class SecurityConfiguration(
-        private val userSettings: UserSettings
+        private val userSettings: UserSettings,
+        private val corsSettings: CorsSettings
 ) : WebSecurityConfigurerAdapter() {
 
     private val infoEndpoint = InfoEndpoint::class.java
@@ -61,11 +62,8 @@ class SecurityConfiguration(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = mutableListOf(
-                "http://localhost:4200",
-                "http://nt-ca-aqe-library.local.pcfdev.io",
-                "https://nt-ca-aqe-library.cfapps.io")
-        configuration.allowedMethods = mutableListOf("GET", "POST", "PUT", "DELETE")
+        configuration.allowedOrigins = corsSettings.origins
+        configuration.allowedMethods = corsSettings.methods
         configuration.allowedHeaders = mutableListOf("*")
         configuration.allowCredentials = true
         val source = UrlBasedCorsConfigurationSource()

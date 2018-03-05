@@ -19,6 +19,17 @@ users:
     username: "user"
     password: "user"
 
+cors:
+  origins:
+    - "http://localhost:4200"
+    - "http://nt-ca-aqe-library.local.pcfdev.io"
+    - "https://nt-ca-aqe-library.cfapps.io"
+  methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "DELETE"
+
 spring:
   data:
     mongodb:
