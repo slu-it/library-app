@@ -14,10 +14,6 @@ users:
     username: "admin"
     password: "admin"
 
-spring:
-  main:
-    banner-mode: "off"
-
 management:
   endpoints:
     enabled-by-default: false
