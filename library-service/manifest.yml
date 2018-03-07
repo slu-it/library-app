@@ -7,6 +7,7 @@ applications:
     memory: 768M
     disk_quota: 256M
     host: nt-ca-aqe-library-service
+    health-check-type: port
     services:
       - mongo-db
       - rabbit-mq

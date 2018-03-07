@@ -7,5 +7,6 @@ applications:
     memory: 768M
     disk_quota: 256M
     host: nt-ca-aqe-library-enrichment
+    health-check-type: port
     services:
       - rabbit-mq
