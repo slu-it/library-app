@@ -1,7 +1,7 @@
 ---
 applications:
   - name: library-enrichment
-    buildpack: https://github.com/cloudfoundry/java-buildpack.git#v4.9
+    buildpack: https://github.com/nt-ca-aqe/java-buildpack.git#v4.9-X1
     path: build/libs/library-enrichment.jar
     instances: 1
     memory: 768M
@@ -10,3 +10,4 @@ applications:
     health-check-type: port
     services:
       - rabbit-mq
+      - metrics-forwarder
