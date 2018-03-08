@@ -1,23 +1,13 @@
 buildscript {
-    ext {
-        kotlinVersion = '1.2.30'
-        kotlinLoggingVersion = '1.5.3'
-        springBootVersion = '2.0.0.RELEASE'
-        junitPlatformVersion = '1.1.0'
-        junitJupiterVersion = '5.1.0'
-        dockerPluginVersion = '1.2'
-        feignVersion = '9.5.1'
-    }
     repositories {
         mavenCentral()
         jcenter()
-        maven { url "https://repo.spring.io/milestone" }
     }
     dependencies {
+        classpath("se.transmode.gradle:gradle-docker:${dockerPluginVersion}")
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
-        classpath("se.transmode.gradle:gradle-docker:${dockerPluginVersion}")
     }
 }
 
@@ -27,62 +17,53 @@ apply plugin: 'kotlin-spring'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-sourceCompatibility = 1.8
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.2"
     }
 }
 compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.2"
     }
-}
-
-springBoot {
-    buildInfo()
 }
 
 repositories {
     mavenCentral()
-    maven { url "https://repo.spring.io/milestone" }
 }
 
 dependencies {
     compile("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}",
             "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-
     compile("org.springframework.boot:spring-boot-starter-actuator",
             "org.springframework.boot:spring-boot-starter-aop",
             "org.springframework.boot:spring-boot-starter-amqp",
             "org.springframework.boot:spring-boot-starter-security",
             "org.springframework.boot:spring-boot-starter-web")
-
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin",
-            "io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
-
     compile("io.github.openfeign:feign-core:${feignVersion}",
             "io.github.openfeign:feign-jackson:${feignVersion}",
             "io.github.openfeign:feign-slf4j:${feignVersion}")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin")
+    compile("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
-
-    testCompile("org.awaitility:awaitility:3.0.0",
-            "com.tngtech.archunit:archunit-junit:0.4.0",
-            "io.rest-assured:rest-assured:3.0.6",
-            "com.github.tomakehurst:wiremock-standalone:2.10.1",
-            "com.nhaarman:mockito-kotlin-kt1.1:1.5.0",
-            "info.novatec.testit:testutils-logrecorder-logback:0.3.3")
-
-    testCompile("au.com.dius:pact-jvm-consumer_2.12:3.5.12",
-            "au.com.dius:pact-jvm-consumer-junit_2.12:3.5.12")
-
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
-            "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}",
-            "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
-            "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+                "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
+    testCompile("io.rest-assured:rest-assured")
+    testCompile("org.awaitility:awaitility:${awaitilityVersion}")
+    testCompile("com.tngtech.archunit:archunit-junit:${archunitVersion}")
+    testCompile("com.github.tomakehurst:wiremock-standalone:${wiremockVersion}")
+    testCompile("com.nhaarman:mockito-kotlin:${mockitoKotlinVersion}")
+    testCompile("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}")
+    testCompile("au.com.dius:pact-jvm-consumer_2.12:${pactVersion}",
+                "au.com.dius:pact-jvm-consumer-junit_2.12:${pactVersion}")
+
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
+                "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+}
+
+springBoot {
+    buildInfo()
 }
 
 task unitTest(type: Test) {
