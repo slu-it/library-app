@@ -1,7 +1,7 @@
 package library.enrichment.core
 
 import library.enrichment.logging.LogMethodEntryAndExit
-import library.enrichment.logging.logger
+import mu.KotlinLogging.logger
 import org.springframework.stereotype.Component
 
 /**
@@ -23,30 +23,30 @@ class BookAddedEventHandler(
         private val library: Library
 ) {
 
-    private val log = BookAddedEventHandler::class.logger
+    private val log = logger {}
 
     fun handle(event: BookAddedEvent) {
-        log.info("processing book added event: {}", event)
+        log.info { "processing book added event: $event" }
 
         val dataSets = gatherBookDataFromSources(event.isbn)
         if (dataSets.isNotEmpty()) {
-            log.debug("found {} data set(s) for ISBN [{}]", dataSets.size, event.isbn)
+            log.debug { "found ${dataSets.size} data set(s) for ISBN [${event.isbn}]" }
             chooseAuthors(dataSets)?.let {
-                log.debug("chose {} as the best author(s), updating book record ...", it)
+                log.debug { "chose $it as the best author(s), updating book record ..." }
                 updateAuthors(event, it)
             }
             chooseNumberOfPages(dataSets)?.let {
-                log.debug("chose [{}] as the best number of pages, updating book record ...", it)
+                log.debug { "chose [$it] as the best number of pages, updating book record ..." }
                 updateNumberOfPages(event, it)
             }
         } else {
-            log.debug("could not find any data sets for ISBN [{}]", event.isbn)
+            log.debug { "could not find any data sets for ISBN [${event.isbn}]" }
         }
     }
 
     private fun gatherBookDataFromSources(isbn: String): List<BookData> {
         return dataSources.mapNotNull {
-            log.debug("looking up book data using [{}]", it)
+            log.debug { "looking up book data using [$it]" }
             it.getBookData(isbn)
         }
     }

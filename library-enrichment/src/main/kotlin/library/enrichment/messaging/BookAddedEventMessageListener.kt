@@ -3,7 +3,7 @@ package library.enrichment.messaging
 import com.fasterxml.jackson.databind.ObjectMapper
 import library.enrichment.core.BookAddedEvent
 import library.enrichment.core.BookAddedEventHandler
-import library.enrichment.logging.logger
+import mu.KotlinLogging.logger
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageListener
 import org.springframework.stereotype.Component
@@ -29,7 +29,7 @@ internal class BookAddedEventMessageListener(
         private val messagesCounter: ProcessedMessagesCounter
 ) : MessageListener {
 
-    private val log = BookAddedEventMessageListener::class.logger
+    private val log = logger {}
 
     override fun onMessage(message: Message) = try {
         readEventFrom(message) {
@@ -37,7 +37,7 @@ internal class BookAddedEventMessageListener(
         }
     } catch (e: Exception) {
         val correlationId = message.messageProperties.correlationId
-        log.warn("could not process message [$correlationId] because of an exception", e)
+        log.warn(e) { "could not process message [$correlationId] because of an exception" }
     } finally {
         messagesCounter.increment()
     }

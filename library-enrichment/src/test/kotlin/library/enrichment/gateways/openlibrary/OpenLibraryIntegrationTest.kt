@@ -136,7 +136,7 @@ internal class OpenLibraryIntegrationTest {
             getOptionalBookData(testIsbn)
 
             assertThat(log.warningMessages())
-                    .containsOnly("Could not retrieve book data from openlibrary.org because of an error on their end:")
+                    .containsOnly("could not retrieve book data from openlibrary.org because of an error on THEIR end:")
         }
 
         @RecordLoggers(OpenLibraryAccessor::class)
@@ -146,7 +146,7 @@ internal class OpenLibraryIntegrationTest {
             getOptionalBookData(testIsbn)
 
             assertThat(log.errorMessages())
-                    .containsOnly("Could not retrieve book data from openlibrary.org because of an error on our end:")
+                    .containsOnly("could not retrieve book data from openlibrary.org because of an error on OUR end:")
         }
 
     }

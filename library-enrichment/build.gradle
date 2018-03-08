@@ -1,6 +1,7 @@
 buildscript {
     ext {
         kotlinVersion = '1.2.30'
+        kotlinLoggingVersion = '1.5.3'
         springBootVersion = '2.0.0.RELEASE'
         junitPlatformVersion = '1.1.0'
         junitJupiterVersion = '5.1.0'
@@ -50,37 +51,38 @@ repositories {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
-    compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    compile("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}",
+            "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-aop")
-    compile("org.springframework.boot:spring-boot-starter-amqp")
-    compile("org.springframework.boot:spring-boot-starter-security")
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-actuator",
+            "org.springframework.boot:spring-boot-starter-aop",
+            "org.springframework.boot:spring-boot-starter-amqp",
+            "org.springframework.boot:spring-boot-starter-security",
+            "org.springframework.boot:spring-boot-starter-web")
 
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin",
+            "io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
 
-    compile("io.github.openfeign:feign-core:${feignVersion}")
-    compile("io.github.openfeign:feign-jackson:${feignVersion}")
-    compile("io.github.openfeign:feign-slf4j:${feignVersion}")
-
-    testCompile("com.nhaarman:mockito-kotlin-kt1.1:1.5.0")
-    testCompile("info.novatec.testit:testutils-logrecorder-logback:0.3.3")
+    compile("io.github.openfeign:feign-core:${feignVersion}",
+            "io.github.openfeign:feign-jackson:${feignVersion}",
+            "io.github.openfeign:feign-slf4j:${feignVersion}")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
 
-    testCompile("org.awaitility:awaitility:3.0.0")
-    testCompile("com.tngtech.archunit:archunit-junit:0.4.0")
-    testCompile("io.rest-assured:rest-assured:3.0.6")
-    testCompile("com.github.tomakehurst:wiremock-standalone:2.10.1")
-    testCompile("au.com.dius:pact-jvm-consumer_2.12:3.5.12")
-    testCompile("au.com.dius:pact-jvm-consumer-junit_2.12:3.5.12")
+    testCompile("org.awaitility:awaitility:3.0.0",
+            "com.tngtech.archunit:archunit-junit:0.4.0",
+            "io.rest-assured:rest-assured:3.0.6",
+            "com.github.tomakehurst:wiremock-standalone:2.10.1",
+            "com.nhaarman:mockito-kotlin-kt1.1:1.5.0",
+            "info.novatec.testit:testutils-logrecorder-logback:0.3.3")
 
-    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
-    testCompile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
-    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testCompile("au.com.dius:pact-jvm-consumer_2.12:3.5.12",
+            "au.com.dius:pact-jvm-consumer-junit_2.12:3.5.12")
+
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
+            "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}",
+            "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
+            "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 }
 
 task unitTest(type: Test) {

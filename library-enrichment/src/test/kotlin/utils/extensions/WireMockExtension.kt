@@ -2,7 +2,7 @@ package utils.extensions
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
-import library.enrichment.logging.logger
+import mu.KotlinLogging.logger
 import org.junit.jupiter.api.extension.*
 
 @Retention
@@ -15,30 +15,31 @@ class WireMockExtension : BeforeAllCallback, BeforeEachCallback, AfterAllCallbac
     private companion object {
         val EXTENSION_NAMESPACE = ExtensionContext.Namespace.create("WireMockExtension")
         val SERVER_PROPERTY = "server"
-        val log = WireMockExtension::class.logger
     }
+
+    private val log = logger {}
 
     override fun beforeAll(context: ExtensionContext) = onlyForInitialContext(context) { store ->
         val options = options()
                 .dynamicPort()
                 .dynamicHttpsPort()
 
-        log.debug("Starting WireMock server ...", options)
+        log.debug { "Starting WireMock server ..." }
         val server = WireMockServer(options).apply { start() }
         store.setServer(server)
-        log.debug("... WireMock server started. [port={}, httpsPort={}]", server.port(), server.httpsPort())
+        log.debug { "... WireMock server started. [port=${server.port()}, httpsPort=${server.httpsPort()}]" }
     }
 
     override fun beforeEach(context: ExtensionContext) {
-        log.debug("Resetting WireMock server ...")
+        log.debug { "Resetting WireMock server ..." }
         context.getExtensionStore().getServer()?.apply { resetAll() }
-        log.debug("... WireMock server reset.")
+        log.debug { "... WireMock server reset." }
     }
 
     override fun afterAll(context: ExtensionContext) = onlyForInitialContext(context) { store ->
-        log.debug("Stopping WireMock server ...")
+        log.debug { "Stopping WireMock server ..." }
         store.getServer()?.apply { stop() }
-        log.debug("... WireMock server stopped.")
+        log.debug { "... WireMock server stopped." }
     }
 
     private fun onlyForInitialContext(context: ExtensionContext, body: (ExtensionContext.Store) -> Unit) {

@@ -1,5 +1,6 @@
 package library.enrichment.logging
 
+import mu.KotlinLogging.logger
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -50,14 +51,14 @@ annotation class LogMethodEntryAndExit
 @Component
 class LogMethodEntryAndExitAspect {
 
-    private val log = LogMethodEntryAndExitAspect::class.logger
+    private val log = logger {}
 
     @Around("(@within(LogMethodEntryAndExit) && execution(public * *(..)))")
     fun aroundMethod(pjp: ProceedingJoinPoint): Any? {
         val signature = pjp.signature
-        log.debug("executing method: {}", signature)
+        log.debug { "executing method: $signature" }
         val returnValue = pjp.proceed()
-        log.debug("successfully executed method: {}", signature)
+        log.debug { "successfully executed method: $signature" }
         return returnValue
     }
 

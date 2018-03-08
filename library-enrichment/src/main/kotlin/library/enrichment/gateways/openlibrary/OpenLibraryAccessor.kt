@@ -4,28 +4,26 @@ import com.fasterxml.jackson.databind.JsonNode
 import feign.FeignException
 import library.enrichment.core.BookData
 import library.enrichment.core.BookDataSource
-import library.enrichment.logging.logger
-import org.springframework.core.annotation.Order
+import mu.KotlinLogging.logger
 import org.springframework.stereotype.Service
 
 /**
  * A [BookDataSource] using `openlibrary.org` as its source of information.
  */
 @Service
-@Order(1)
 class OpenLibraryAccessor(
         private val client: OpenLibraryClient
 ) : BookDataSource {
 
-    private val log = OpenLibraryAccessor::class.logger
+    private val log = logger {}
 
     override fun getBookData(isbn: String): BookData? {
-        log.debug("Looking up ISBN {} on openlibrary.org ...", isbn)
+        log.debug { "looking up ISBN [$isbn] on openlibrary.org ..." }
         try {
             val data = client.searchBooks(isbn)
                     .get("ISBN:$isbn")
                     ?.extractBookData()
-            log.debug("Found book data: {}", data)
+            log.debug { "found book data: $data" }
             return data
         } catch (e: FeignException) {
             handleException(e)
@@ -42,8 +40,8 @@ class OpenLibraryAccessor(
     )
 
     private fun handleException(e: FeignException) = when (e.status()) {
-        in 500..599 -> log.warn("Could not retrieve book data from openlibrary.org because of an error on their end:", e)
-        else -> log.error("Could not retrieve book data from openlibrary.org because of an error on our end:", e)
+        in 500..599 -> log.warn(e) { "could not retrieve book data from openlibrary.org because of an error on THEIR end:" }
+        else -> log.error(e) { "could not retrieve book data from openlibrary.org because of an error on OUR end:" }
     }
 
 }
