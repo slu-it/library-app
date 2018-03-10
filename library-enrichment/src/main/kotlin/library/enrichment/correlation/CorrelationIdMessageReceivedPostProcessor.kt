@@ -5,14 +5,13 @@ import org.springframework.amqp.core.MessagePostProcessor
 import org.springframework.stereotype.Component
 
 @Component
-class CorrelationIdMessagePostProcessor(
-        private val correlationIdHolder: CorrelationIdHolder
+class CorrelationIdMessageReceivedPostProcessor(
+        private val correlationId: CorrelationId
 ) : MessagePostProcessor {
 
     override fun postProcessMessage(message: Message): Message {
         val correlationId = message.messageProperties.correlationId
-                ?: CorrelationId.generate()
-        correlationIdHolder.set(correlationId)
+        this.correlationId.setOrGenerate(correlationId)
         return message
     }
 

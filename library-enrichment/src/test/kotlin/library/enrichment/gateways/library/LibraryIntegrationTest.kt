@@ -3,7 +3,7 @@ package library.enrichment.gateways.library
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import feign.FeignException
-import library.enrichment.correlation.CorrelationIdHolder
+import library.enrichment.correlation.CorrelationId
 import library.enrichment.correlation.CorrelationIdRequestInterceptor
 import library.enrichment.gateways.library.LibraryIntegrationTest.CustomConfiguration
 import org.assertj.core.api.Assertions.assertThat
@@ -37,7 +37,7 @@ internal class LibraryIntegrationTest {
     @Autowired lateinit var settings: LibrarySettings
     @Autowired lateinit var accessor: LibraryAccessor
     @Autowired lateinit var client: LibraryClient
-    @Autowired lateinit var correlationIdHolder: CorrelationIdHolder
+    @Autowired lateinit var correlationIdHolder: CorrelationId
 
     lateinit var correlationId: String
 
@@ -45,7 +45,7 @@ internal class LibraryIntegrationTest {
         settings.url = "http://localhost:${wireMock.port()}"
 
         correlationId = UUID.randomUUID().toString()
-        correlationIdHolder.set(correlationId)
+        correlationIdHolder.setOrGenerate(correlationId)
     }
 
     @Nested inner class `pinging service` {

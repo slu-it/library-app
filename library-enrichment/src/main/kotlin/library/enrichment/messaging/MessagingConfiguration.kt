@@ -1,6 +1,6 @@
 package library.enrichment.messaging
 
-import library.enrichment.correlation.CorrelationIdMessagePostProcessor
+import library.enrichment.correlation.CorrelationIdMessageReceivedPostProcessor
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration
  */
 @Configuration
 internal class MessagingConfiguration(
-        private val correlationIdMessagePostProcessor: CorrelationIdMessagePostProcessor,
+        private val correlationIdMessageReceivedPostProcessor: CorrelationIdMessageReceivedPostProcessor,
         private val bookAddedEventMessageListener: BookAddedEventMessageListener
 ) {
 
@@ -49,7 +49,7 @@ internal class MessagingConfiguration(
     @Bean fun bookAddedEventMessageContainer(connectionFactory: ConnectionFactory): MessageListenerContainer = SimpleMessageListenerContainer(connectionFactory)
             .apply {
                 setQueueNames(QUEUE_NAME)
-                setAfterReceivePostProcessors(correlationIdMessagePostProcessor)
+                setAfterReceivePostProcessors(correlationIdMessageReceivedPostProcessor)
                 setMessageListener(bookAddedEventMessageListener)
             }
 
