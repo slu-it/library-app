@@ -35,7 +35,7 @@ class BooksController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun postBook(@Valid @RequestBody body: CreateBookRequestBody): BookResource {
+    fun postBook(@Valid @RequestBody body: CreateBookRequest): BookResource {
         val book = Book(
                 isbn = Isbn13.parse(body.isbn!!),
                 title = Title(body.title!!),
@@ -106,7 +106,7 @@ class BooksController(
 
     @PostMapping("/{id}/borrow")
     @ResponseStatus(HttpStatus.OK)
-    fun postBorrowBook(@PathVariable id: UUID, @Valid @RequestBody body: BorrowBookRequestBody): BookResource {
+    fun postBorrowBook(@PathVariable id: UUID, @Valid @RequestBody body: BorrowBookRequest): BookResource {
         val bookRecord = collection.borrowBook(BookId(id), Borrower(body.borrower!!))
         return assembler.toResource(bookRecord)
     }
