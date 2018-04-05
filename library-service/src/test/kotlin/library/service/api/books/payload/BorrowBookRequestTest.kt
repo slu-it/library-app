@@ -1,5 +1,6 @@
 package library.service.api.books.payload
 
+import library.service.business.books.domain.types.Borrower
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -30,7 +31,8 @@ internal class BorrowBookRequestTest : AbstractPayloadTest<BorrowBookRequest>() 
         @Nested inner class `invalid value examples` {
 
             private val nullError = "must not be null"
-            private val patternError = """must match "(?U)[\w][\w -]{0,49}""""
+            private val sizeError = "size must be between 1 and 50"
+            private val patternError = """must match "${Borrower.VALID_BORROWER_PATTERN}""""
 
             @Test fun `null`() {
                 val payload = BorrowBookRequest(null)
@@ -39,7 +41,7 @@ internal class BorrowBookRequestTest : AbstractPayloadTest<BorrowBookRequest>() 
 
             @Test fun `empty string`() {
                 val payload = BorrowBookRequest("")
-                assertThat(validate(payload)).containsOnly(patternError)
+                assertThat(validate(payload)).containsOnly(sizeError, patternError)
             }
 
             @Test fun `blank string`() {
@@ -49,7 +51,7 @@ internal class BorrowBookRequestTest : AbstractPayloadTest<BorrowBookRequest>() 
 
             @Test fun `more than 50 character string`() {
                 val payload = BorrowBookRequest(borrowerOfLength(51))
-                assertThat(validate(payload)).containsOnly(patternError)
+                assertThat(validate(payload)).containsOnly(sizeError)
             }
 
             @ValueSource(strings = [

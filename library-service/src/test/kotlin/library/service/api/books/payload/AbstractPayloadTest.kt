@@ -3,10 +3,12 @@ package library.service.api.books.payload
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import utils.classification.UnitTest
 import javax.validation.Validation
 import javax.validation.Validator
 import kotlin.reflect.KClass
 
+@UnitTest
 internal abstract class AbstractPayloadTest<T : Any> {
 
     private val objectMapper = ObjectMapper().apply { findAndRegisterModules() }
