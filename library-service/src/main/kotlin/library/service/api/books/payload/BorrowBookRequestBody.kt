@@ -1,11 +1,11 @@
 package library.service.api.books.payload
 
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Size
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Pattern
 
 /** Request body used when borrowing a book. */
 data class BorrowBookRequestBody(
-        @get:NotBlank
-        @get:Size(min = 1, max = 50)
+        @field:NotNull
+        @field:Pattern(regexp = """(?U)[\w][\w -]{0,49}""")
         val borrower: String?
 )
