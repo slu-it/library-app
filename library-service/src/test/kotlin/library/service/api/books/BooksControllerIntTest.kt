@@ -894,7 +894,7 @@ internal class BooksControllerIntTest {
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$correlationId",
                   "message": "The request's body is invalid. See details...",
-                  "details": [ "The field 'borrower' must not be blank." ]
+                  "details": [ "The field 'borrower' must not be null." ]
                 }
             """
             mockMvc.perform(request)
