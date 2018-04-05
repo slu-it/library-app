@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull
 
 /** Request body used when updating a book's number of pages. */
 data class UpdateNumberOfPagesRequest(
-        @get:NotNull
-        @get:Min(1)
+        @field:NotNull
+        @field:Min(1)
         val numberOfPages: Int?
 )

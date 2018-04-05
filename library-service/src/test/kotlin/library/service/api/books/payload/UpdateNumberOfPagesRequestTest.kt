@@ -1,44 +1,59 @@
 package library.service.api.books.payload
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import utils.classification.UnitTest
-import javax.validation.Validation
-import javax.validation.Validator
+import java.util.*
 
 @UnitTest
-internal class UpdateNumberOfPagesRequestTest {
+internal class UpdateNumberOfPagesRequestTest : AbstractPayloadTest<UpdateNumberOfPagesRequest>() {
 
-    val objectMapper = ObjectMapper().apply { findAndRegisterModules() }
+    override val payloadType = UpdateNumberOfPagesRequest::class
 
-    @Test fun `can be de-serialized from JSON`() {
-        val json = """ { "numberOfPages": 128 } """
-        val cut = objectMapper.readValue(json, UpdateNumberOfPagesRequest::class.java)
-        assertThat(cut.numberOfPages).isEqualTo(128)
-    }
+    override val jsonExample = """ { "numberOfPages": 128 } """
+    override val deserializedExample = UpdateNumberOfPagesRequest(128)
 
-    @Nested inner class `bean validation for 'numberOfPages'` {
+    private val random = Random()
 
-        val validator: Validator = Validation.buildDefaultValidatorFactory().validator
+    @Nested inner class `numberOfPages property validation` {
 
-        @Test fun `null is not allowed`() {
-            val cut = UpdateNumberOfPagesRequest(null)
-            val result = validator.validate(cut).toList()
-            assertThat(result[0].message).isEqualTo("must not be null")
+        @Test fun `any values between 1 and MAX int are valid`() {
+            val randomValues = (1..100).map { random.nextInt(Int.MAX_VALUE) + 1 }
+            randomValues.forEach {
+                val cut = UpdateNumberOfPagesRequest(it)
+                assertThat(validate(cut)).isEmpty()
+            }
         }
 
-        @Test fun `less than one page is not allowed`() {
-            val cut = UpdateNumberOfPagesRequest(0)
-            val result = validator.validate(cut).toList()
-            assertThat(result[0].message).isEqualTo("must be greater than or equal to 1")
+        @ValueSource(ints = [1, 10, 100, 1_000, 10_000, Int.MAX_VALUE])
+        @ParameterizedTest fun `valid value examples`(numberOfPages: Int) {
+            val cut = UpdateNumberOfPagesRequest(numberOfPages)
+            assertThat(validate(cut)).isEmpty()
         }
 
-        @Test fun `one page is allowed`() {
-            val cut = UpdateNumberOfPagesRequest(1)
-            val result = validator.validate(cut).toList()
-            assertThat(result).isEmpty()
+        @Nested inner class `invalid value examples` {
+
+            private val nullError = "must not be null"
+            private val minValueError = "must be greater than or equal to 1"
+
+            @Test fun `null`() {
+                val cut = UpdateNumberOfPagesRequest(null)
+                assertThat(validate(cut)).containsOnly(nullError)
+            }
+
+            @Test fun `zero pages`() {
+                val cut = UpdateNumberOfPagesRequest(0)
+                assertThat(validate(cut)).containsOnly(minValueError)
+            }
+
+            @Test fun `negative numbers`() {
+                val cut = UpdateNumberOfPagesRequest(-1)
+                assertThat(validate(cut)).containsOnly(minValueError)
+            }
+
         }
 
     }
