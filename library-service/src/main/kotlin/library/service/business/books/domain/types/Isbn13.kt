@@ -22,15 +22,19 @@ data class Isbn13(
         /**
          * Creates a new [Isbn13] from the given value.
          *
-         * The value can either be a 10 or 13 digit ISBN number. Anything
-         * else will throw an exception. If the value is a 10 digit ISBN
-         * number, it will be prefixed with `978` to make it a valid 13
-         * digit ISBN.
+         * The value can be in one of the following formats:
+         * - 10 digit number e.g. `0575081244`
+         * - 13 digit number e.g. `9780575081244`
+         * - 3 digit / 10 digit with separator e.g. `978-0575081244`
+         *
+         * Any other format will throw an exception. The value will always
+         * be stored as a 13 digit number! For values with a 10 digit format
+         * the official `978` prefix is added to make it 13 digits.
          *
          * @param value the value to use
          * @return the created [Isbn13]
          * @throws NotAnIsbnNumberException in case the given value is not an
-         * ISBN number
+         *          ISBN number
          */
         fun parse(value: String): Isbn13 {
             if (!value.matches(VALID_PARSE_REGEX)) {
