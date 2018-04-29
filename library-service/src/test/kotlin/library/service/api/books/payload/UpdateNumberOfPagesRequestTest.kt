@@ -23,15 +23,13 @@ internal class UpdateNumberOfPagesRequestTest : AbstractPayloadTest<UpdateNumber
         @Test fun `any values between 1 and MAX int are valid`() {
             val randomValues = (1..100).map { random.nextInt(Int.MAX_VALUE) + 1 }
             randomValues.forEach {
-                val cut = UpdateNumberOfPagesRequest(it)
-                assertThat(validate(cut)).isEmpty()
+                assertThat(validate(it)).isEmpty()
             }
         }
 
         @ValueSource(ints = [1, 10, 100, 1_000, 10_000, Int.MAX_VALUE])
         @ParameterizedTest fun `valid value examples`(numberOfPages: Int) {
-            val cut = UpdateNumberOfPagesRequest(numberOfPages)
-            assertThat(validate(cut)).isEmpty()
+            assertThat(validate(numberOfPages)).isEmpty()
         }
 
         @Nested inner class `invalid value examples` {
@@ -40,21 +38,20 @@ internal class UpdateNumberOfPagesRequestTest : AbstractPayloadTest<UpdateNumber
             private val minValueError = "must be greater than or equal to 1"
 
             @Test fun `null`() {
-                val cut = UpdateNumberOfPagesRequest(null)
-                assertThat(validate(cut)).containsOnly(nullError)
+                assertThat(validate(null)).containsOnly(nullError)
             }
 
             @Test fun `zero pages`() {
-                val cut = UpdateNumberOfPagesRequest(0)
-                assertThat(validate(cut)).containsOnly(minValueError)
+                assertThat(validate(0)).containsOnly(minValueError)
             }
 
             @Test fun `negative numbers`() {
-                val cut = UpdateNumberOfPagesRequest(-1)
-                assertThat(validate(cut)).containsOnly(minValueError)
+                assertThat(validate(-1)).containsOnly(minValueError)
             }
 
         }
+
+        private fun validate(numberOfPages: Int?) = validate(UpdateNumberOfPagesRequest(numberOfPages))
 
     }
 

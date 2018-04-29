@@ -13,14 +13,11 @@ data class Isbn13(
         private val value: String
 ) {
 
-    init {
-        if (!value.matches(Regex("[0-9]{13}")))
-            throw NotAnIsbnNumberException(value)
-    }
-
-    override fun toString(): String = value
-
     companion object {
+
+        const val VALID_PARSE_PATTERN = """(\d{3}-?)?\d{10}"""
+        private val VALID_PARSE_REGEX = Regex(VALID_PARSE_PATTERN)
+        private val VALID_VALUE_REGEX = Regex("""\d{13}""")
 
         /**
          * Creates a new [Isbn13] from the given value.
@@ -36,15 +33,27 @@ data class Isbn13(
          * ISBN number
          */
         fun parse(value: String): Isbn13 {
+            if (!value.matches(VALID_PARSE_REGEX)) {
+                throw NotAnIsbnNumberException(value)
+            }
+
+            val cleanValue = value.replace("-", "")
+
             val isbnValue = when {
-                value.length == 10 -> "978$value"
-                value.length == 13 -> value
-                else -> throw NotAnIsbnNumberException(value)
+                cleanValue.length == 10 -> "978$cleanValue"
+                cleanValue.length == 13 -> cleanValue
+                else -> error("invalid state")
             }
             return Isbn13(isbnValue)
         }
 
     }
+
+    init {
+        if (!value.matches(VALID_VALUE_REGEX)) throw NotAnIsbnNumberException(value)
+    }
+
+    override fun toString(): String = value
 
     class NotAnIsbnNumberException(value: String)
         : MalformedValueException("This is not a valid ISBN-13 number: $value")

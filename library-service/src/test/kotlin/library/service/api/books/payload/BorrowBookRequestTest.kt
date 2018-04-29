@@ -19,13 +19,11 @@ internal class BorrowBookRequestTest : AbstractPayloadTest<BorrowBookRequest>() 
     @Nested inner class `borrower property validation` {
 
         @Test fun `any values between 1 and 50 characters are valid`() = (1..50)
-                .map { BorrowBookRequest(borrowerOfLength(it)) }
-                .forEach { assertThat(validate(it)).isEmpty() }
+                .forEach { assertThat(validate(borrowerOfLength(it))).isEmpty() }
 
         @ValueSource(strings = ["abc", "ABC", "Loer Saguzaz", "Loer Saguzaz-Vocle", "Lülöla", "Ètien"])
         @ParameterizedTest fun `valid value examples`(borrower: String) {
-            val payload = BorrowBookRequest(borrower)
-            assertThat(validate(payload)).isEmpty()
+            assertThat(validate(borrower)).isEmpty()
         }
 
         @Nested inner class `invalid value examples` {
@@ -35,34 +33,31 @@ internal class BorrowBookRequestTest : AbstractPayloadTest<BorrowBookRequest>() 
             private val patternError = """must match "${Borrower.VALID_BORROWER_PATTERN}""""
 
             @Test fun `null`() {
-                val payload = BorrowBookRequest(null)
-                assertThat(validate(payload)).containsOnly(nullError)
+                assertThat(validate(null)).containsOnly(nullError)
             }
 
             @Test fun `empty string`() {
-                val payload = BorrowBookRequest("")
-                assertThat(validate(payload)).containsOnly(sizeError, patternError)
+                assertThat(validate("")).containsOnly(sizeError, patternError)
             }
 
             @Test fun `blank string`() {
-                val payload = BorrowBookRequest(" ")
-                assertThat(validate(payload)).containsOnly(patternError)
+                assertThat(validate(" ")).containsOnly(patternError)
             }
 
             @Test fun `more than 50 character string`() {
-                val payload = BorrowBookRequest(borrowerOfLength(51))
-                assertThat(validate(payload)).containsOnly(sizeError)
+                assertThat(validate(borrowerOfLength(51))).containsOnly(sizeError)
             }
 
             @ValueSource(strings = [
                 ".", ",", ";", ":", "=", "*", "+", "[", "]", "(", ")", "!", "?", "<", ">", "$", "&"
             ])
             @ParameterizedTest fun `special characters`(borrower: String) {
-                val payload = BorrowBookRequest(borrower)
-                assertThat(validate(payload)).containsOnly(patternError)
+                assertThat(validate(borrower)).containsOnly(patternError)
             }
 
         }
+
+        private fun validate(borrower: String?) = validate(BorrowBookRequest(borrower))
 
     }
 

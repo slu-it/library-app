@@ -19,8 +19,7 @@ internal class UpdateTitleRequestTest : AbstractPayloadTest<UpdateTitleRequest>(
     @Nested inner class `title property validation` {
 
         @Test fun `any values between 1 and 256 characters are valid`() = (1..256)
-                .map { UpdateTitleRequest(titleOfLength(it)) }
-                .forEach { assertThat(validate(it)).isEmpty() }
+                .forEach { assertThat(validate(titleOfLength(it))).isEmpty() }
 
         @ValueSource(strings = [
             "abc", "ABC", "The Martian", "The Dark Tower I: The Gunslinger",
@@ -28,8 +27,7 @@ internal class UpdateTitleRequestTest : AbstractPayloadTest<UpdateTitleRequest>(
             """"_ !"#$%&'()*+,-./:;<=>?@`\~[]^|{} _""", "1234567890"
         ])
         @ParameterizedTest fun `valid value examples`(title: String) {
-            val payload = UpdateTitleRequest(title)
-            assertThat(validate(payload)).isEmpty()
+            assertThat(validate(title)).isEmpty()
         }
 
         @Nested inner class `invalid value examples` {
@@ -39,29 +37,27 @@ internal class UpdateTitleRequestTest : AbstractPayloadTest<UpdateTitleRequest>(
             private val patternError = """must match "${Title.VALID_TITLE_PATTERN}""""
 
             @Test fun `null`() {
-                val cut = UpdateTitleRequest(null)
-                assertThat(validate(cut)).containsOnly(blankError)
+                assertThat(validate(null)).containsOnly(blankError)
             }
 
             @Test fun `empty string`() {
-                val cut = UpdateTitleRequest("")
-                assertThat(validate(cut)).containsOnly(sizeError, blankError, patternError)
+                assertThat(validate("")).containsOnly(sizeError, blankError, patternError)
             }
 
             @Test fun `blank string`() {
-                val cut = UpdateTitleRequest(" ")
-                assertThat(validate(cut)).containsOnly(blankError)
+                assertThat(validate(" ")).containsOnly(blankError)
             }
 
             @Test fun `more than 256 characters string`() {
-                val cut = UpdateTitleRequest(titleOfLength(257))
-                assertThat(validate(cut)).containsOnly(sizeError)
+                assertThat(validate(titleOfLength(257))).containsOnly(sizeError)
             }
 
         }
 
-    }
+        private fun titleOfLength(length: Int) = "".padEnd(length, 'a')
 
-    private fun titleOfLength(length: Int) = "".padEnd(length, 'a')
+        private fun validate(title: String?) = validate(UpdateTitleRequest(title))
+
+    }
 
 }

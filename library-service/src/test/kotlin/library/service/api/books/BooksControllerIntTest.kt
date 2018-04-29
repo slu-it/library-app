@@ -216,7 +216,8 @@ internal class BooksControllerIntTest {
                   "error": "Bad Request",
                   "timestamp": "2017-08-20T12:34:56.789Z",
                   "correlationId": "$correlationId",
-                  "message": "This is not a valid ISBN-13 number: 978abcdefghij"
+                  "message": "The request's body is invalid. See details...",
+                  "details": ["The field 'isbn' must match \"(\\d{3}-?)?\\d{10}\"."]
                 }
             """
             mockMvc.perform(request)

@@ -24,6 +24,6 @@ internal abstract class AbstractPayloadTest<T : Any> {
         assertThat(deserialized).isEqualTo(deserializedExample)
     }
 
-    protected fun validate(it: Any) = validator.validate(it).map { it.message }
+    protected fun validate(it: T) = validator.validate(it).map { it.message }
 
 }

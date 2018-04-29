@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import utils.classification.UnitTest
-import javax.validation.Validation
-import javax.validation.Validator
 
 @UnitTest
 internal class CreateBookRequestTest : AbstractPayloadTest<CreateBookRequest>() {
@@ -20,65 +18,49 @@ internal class CreateBookRequestTest : AbstractPayloadTest<CreateBookRequest>() 
 
     @Nested inner class `bean validation` {
 
-        val validator: Validator = Validation.buildDefaultValidatorFactory().validator
-
         @Nested inner class `for isbn` {
 
-            @Test fun `null is not allowed`() {
-                val cut = CreateBookRequest(isbn = null, title = "Hello World")
-                val result = validator.validate(cut).toList()
-                assertThat(result[0].message).isEqualTo("must not be blank")
+            @ValueSource(strings = ["0575081244", "978-0575081244", "9780575081244"])
+            @ParameterizedTest fun `valid value examples`(isbn: String) {
+                assertThat(validate(isbn)).isEmpty()
             }
 
-            @Test fun `empty is not allowed`() {
-                val cut = CreateBookRequest(isbn = "", title = "Hello World")
-                val result = validator.validate(cut).toList()
-                assertThat(result.map { it.message }).containsOnly(
-                        "size must be between 10 and 13",
-                        "must not be blank"
-                )
-            }
+            @Nested inner class `invalid value examples` {
 
-            @Test fun `blank is not allowed`() {
-                val cut = CreateBookRequest(isbn = " ", title = "Hello World")
-                val result = validator.validate(cut).toList()
-                assertThat(result.map { it.message }).containsOnly(
-                        "size must be between 10 and 13",
-                        "must not be blank"
-                )
-            }
+                private val blankError = "must not be blank"
+                private val patternError = """must match "(\d{3}-?)?\d{10}""""
 
-            @Test fun `values between 10 and 13 characters are valid`() {
-                (10..13)
-                        .map { "".padEnd(it, '1') }
-                        .map { CreateBookRequest(isbn = it, title = "Hello World") }
-                        .map { validator.validate(it).toList() }
-                        .forEach { assertThat(it).isEmpty() }
-            }
+                @Test fun `null`() {
+                    assertThat(validate(null)).containsOnly(blankError)
+                }
 
-            @Test fun `values with less 10 characters are invalid`() {
-                val value = "".padEnd(9, '1')
-                val cut = CreateBookRequest(isbn = value, title = "Hello World")
-                val result = validator.validate(cut).toList()
-                assertThat(result[0].message).isEqualTo("size must be between 10 and 13")
-            }
+                @ValueSource(strings = ["", " ", "\t", "\n"])
+                @ParameterizedTest fun `blank strings`(isbn: String) {
+                    assertThat(validate(isbn)).containsOnly(patternError, blankError)
+                }
 
-            @Test fun `values with more than 13 characters are invalid`() {
-                val value = "".padEnd(14, '1')
-                val cut = CreateBookRequest(isbn = value, title = "Hello World")
-                val result = validator.validate(cut).toList()
-                assertThat(result[0].message).isEqualTo("size must be between 10 and 13")
+                @ValueSource(strings = ["123456789", "12345678901", "123456789012", "12345678901234"])
+                @ParameterizedTest fun `wrong number of digits`(isbn: String) {
+                    assertThat(validate(isbn)).containsOnly(patternError)
+                }
+
+                @ValueSource(strings = ["a1b2c3d4e5", "1a2-1234567890", "1a21234567890"])
+                @ParameterizedTest fun `alpha numeric characters`(isbn: String) {
+                    assertThat(validate(isbn)).containsOnly(patternError)
+                }
+
             }
 
         }
+
+        private fun validate(isbn: String?) = validate(CreateBookRequest(isbn = isbn, title = "Hello World"))
 
     }
 
     @Nested inner class `title property validation` {
 
         @Test fun `any values between 1 and 256 characters are valid`() = (1..256)
-                .map { CreateBookRequest("0123456789", titleOfLength(it)) }
-                .forEach { assertThat(validate(it)).isEmpty() }
+                .forEach { assertThat(validate(titleOfLength(it))).isEmpty() }
 
         @ValueSource(strings = [
             "abc", "ABC", "The Martian", "The Dark Tower I: The Gunslinger",
@@ -86,8 +68,7 @@ internal class CreateBookRequestTest : AbstractPayloadTest<CreateBookRequest>() 
             """"_ !"#$%&'()*+,-./:;<=>?@`\~[]^|{} _""", "1234567890"
         ])
         @ParameterizedTest fun `valid value examples`(title: String) {
-            val payload = CreateBookRequest("0123456789", title)
-            assertThat(validate(payload)).isEmpty()
+            assertThat(validate(title)).isEmpty()
         }
 
         @Nested inner class `invalid value examples` {
@@ -97,29 +78,27 @@ internal class CreateBookRequestTest : AbstractPayloadTest<CreateBookRequest>() 
             private val patternError = """must match "${Title.VALID_TITLE_PATTERN}""""
 
             @Test fun `null`() {
-                val cut = CreateBookRequest("0123456789", null)
-                assertThat(validate(cut)).containsOnly(blankError)
+                assertThat(validate(null)).containsOnly(blankError)
             }
 
             @Test fun `empty string`() {
-                val cut = CreateBookRequest("0123456789", "")
-                assertThat(validate(cut)).containsOnly(sizeError, blankError, patternError)
+                assertThat(validate("")).containsOnly(sizeError, blankError, patternError)
             }
 
             @Test fun `blank string`() {
-                val cut = CreateBookRequest("0123456789", " ")
-                assertThat(validate(cut)).containsOnly(blankError)
+                assertThat(validate(" ")).containsOnly(blankError)
             }
 
             @Test fun `more than 256 characters string`() {
-                val cut = CreateBookRequest("0123456789", titleOfLength(257))
-                assertThat(validate(cut)).containsOnly(sizeError)
+                assertThat(validate(titleOfLength(257))).containsOnly(sizeError)
             }
 
         }
 
-    }
+        private fun titleOfLength(length: Int) = "".padEnd(length, 'a')
 
-    private fun titleOfLength(length: Int) = "".padEnd(length, 'a')
+        private fun validate(title: String?) = validate(CreateBookRequest(isbn = "0123456789", title = title))
+
+    }
 
 }
