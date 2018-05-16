@@ -70,19 +70,19 @@ springBoot {
 
 task unitTest(type: Test) {
     useJUnitPlatform() { includeTags 'unit-test' }
-    testLogging { events "passed", "skipped", "failed" }
+    testLogging { events "skipped", "failed" }
 }
 
 task integrationTest(type: Test) {
     dependsOn unitTest
     useJUnitPlatform() { includeTags 'integration-test' }
-    testLogging { events "passed", "skipped", "failed" }
+    testLogging { events "skipped", "failed" }
 }
 
 task acceptanceTest(type: Test) {
     dependsOn integrationTest
     useJUnitPlatform() { includeTags 'acceptance-test' }
-    testLogging { events "passed", "skipped", "failed" }
+    testLogging { events "skipped", "failed" }
 }
 
 task aggregateTestReports(type: TestReport) {
