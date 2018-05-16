@@ -1,11 +1,5 @@
 buildscript {
     ext {
-        kotlinVersion = '1.2.41'
-        springBootVersion = '2.0.2.RELEASE'
-        junitPlatformVersion = '1.2.0'
-        junitJupiterVersion = '5.2.0'
-        dockerPluginVersion = '1.2'
-        asciidoctorVersion = '1.5.7'
         snippetsDir = file('build/generated-snippets')
     }
     repositories {
@@ -54,35 +48,32 @@ repositories {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
-    compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-aop")
-    compile("org.springframework.boot:spring-boot-starter-amqp")
-    compile("org.springframework.boot:spring-boot-starter-data-mongodb")
-    compile("org.springframework.boot:spring-boot-starter-hateoas")
-    compile("org.springframework.boot:spring-boot-starter-security")
-    compile("org.springframework.boot:spring-boot-starter-web")
-
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}",
+            "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    compile("org.springframework.boot:spring-boot-starter-actuator",
+            "org.springframework.boot:spring-boot-starter-aop",
+            "org.springframework.boot:spring-boot-starter-amqp",
+            "org.springframework.boot:spring-boot-starter-data-mongodb",
+            "org.springframework.boot:spring-boot-starter-hateoas",
+            "org.springframework.boot:spring-boot-starter-security",
+            "org.springframework.boot:spring-boot-starter-web")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor")
 
-    testCompile("com.nhaarman:mockito-kotlin:1.5.0")
-    testCompile("com.tngtech.archunit:archunit:0.5.0")
+    testCompile("org.springframework.boot:spring-boot-starter-test",
+                "org.springframework.restdocs:spring-restdocs-mockmvc",
+                "org.springframework.security:spring-security-test")
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
+                "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
     testCompile("io.rest-assured:rest-assured")
-    testCompile("info.novatec.testit:testutils-logrecorder-logback:0.3.3")
-    testCompile("info.novatec.testit:pact-provider-junit5:0.4.0")
+    testCompile("com.tngtech.archunit:archunit:${archunitVersion}")
+    testCompile("com.nhaarman.mockitokotlin2:mockito-kotlin:${mockitoKotlinVersion}")
+    testCompile("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}",
+                "info.novatec.testit:pact-provider-junit5:${pactProviderVersion}")
 
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompile("org.springframework.restdocs:spring-restdocs-mockmvc")
-    testCompile("org.springframework.security:spring-security-test")
-
-    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
-    testCompile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
-    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}",
+                "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 }
 
 task unitTest(type: Test) {

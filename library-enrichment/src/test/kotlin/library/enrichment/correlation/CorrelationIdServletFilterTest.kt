@@ -1,6 +1,6 @@
 package library.enrichment.correlation
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import utils.classification.UnitTest

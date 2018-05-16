@@ -2,9 +2,9 @@ package library.enrichment
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.nhaarman.mockito_kotlin.given
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.willReturn
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.willReturn
 import library.enrichment.core.BookAddedEvent
 import library.enrichment.gateways.library.LibraryClient
 import library.enrichment.gateways.library.UpdateAuthors

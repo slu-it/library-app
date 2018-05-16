@@ -1,8 +1,8 @@
 package library.service.metrics
 
-import com.nhaarman.mockito_kotlin.given
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.willReturn
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.willReturn
 import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import library.service.database.BookRepository

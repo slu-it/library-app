@@ -1,9 +1,9 @@
 package library.service.api
 
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.given
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.willThrow
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.willThrow
 import library.service.correlation.CorrelationIdHolder
 import library.service.business.exceptions.MalformedValueException
 import library.service.business.exceptions.NotFoundException

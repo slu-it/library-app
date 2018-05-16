@@ -1,14 +1,11 @@
 package library.service.api.books
 
-import com.nhaarman.mockito_kotlin.given
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.willReturn
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.willReturn
 import library.service.business.books.domain.BookRecord
-import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
-import library.service.business.books.domain.types.Isbn13
-import library.service.business.books.domain.types.Title
 import library.service.security.UserContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested

@@ -1,6 +1,6 @@
 package library.service.business.books
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.events.*
 import library.service.business.books.domain.states.Available

@@ -1,7 +1,7 @@
 package library.service.messaging
 
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import library.service.business.books.domain.events.*
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Isbn13

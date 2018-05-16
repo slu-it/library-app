@@ -1,8 +1,8 @@
 package library.service.api.index
 
-import com.nhaarman.mockito_kotlin.given
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.willReturn
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.willReturn
 import library.service.security.UserContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested

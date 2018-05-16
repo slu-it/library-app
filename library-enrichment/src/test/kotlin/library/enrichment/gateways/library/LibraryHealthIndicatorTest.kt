@@ -1,9 +1,9 @@
 package library.enrichment.gateways.library
 
-import com.nhaarman.mockito_kotlin.given
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.willThrow
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.willThrow
 import feign.FeignException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

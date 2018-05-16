@@ -1,7 +1,7 @@
 package library.service.api.books
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.given
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.given
 import library.service.business.books.BookCollection
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.composites.Book

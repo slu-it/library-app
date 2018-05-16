@@ -1,8 +1,8 @@
 package library.service.api.books
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.given
-import com.nhaarman.mockito_kotlin.willReturn
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.willReturn
 import library.service.correlation.CorrelationIdHolder
 import library.service.business.books.BookDataStore
 import library.service.business.books.BookIdGenerator
