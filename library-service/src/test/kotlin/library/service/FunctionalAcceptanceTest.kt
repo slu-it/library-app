@@ -21,14 +21,12 @@ import org.springframework.hateoas.hal.Jackson2HalModule
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.classification.AcceptanceTest
-import utils.extensions.UseDockerToRunMongoDB
-import utils.extensions.UseDockerToRunRabbitMQ
+import utils.extensions.MongoDBExtension
+import utils.extensions.RabbitMQExtension
 import java.net.URL
 
 @AcceptanceTest
-@UseDockerToRunMongoDB
-@UseDockerToRunRabbitMQ
-@ExtendWith(SpringExtension::class)
+@ExtendWith(MongoDBExtension::class, RabbitMQExtension::class, SpringExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test", "unsecured")
 internal class FunctionalAcceptanceTest {

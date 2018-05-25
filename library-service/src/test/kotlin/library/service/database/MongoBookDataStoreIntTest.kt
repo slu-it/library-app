@@ -16,14 +16,14 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.Books
 import utils.classification.IntegrationTest
-import utils.extensions.UseDockerToRunMongoDB
+import utils.extensions.MongoDBExtension
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
-@IntegrationTest
-@ExtendWith(SpringExtension::class)
+
 @DataMongoTest
-@UseDockerToRunMongoDB
+@IntegrationTest
+@ExtendWith(MongoDBExtension::class, SpringExtension::class)
 @ComponentScan("library.service.database")
 internal class MongoBookDataStoreIntTest {
 

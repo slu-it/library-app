@@ -20,20 +20,19 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.Books
 import utils.classification.AcceptanceTest
 import utils.executeAsUserWithRole
-import utils.extensions.UseDockerToRunMongoDB
-import utils.extensions.UseDockerToRunRabbitMQ
+import utils.extensions.MongoDBExtension
+import utils.extensions.RabbitMQExtension
 
 @AcceptanceTest
-@UseDockerToRunMongoDB
-@UseDockerToRunRabbitMQ
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith(MongoDBExtension::class, RabbitMQExtension::class, SpringExtension::class)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 internal class SecurityAcceptanceTest {
 
