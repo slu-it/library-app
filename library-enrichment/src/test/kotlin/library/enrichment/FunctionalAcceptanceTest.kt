@@ -12,9 +12,7 @@ import library.enrichment.gateways.library.UpdateNumberOfPages
 import library.enrichment.gateways.openlibrary.OpenLibraryClient
 import library.enrichment.messaging.ProcessedMessagesCounter
 import org.awaitility.Awaitility.await
-import org.awaitility.Duration.FIVE_SECONDS
-import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Assumptions.*
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.amqp.core.Message
@@ -29,16 +27,17 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.classification.AcceptanceTest
-import utils.extensions.UseDockerToRunRabbitMQ
+import utils.extensions.RabbitMqExtension
 import utils.readFile
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.*
+import java.util.concurrent.TimeUnit.SECONDS
 
 
 @AcceptanceTest
-@UseDockerToRunRabbitMQ
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = NONE)
+@ExtendWith(RabbitMqExtension::class, SpringExtension::class)
+@SpringBootTest(
+        webEnvironment = NONE,
+        properties = ["spring.rabbitmq.port=\${RABBITMQ_PORT}"]
+)
 @ActiveProfiles("test", "unsecured")
 internal class FunctionalAcceptanceTest {
 

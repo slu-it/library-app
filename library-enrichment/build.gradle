@@ -59,6 +59,7 @@ dependencies {
     testCompile("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}")
     testCompile("au.com.dius:pact-jvm-consumer_2.12:${pactVersion}",
                 "au.com.dius:pact-jvm-consumer-junit_2.12:${pactVersion}")
+    testCompile("org.testcontainers:testcontainers:1.8.1")
 
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
                 "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")

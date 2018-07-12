@@ -18,11 +18,14 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.classification.AcceptanceTest
-import utils.extensions.UseDockerToRunRabbitMQ
+import utils.extensions.RabbitMqExtension
 
 @AcceptanceTest
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@ExtendWith(RabbitMqExtension::class, SpringExtension::class)
+@SpringBootTest(
+        webEnvironment = RANDOM_PORT,
+        properties = ["spring.rabbitmq.port=\${RABBITMQ_PORT}"]
+)
 @ActiveProfiles("test")
 internal class SecurityAcceptanceTest {
 
@@ -41,8 +44,7 @@ internal class SecurityAcceptanceTest {
         }
 
         @Test fun `actuator health endpoint can be accessed by anyone`() {
-            // status 503 because RabbitMQ won't be available
-            given { auth().none() } `when` { get("/actuator/health") } then { statusCode(503) }
+            given { auth().none() } `when` { get("/actuator/health") } then { statusCode(200) }
         }
 
         @ValueSource(strings = ["beans", "conditions", "configprops", "env", "loggers",

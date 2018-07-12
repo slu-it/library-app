@@ -27,12 +27,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.Books
 import utils.classification.AcceptanceTest
 import utils.executeAsUserWithRole
-import utils.extensions.MongoDBExtension
-import utils.extensions.RabbitMQExtension
+import utils.extensions.MongoDbExtension
+import utils.extensions.RabbitMqExtension
 
 @AcceptanceTest
-@ExtendWith(MongoDBExtension::class, RabbitMQExtension::class, SpringExtension::class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@ExtendWith(MongoDbExtension::class, RabbitMqExtension::class, SpringExtension::class)
+@SpringBootTest(
+        webEnvironment = RANDOM_PORT,
+        properties = [
+            "spring.data.mongodb.port=\${MONGODB_PORT}",
+            "spring.rabbitmq.port=\${RABBITMQ_PORT}"
+        ]
+)
 @ActiveProfiles("test")
 internal class SecurityAcceptanceTest {
 

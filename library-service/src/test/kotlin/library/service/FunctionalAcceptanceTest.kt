@@ -21,13 +21,19 @@ import org.springframework.hateoas.hal.Jackson2HalModule
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.classification.AcceptanceTest
-import utils.extensions.MongoDBExtension
-import utils.extensions.RabbitMQExtension
+import utils.extensions.MongoDbExtension
+import utils.extensions.RabbitMqExtension
 import java.net.URL
 
 @AcceptanceTest
-@ExtendWith(MongoDBExtension::class, RabbitMQExtension::class, SpringExtension::class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@ExtendWith(MongoDbExtension::class, RabbitMqExtension::class, SpringExtension::class)
+@SpringBootTest(
+        webEnvironment = RANDOM_PORT,
+        properties = [
+            "spring.data.mongodb.port=\${MONGODB_PORT}",
+            "spring.rabbitmq.port=\${RABBITMQ_PORT}"
+        ]
+)
 @ActiveProfiles("test", "unsecured")
 internal class FunctionalAcceptanceTest {
 
