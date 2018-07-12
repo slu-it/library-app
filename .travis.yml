@@ -1,27 +1,83 @@
 language: java
-jdk:
-  - oraclejdk8
-  - oraclejdk9
-  - oraclejdk10
-  - openjdk8
-  - openjdk9
-  - openjdk10
-
 dist: trusty
+install: skip
 sudo: required
-
 services:
   - docker
 
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install --assume-yes --option Dpkg::Options::="--force-confnew" docker-ce
-install: true
+jobs:
+  include:
 
-before_script:
-  - docker --version
-  - docker-compose --version
+    - stage: build
+      jdk: openjdk8
+      env: LIBRARY_ENRICHMENT
+      script:
+        - cd library-enrichment
+        - ./gradlew build
+    - stage: build
+      jdk: openjdk9
+      env: LIBRARY_ENRICHMENT
+      script:
+        - cd library-enrichment
+        - ./gradlew build
+    - stage: build
+      jdk: openjdk10
+      env: LIBRARY_ENRICHMENT
+      script:
+        - cd library-enrichment
+        - ./gradlew build
+    - stage: build
+      jdk: oraclejdk8
+      env: LIBRARY_ENRICHMENT
+      script:
+        - cd library-enrichment
+        - ./gradlew build
+    - stage: build
+      jdk: oraclejdk9
+      env: LIBRARY_ENRICHMENT
+      script:
+        - cd library-enrichment
+        - ./gradlew build
+    - stage: build
+      jdk: oraclejdk10
+      env: LIBRARY_ENRICHMENT
+      script:
+        - cd library-enrichment
+        - ./gradlew build
 
-script:
-  - cd library-service && ./gradlew clean build && cd ..
-  - cd library-enrichment && ./gradlew clean build
+    - stage: build
+      jdk: openjdk8
+      env: LIBRARY_SERVICE
+      script:
+        - cd library-service
+        - ./gradlew build
+    - stage: build
+      jdk: openjdk9
+      env: LIBRARY_SERVICE
+      script:
+        - cd library-service
+        - ./gradlew build
+    - stage: build
+      jdk: openjdk10
+      env: LIBRARY_SERVICE
+      script:
+        - cd library-service
+        - ./gradlew build
+    - stage: build
+      jdk: oraclejdk8
+      env: LIBRARY_SERVICE
+      script:
+        - cd library-service
+        - ./gradlew build
+    - stage: build
+      jdk: oraclejdk9
+      env: LIBRARY_SERVICE
+      script:
+        - cd library-service
+        - ./gradlew build
+    - stage: build
+      jdk: oraclejdk10
+      env: LIBRARY_SERVICE
+      script:
+        - cd library-service
+        - ./gradlew build
