@@ -48,9 +48,6 @@ sealed class Container(image: String) : GenericContainer<Container>(image)
 
 class MongoDbContainer : Container("mongo:3.5") {
     init {
-        setWaitStrategy(LogMessageWaitStrategy()
-                .withRegEx(".*waiting for connections on port.*\n")
-                .withStartupTimeout(Duration.ofSeconds(30)))
         addExposedPort(27017)
     }
 }
