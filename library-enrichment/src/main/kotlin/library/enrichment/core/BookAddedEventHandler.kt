@@ -33,11 +33,11 @@ class BookAddedEventHandler(
             log.debug { "found ${dataSets.size} data set(s) for ISBN [${event.isbn}]" }
             chooseAuthors(dataSets)?.let {
                 log.debug { "chose $it as the best author(s), updating book record ..." }
-                updateAuthors(event, it)
+                library.updateAuthors(event.bookId, it)
             }
             chooseNumberOfPages(dataSets)?.let {
                 log.debug { "chose [$it] as the best number of pages, updating book record ..." }
-                updateNumberOfPages(event, it)
+                library.updateNumberOfPages(event.bookId, it)
             }
         } else {
             log.debug { "could not find any data sets for ISBN [${event.isbn}]" }
@@ -58,8 +58,5 @@ class BookAddedEventHandler(
     private fun chooseNumberOfPages(dataSets: Iterable<BookData>) = dataSets
             .mapNotNull { it.numberOfPages }
             .firstOrNull { it > 0 }
-
-    private fun updateAuthors(event: BookAddedEvent, it: List<String>) = library.updateAuthors(event.bookId, it)
-    private fun updateNumberOfPages(event: BookAddedEvent, it: Int) = library.updateNumberOfPages(event.bookId, it)
 
 }

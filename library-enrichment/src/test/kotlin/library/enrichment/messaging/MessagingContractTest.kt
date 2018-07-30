@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageProperties
 import utils.classification.UnitTest
-import utils.testObjectMapper
+import utils.objectMapper
 
 
 @UnitTest
@@ -23,7 +23,7 @@ internal class MessagingContractTest {
     val eventId = "aa1dc09f-7b64-4e7e-a6f6-7eb50dcd6e9d"
     val bookId = "9bf258be-19d4-4338-b172-60a1b7ef076b"
 
-    val objectMapper = testObjectMapper()
+    val objectMapper = objectMapper()
     val handler: BookAddedEventHandler = mock()
     val counter: ProcessedMessagesCounter = mock()
 

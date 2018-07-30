@@ -1,5 +1,6 @@
 package library.enrichment
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
@@ -14,6 +15,7 @@ import java.time.Clock
 class Application {
 
     @Bean fun utcClock(): Clock = Clock.systemUTC()
+    @Bean fun objectMapper(): ObjectMapper = ObjectMapper().apply { findAndRegisterModules() }
 
 }
 

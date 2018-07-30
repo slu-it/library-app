@@ -3,7 +3,7 @@ package library.enrichment.core
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import utils.classification.UnitTest
-import utils.testObjectMapper
+import utils.objectMapper
 
 
 @UnitTest
@@ -12,7 +12,7 @@ internal class BookAddedEventTest {
     val id = "8669efc6-cde3-401b-98f6-6a32f621ea9c"
     val bookId = "9e8f2a6a-1dc9-4965-8525-cf42efc1d767"
 
-    val objectMapper = testObjectMapper()
+    val objectMapper = objectMapper()
 
     @Test fun `can be de-serialized from JSON`() {
         val json = """

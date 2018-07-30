@@ -14,13 +14,13 @@ import org.springframework.amqp.core.MessageProperties
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
 import utils.classification.UnitTest
-import utils.testObjectMapper
+import utils.objectMapper
 
 
 @UnitTest
 internal class BookAddedEventMessageListenerTest {
 
-    val objectMapper = testObjectMapper()
+    val objectMapper = objectMapper()
     val handler: BookAddedEventHandler = mock()
     val counter: ProcessedMessagesCounter = mock()
 
