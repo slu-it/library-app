@@ -58,6 +58,7 @@ dependencies {
             "org.springframework.boot:spring-boot-starter-security",
             "org.springframework.boot:spring-boot-starter-web")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin")
+    compile("io.micrometer:micrometer-registry-prometheus")
 
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor")
 

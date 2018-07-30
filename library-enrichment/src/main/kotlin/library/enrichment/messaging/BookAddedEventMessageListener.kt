@@ -25,8 +25,7 @@ import org.springframework.stereotype.Component
 @Component
 internal class BookAddedEventMessageListener(
         private val objectMapper: ObjectMapper,
-        private val handler: BookAddedEventHandler,
-        private val messagesCounter: ProcessedMessagesCounter
+        private val handler: BookAddedEventHandler
 ) : MessageListener {
 
     private val log = logger {}
@@ -38,8 +37,6 @@ internal class BookAddedEventMessageListener(
     } catch (e: Exception) {
         val correlationId = message.messageProperties.correlationId
         log.error(e) { "could not process message [$correlationId] because of an exception" }
-    } finally {
-        messagesCounter.increment()
     }
 
     private fun readEventFrom(message: Message, eventProcessor: (BookAddedEvent) -> Unit) {

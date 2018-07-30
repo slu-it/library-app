@@ -7,7 +7,6 @@ import com.nhaarman.mockitokotlin2.willThrow
 import library.enrichment.core.BookAddedEvent
 import library.enrichment.core.BookAddedEventHandler
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageProperties
@@ -22,9 +21,8 @@ internal class BookAddedEventMessageListenerTest {
 
     val objectMapper = objectMapper()
     val handler: BookAddedEventHandler = mock()
-    val counter: ProcessedMessagesCounter = mock()
 
-    val cut = BookAddedEventMessageListener(objectMapper, handler, counter)
+    val cut = BookAddedEventMessageListener(objectMapper, handler)
 
     val event = BookAddedEvent(
             id = "event-id",
@@ -45,21 +43,6 @@ internal class BookAddedEventMessageListenerTest {
         cut.onMessage(message)
         assertThat(log.messages)
                 .containsOnly("could not process message [correlation-id] because of an exception")
-    }
-
-    @Nested inner class `processed messages counter is incremented` {
-
-        @Test fun `if message was processed successfully`() {
-            cut.onMessage(toMessage(event))
-            verify(counter).increment()
-        }
-
-        @Test fun `if message processing failed`() {
-            given { handler.handle(event) } willThrow { RuntimeException() }
-            cut.onMessage(toMessage(event))
-            verify(counter).increment()
-        }
-
     }
 
     private fun toMessage(event: BookAddedEvent, correlationId: String? = null): Message {

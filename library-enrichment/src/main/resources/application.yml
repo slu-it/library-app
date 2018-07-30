@@ -44,6 +44,8 @@ management:
       enabled: true
     mappings:
       enabled: true
+    prometheus:
+      enabled: true
 
 library:
   url: "http://localhost:8080"

@@ -65,3 +65,5 @@ management:
       enabled: true
     mappings:
       enabled: true
+    prometheus:
+      enabled: true
