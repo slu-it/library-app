@@ -2,18 +2,21 @@ package library.enrichment.messaging
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.binder.MeterBinder
 import org.springframework.stereotype.Component
 
 @Component
-class ProcessedMessagesCounter(
-        private val meterRegistry: MeterRegistry
-) {
+class ProcessedMessagesCounter : MeterBinder {
 
-    fun increment() = counter().increment()
+    private lateinit var counter: Counter
 
     val total: Long
-        get() = counter().count().toLong()
+        get() = counter.count().toLong()
 
-    private fun counter(): Counter = meterRegistry.counter("messages.processed")
+    fun increment(): Unit = counter.increment()
+
+    override fun bindTo(registry: MeterRegistry) {
+        counter = registry.counter("messages.processed")
+    }
 
 }

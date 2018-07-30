@@ -9,7 +9,7 @@ import utils.classification.UnitTest
 internal class ProcessedMessagesCounterTest {
 
     val registry = SimpleMeterRegistry()
-    val cut = ProcessedMessagesCounter(registry)
+    val cut = ProcessedMessagesCounter().apply { bindTo(registry) }
 
     @Test fun `counter can be incremented`() {
         cut.increment()

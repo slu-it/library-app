@@ -37,7 +37,7 @@ internal class BookAddedEventMessageListener(
         }
     } catch (e: Exception) {
         val correlationId = message.messageProperties.correlationId
-        log.warn(e) { "could not process message [$correlationId] because of an exception" }
+        log.error(e) { "could not process message [$correlationId] because of an exception" }
     } finally {
         messagesCounter.increment()
     }
