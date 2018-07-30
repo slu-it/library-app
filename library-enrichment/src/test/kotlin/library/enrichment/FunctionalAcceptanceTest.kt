@@ -12,7 +12,6 @@ import library.enrichment.gateways.library.UpdateNumberOfPages
 import library.enrichment.gateways.openlibrary.OpenLibraryClient
 import library.enrichment.messaging.ProcessedMessagesCounter
 import org.awaitility.Awaitility.await
-import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.amqp.core.Message
@@ -41,6 +40,12 @@ import java.util.concurrent.TimeUnit.SECONDS
 @ActiveProfiles("test", "unsecured")
 internal class FunctionalAcceptanceTest {
 
+    companion object {
+        const val routingKey = "book-added"
+        const val id = "dda05852-f6fe-4ba6-9ce2-6f3a73c664a9"
+        const val bookId = "175c5a7e-dd91-4d42-8c0d-6a97d8755231"
+    }
+
     @Autowired lateinit var exchange: TopicExchange
     @Autowired lateinit var connectionFactory: ConnectionFactory
     @Autowired lateinit var objectMapper: ObjectMapper
@@ -49,15 +54,7 @@ internal class FunctionalAcceptanceTest {
     @MockBean lateinit var openLibraryClient: OpenLibraryClient
     @MockBean lateinit var libraryClient: LibraryClient
 
-    companion object {
-        const val routingKey = "book-added"
-        const val id = "dda05852-f6fe-4ba6-9ce2-6f3a73c664a9"
-        const val bookId = "175c5a7e-dd91-4d42-8c0d-6a97d8755231"
-    }
-
     @Test fun `book added events are processed correctly`() {
-        assumeTrue(System.getenv("TRAVIS") == null) // TODO: find out why this test fail in TravisCI
-
         given { openLibraryClient.searchBooks("9780261102354") } willReturn {
             readFile("openlibrary/responses/200_isbn_9780261102354.json").toJson()
         }
