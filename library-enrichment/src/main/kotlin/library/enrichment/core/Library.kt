@@ -17,6 +17,9 @@ interface Library {
      * actual library and would therefore lead to an exception somewhere down
      * the line.
      *
+     * This method is not intended to throw any exception. All exceptions should
+     * be handled by the implementing class.
+     *
      * @param bookId the unique ID of the book inside the library
      * @param authors the list of authors to set - may not be empty
      */
@@ -29,6 +32,9 @@ interface Library {
      * The value must be greater or equal to 1! Any lower value is forbidden by
      * the actual library and would therefore lead to an exception somewhere down
      * the line.
+     *
+     * This method is not intended to throw any exception. All exceptions should
+     * be handled by the implementing class.
      *
      * @param bookId the unique ID of the book inside the library
      * @param numberOfPages the number of pages to set - may not be less than 1

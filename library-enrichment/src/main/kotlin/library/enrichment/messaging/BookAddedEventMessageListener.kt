@@ -31,9 +31,7 @@ internal class BookAddedEventMessageListener(
     private val log = logger {}
 
     override fun onMessage(message: Message) = try {
-        readEventFrom(message) {
-            handler.handle(it)
-        }
+        readEventFrom(message) { handler.handle(it) }
     } catch (e: Exception) {
         val correlationId = message.messageProperties.correlationId
         log.error(e) { "could not process message [$correlationId] because of an exception" }

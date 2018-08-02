@@ -4,6 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode
 import feign.Param
 import feign.RequestLine
 
+/**
+ * This Feign client interface describes all relevant REST endpoints of the
+ * openlibrary.org internet service. It is used to generate an actual client
+ * implementation at runtime.
+ *
+ * For more details on Feign see: [Open Feign](https://github.com/OpenFeign/feign)
+ */
 interface OpenLibraryClient {
 
     @RequestLine("GET /api/books?bibkeys={isbn}&format=json&jscmd=data")

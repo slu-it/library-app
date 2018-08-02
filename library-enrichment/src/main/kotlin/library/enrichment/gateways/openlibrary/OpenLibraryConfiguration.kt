@@ -13,16 +13,16 @@ import org.springframework.context.annotation.Configuration
 @EnableConfigurationProperties(OpenLibrarySettings::class)
 class OpenLibraryConfiguration {
 
-    @Bean fun openLibraryClient(settings: OpenLibrarySettings): OpenLibraryClient {
+    @Bean fun openLibraryClient(
+            settings: OpenLibrarySettings
+    ): OpenLibraryClient {
         val target = DynamicUrlTarget("openlibrary", OpenLibraryClient::class) { settings.url }
         return Feign.builder()
                 .encoder(JacksonEncoder())
                 .decoder(JacksonDecoder())
-                .logger(Slf4jLogger("utils.feign.openlibrary"))
+                .logger(Slf4jLogger(OpenLibraryClient::class.java))
                 .logLevel(settings.logLevel)
-                .requestInterceptor {
-                    it.header("User-Agent", "Mozilla/5.0")
-                }
+                .requestInterceptor { it.header("User-Agent", "Mozilla/5.0") }
                 .target(target)
     }
 

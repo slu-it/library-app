@@ -55,7 +55,6 @@ internal class LibraryIntegrationTest {
                     .willReturn(aResponse().withStatus(200)))
             client.ping()
             verify(getRequestedFor(urlEqualTo("/api"))
-                    .withHeader("Content-Type", equalTo("application/json"))
                     .withHeader("Authorization", equalTo("Basic Y3VyYXRvcjpjdXJhdG9y"))
                     .withHeader("X-Correlation-ID", equalTo(correlationId)))
         }

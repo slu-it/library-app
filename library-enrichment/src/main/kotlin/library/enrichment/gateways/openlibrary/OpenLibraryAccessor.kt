@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service
 
 /**
  * A [BookDataSource] using `openlibrary.org` as its source of information.
+ *
+ * @see BookDataSource
+ * @see OpenLibraryClient
  */
 @Service
 class OpenLibraryAccessor(
@@ -31,13 +34,14 @@ class OpenLibraryAccessor(
         return null
     }
 
-    private fun JsonNode.extractBookData() = BookData(
-            authors = get("authors")
-                    ?.map { it.get("name").asText() }
-                    ?: emptyList(),
-            numberOfPages = get("number_of_pages")
-                    ?.asInt()
-    )
+    private fun JsonNode.extractBookData(): BookData {
+        val authors = get("authors")
+                ?.map { it.get("name").asText() }
+                ?: emptyList()
+        val numberOfPages = get("number_of_pages")
+                ?.asInt()
+        return BookData(authors, numberOfPages)
+    }
 
     private fun handleException(e: FeignException) = when (e.status()) {
         in 500..599 -> log.warn(e) { "could not retrieve book data from openlibrary.org because of an error on THEIR end:" }

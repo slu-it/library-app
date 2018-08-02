@@ -23,7 +23,7 @@ class LibraryConfiguration {
         return Feign.builder()
                 .encoder(JacksonEncoder())
                 .decoder(JacksonDecoder())
-                .logger(Slf4jLogger("utils.feign.library"))
+                .logger(Slf4jLogger(LibraryClient::class.java))
                 .logLevel(settings.logLevel)
                 .requestInterceptor(correlationInterceptor)
                 .requestInterceptor(BasicAuthRequestInterceptor(settings.username, settings.password))

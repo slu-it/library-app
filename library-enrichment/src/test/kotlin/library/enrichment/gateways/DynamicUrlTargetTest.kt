@@ -14,15 +14,15 @@ internal class DynamicUrlTargetTest {
 
     @Nested inner class `properties are returned correctly` {
 
-        @Test fun `name`() {
+        @Test fun name() {
             assertThat(cut.name()).isEqualTo("test-client")
         }
 
-        @Test fun `url`() {
+        @Test fun url() {
             assertThat(cut.url()).isEqualTo("http://example.com")
         }
 
-        @Test fun `type`() {
+        @Test fun type() {
             assertThat(cut.type()).isEqualTo(TestClient::class.java)
         }
 
