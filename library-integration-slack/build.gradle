@@ -48,6 +48,7 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
             "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
     testCompile("com.nhaarman.mockitokotlin2:mockito-kotlin:${mockitoKotlinVersion}")
+    testCompile("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}")
 
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
             "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
