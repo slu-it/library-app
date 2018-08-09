@@ -9,6 +9,5 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 data class BookAddedEvent(
         val bookId: String,
         val id: String,
-        val type: String,
         val isbn: String
 ) : BookEvent

@@ -43,6 +43,10 @@ dependencies {
             "org.springframework.boot:spring-boot-starter-web")
     compile("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin")
+    compile("io.github.openfeign:feign-core:${feignVersion}",
+            "io.github.openfeign:feign-jackson:${feignVersion}",
+            "io.github.openfeign:feign-slf4j:${feignVersion}")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
