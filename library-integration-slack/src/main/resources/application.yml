@@ -41,3 +41,8 @@ management:
       enabled: true
     prometheus:
       enabled: true
+
+slack:
+  baseUrl: "https://hooks.slack.com/services"
+  channelWebhook: "/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
+  logLevel: "FULL"

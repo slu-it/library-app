@@ -24,7 +24,6 @@ class BookAddedMessageConsumerTest {
     val bookAddedEvent = BookAddedEvent(
             bookId = "book-id-test",
             id = "event-id-test",
-            type = "e-book",
             isbn = "9780132350884"
     )
 
