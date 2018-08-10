@@ -81,3 +81,40 @@ jobs:
       script:
         - cd library-service
         - ./gradlew build
+
+    - stage: build
+      jdk: openjdk8
+      env: LIBRARY_INTEGRATION_SLACK
+      script:
+        - cd library-integration-slack
+        - ./gradlew build
+    - stage: build
+      jdk: openjdk9
+      env: LIBRARY_INTEGRATION_SLACK
+      script:
+        - cd library-integration-slack
+        - ./gradlew build
+    - stage: build
+      jdk: openjdk10
+      env: LIBRARY_INTEGRATION_SLACK
+      script:
+        - cd library-integration-slack
+        - ./gradlew build
+    - stage: build
+      jdk: oraclejdk8
+      env: LIBRARY_INTEGRATION_SLACK
+      script:
+        - cd library-integration-slack
+        - ./gradlew build
+    - stage: build
+      jdk: oraclejdk9
+      env: LIBRARY_INTEGRATION_SLACK
+      script:
+        - cd library-integration-slack
+        - ./gradlew build
+    - stage: build
+      jdk: oraclejdk10
+      env: LIBRARY_INTEGRATION_SLACK
+      script:
+        - cd library-integration-slack
+        - ./gradlew build
