@@ -67,3 +67,6 @@ task aggregateTestReports(type: TestReport) {
     destinationDir = test.reports.html.destination
     reportOn unitTest
 }
+
+tasks.check.dependsOn.remove(test)
+tasks.check.dependsOn unitTest
