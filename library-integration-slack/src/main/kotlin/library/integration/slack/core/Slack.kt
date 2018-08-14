@@ -7,7 +7,7 @@ package library.integration.slack.core
  */
 interface Slack {
     /**
-     * Posts a message to a predefined slack channel and webhook url. Max length of the message:
+     * Posts a message to a predefined slack channel and webhook url.
      * Empty messages are not allowed and an error will be thrown.
      */
     fun postMessage(slackMessage: String)
