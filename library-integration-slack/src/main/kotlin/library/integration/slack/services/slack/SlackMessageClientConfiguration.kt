@@ -14,10 +14,10 @@ import org.springframework.context.annotation.Configuration
 class SlackMessageClientConfiguration {
 
     @Bean
-    fun slackMessageClient(slackSettings: SlackSettings) {
+    fun slackMessageClient(slackSettings: SlackSettings): SlackMessageClient {
         val slackMsgPostUrl = slackSettings.baseUrl + slackSettings.channelWebhook
 
-        Feign
+        return Feign
                 .builder()
                 .encoder(JacksonEncoder())
                 .decoder(JacksonDecoder())
