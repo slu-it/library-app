@@ -1,11 +1,12 @@
 package library.service.business.books.domain.events
 
+import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.types.BookId
-import library.service.business.books.domain.types.Isbn13
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
+import utils.Books
 import utils.classification.UnitTest
 import java.time.OffsetDateTime
 import java.util.*
@@ -14,16 +15,15 @@ import java.util.*
 internal class BookEventsTest {
 
     val uuid = UUID.randomUUID()!!
-    val bookId = BookId.generate()
     val timestamp = OffsetDateTime.now()!!
-    val isbn = Isbn13("0123456789123")
+    val bookRecord = BookRecord(BookId.generate(), Books.THE_MARTIAN)
 
     val allBookEventTypes = listOf(
-            BookAdded(uuid, bookId, timestamp, isbn),
-            BookUpdated(uuid, bookId, timestamp),
-            BookRemoved(uuid, bookId, timestamp),
-            BookBorrowed(uuid, bookId, timestamp),
-            BookReturned(uuid, bookId, timestamp)
+            BookAdded(uuid, timestamp, bookRecord),
+            BookUpdated(uuid, timestamp, bookRecord),
+            BookRemoved(uuid, timestamp, bookRecord),
+            BookBorrowed(uuid, timestamp, bookRecord),
+            BookReturned(uuid, timestamp, bookRecord)
     )
 
     @Test fun `all event types are unique`() {
@@ -46,7 +46,7 @@ internal class BookEventsTest {
 
     @TestFactory fun `all event book ids are formatted as strings`() = allBookEventTypes.map {
         dynamicTest(it.javaClass.simpleName) {
-            assertThat(it.bookId).isEqualTo(bookId.toString())
+            assertThat(it.bookId).isEqualTo(bookRecord.id.toString())
         }
     }
 
@@ -56,9 +56,16 @@ internal class BookEventsTest {
         }
     }
 
-    @Test fun `book added events contain an ISBN formatted as a string`() {
-        val event = BookAdded(uuid, bookId, timestamp, isbn)
-        assertThat(event.isbn).isEqualTo(isbn.toString())
+    @TestFactory fun `all event book isbn are formatted as strings`() = allBookEventTypes.map {
+        dynamicTest(it.javaClass.simpleName) {
+            assertThat(it.isbn).isEqualTo(bookRecord.book.isbn.toString())
+        }
+    }
+
+    @TestFactory fun `all event book titles are formatted as strings`() = allBookEventTypes.map {
+        dynamicTest(it.javaClass.simpleName) {
+            assertThat(it.title).isEqualTo(bookRecord.book.title.toString())
+        }
     }
 
 }

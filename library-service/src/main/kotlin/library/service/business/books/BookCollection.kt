@@ -55,8 +55,7 @@ class BookCollection(
         return bookRecord
     }
 
-    private fun bookAddedEvent(bookRecord: BookRecord) =
-            BookAdded(timestamp = now(), bookId = bookRecord.id, isbn = bookRecord.book.isbn)
+    private fun bookAddedEvent(bookRecord: BookRecord) = BookAdded(timestamp = now(), bookRecord = bookRecord)
 
     /**
      * Updates a [BookRecord] from the collection by applying the given
@@ -79,8 +78,7 @@ class BookCollection(
         return updatedRecord
     }
 
-    private fun bookUpdatedEvent(bookRecord: BookRecord) =
-            BookUpdated(timestamp = now(), bookId = bookRecord.id)
+    private fun bookUpdatedEvent(bookRecord: BookRecord) = BookUpdated(timestamp = now(), bookRecord = bookRecord)
 
     /**
      * Gets a [BookRecord] from the collection by its unique ID.
@@ -130,8 +128,7 @@ class BookCollection(
         dispatch(bookRemovedEvent(bookRecord))
     }
 
-    private fun bookRemovedEvent(bookRecord: BookRecord) =
-            BookRemoved(timestamp = now(), bookId = bookRecord.id)
+    private fun bookRemovedEvent(bookRecord: BookRecord) = BookRemoved(timestamp = now(), bookRecord = bookRecord)
 
     /**
      * Tries to borrow a [BookRecord] with the given unique ID for the given
@@ -160,8 +157,7 @@ class BookCollection(
         return updatedRecord
     }
 
-    private fun bookBorrowedEvent(bookRecord: BookRecord) =
-            BookBorrowed(timestamp = now(), bookId = bookRecord.id)
+    private fun bookBorrowedEvent(bookRecord: BookRecord) = BookBorrowed(timestamp = now(), bookRecord = bookRecord)
 
     /**
      * Tries to return a [BookRecord] with the given unique ID.
@@ -188,8 +184,7 @@ class BookCollection(
         return updatedRecord
     }
 
-    private fun bookReturnedEvent(bookRecord: BookRecord) =
-            BookReturned(timestamp = now(), bookId = bookRecord.id)
+    private fun bookReturnedEvent(bookRecord: BookRecord) = BookReturned(timestamp = now(), bookRecord = bookRecord)
 
     private fun dispatch(event: BookEvent) = eventDispatcher.dispatch(event)
     private fun now() = OffsetDateTime.now(clock)

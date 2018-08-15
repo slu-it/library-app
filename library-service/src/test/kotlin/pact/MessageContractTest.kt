@@ -1,6 +1,7 @@
 package pact
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.events.BookAdded
 import library.service.business.books.domain.types.BookId
 import library.service.messaging.MessagingConfiguration
@@ -32,9 +33,8 @@ class MessageContractTest {
     fun `verify The Martian was added event`(): ActualMessage {
         val event = BookAdded(
                 id = UUID.randomUUID(),
-                bookId = BookId.generate(),
-                isbn = Books.THE_MARTIAN.isbn,
-                timestamp = OffsetDateTime.now()
+                timestamp = OffsetDateTime.now(),
+                bookRecord = BookRecord(BookId.generate(), Books.THE_MARTIAN)
         )
         val message = messageConverter.toMessage(event, MessageProperties())
         return ActualMessage(message.body)
