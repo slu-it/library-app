@@ -16,42 +16,37 @@ import java.util.*
 /**
  * Aggregate of a [Book], its unique reference ID ([UUID]) and [state][BookState].
  */
-class BookRecord(id: BookId, book: Book, state: BookState = Available) {
-
-    val id: BookId = id
-    var book: Book = book
-        private set
-    var state: BookState = state
-        private set
+data class BookRecord(
+        val id: BookId,
+        val book: Book,
+        val state: BookState = Available
+) {
 
     /**
      * Changes the [Title] of this [BookRecord's][BookRecord] [Book]
      *
      * @param title the new [Title]
+     * @return a new [BookRecord] instance with the new [Title]
      */
-    fun changeTitle(title: Title) {
-        book = book.copy(title = title)
-    }
+    fun changeTitle(title: Title) = copy(book = book.copy(title = title))
 
     /**
      * Changes the list of [Authors][Author] of this [BookRecord's][BookRecord]
      * [Book]. Might be empty in order to remove the existing authors.
      *
      * @param authors the new list of [Authors][Author]
+     * @return a new [BookRecord] instance with the new [Authors][Author]
      */
-    fun changeAuthors(authors: List<Author>) {
-        book = book.copy(authors = authors.toList())
-    }
+    fun changeAuthors(authors: List<Author>) = copy(book = book.copy(authors = authors.toList()))
 
     /**
      * Changes the number of pages of this [BookRecord's][BookRecord] [Book].
      * Might be null in order to remove the existing number of pages.
      *
      * @param numberOfPages the new number of pages
+     * @return a new [BookRecord] instance with the new number of pages
      */
-    fun changeNumberOfPages(numberOfPages: Int?) {
-        book = book.copy(numberOfPages = numberOfPages)
-    }
+    fun changeNumberOfPages(numberOfPages: Int?) = copy(book = book.copy(numberOfPages = numberOfPages))
 
     /**
      * Tries to borrow this [BookRecord].
@@ -66,7 +61,7 @@ class BookRecord(id: BookId, book: Book, state: BookState = Available) {
      *
      * @param by who is borrowing the book
      * @param on when was the book borrowed
-     * @return the same [BookRecord] in it's [Borrowed] state
+     * @return a new [BookRecord] instance with the new state of [Borrowed]
      * @throws BookAlreadyBorrowedException in case the book is already
      * [Borrowed] by someone
      */
@@ -74,8 +69,7 @@ class BookRecord(id: BookId, book: Book, state: BookState = Available) {
         if (state is Borrowed) {
             throw BookAlreadyBorrowedException(id)
         }
-        state = Borrowed(by, on)
-        return this
+        return copy(state = Borrowed(by, on))
     }
 
     /**
@@ -86,7 +80,7 @@ class BookRecord(id: BookId, book: Book, state: BookState = Available) {
      * Attempting to return an already [Available] book will result in an
      * exception.
      *
-     * @return the same [BookRecord] in it's [Available] state
+     * @return a new [BookRecord] instance with the new state of [Available]
      * @throws BookAlreadyReturnedException in case the book is already
      * [Available]
      */
@@ -94,30 +88,7 @@ class BookRecord(id: BookId, book: Book, state: BookState = Available) {
         if (state is Available) {
             throw BookAlreadyReturnedException(id)
         }
-        state = Available
-        return this
+        return copy(state = Available)
     }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as BookRecord
-
-        if (id != other.id) return false
-        if (book != other.book) return false
-        if (state != other.state) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + book.hashCode()
-        result = 31 * result + state.hashCode()
-        return result
-    }
-
-    override fun toString() = "BookRecord(id=$id, book=$book, state=$state)"
 
 }

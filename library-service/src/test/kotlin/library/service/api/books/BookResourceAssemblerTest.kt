@@ -40,9 +40,9 @@ internal class BookResourceAssemblerTest {
     @Test fun `book with 'borrowed' state is assembled correctly`() {
         val borrowedBy = Borrower("Someone")
         val borrowedOn = OffsetDateTime.now()
-        bookRecord.borrow(borrowedBy, borrowedOn)
+        val borrowedBookRecord = bookRecord.borrow(borrowedBy, borrowedOn)
 
-        val resource = cut.toResource(bookRecord)
+        val resource = cut.toResource(borrowedBookRecord)
 
         assertThat(resource.isbn).isEqualTo(book.isbn.toString())
         assertThat(resource.title).isEqualTo(book.title.toString())

@@ -50,7 +50,7 @@ class BooksController(
     @ResponseStatus(HttpStatus.OK)
     fun putBookTitle(@PathVariable id: UUID, @Valid @RequestBody body: UpdateTitleRequest): BookResource {
         val bookRecord = collection.updateBook(BookId(id)) {
-            changeTitle(Title(body.title!!))
+            it.changeTitle(Title(body.title!!))
         }
         return assembler.toResource(bookRecord)
     }
@@ -59,7 +59,7 @@ class BooksController(
     @ResponseStatus(HttpStatus.OK)
     fun putBookAuthors(@PathVariable id: UUID, @Valid @RequestBody body: UpdateAuthorsRequest): BookResource {
         val bookRecord = collection.updateBook(BookId(id)) {
-            changeAuthors(body.authors!!.map { Author(it) })
+            it.changeAuthors(body.authors!!.map { Author(it) })
         }
         return assembler.toResource(bookRecord)
     }
@@ -68,7 +68,7 @@ class BooksController(
     @ResponseStatus(HttpStatus.OK)
     fun deleteBookAuthors(@PathVariable id: UUID): BookResource {
         val bookRecord = collection.updateBook(BookId(id)) {
-            changeAuthors(emptyList())
+            it.changeAuthors(emptyList())
         }
         return assembler.toResource(bookRecord)
     }
@@ -77,7 +77,7 @@ class BooksController(
     @ResponseStatus(HttpStatus.OK)
     fun putBookNumberOfPages(@PathVariable id: UUID, @Valid @RequestBody body: UpdateNumberOfPagesRequest): BookResource {
         val bookRecord = collection.updateBook(BookId(id)) {
-            changeNumberOfPages(body.numberOfPages)
+            it.changeNumberOfPages(body.numberOfPages)
         }
         return assembler.toResource(bookRecord)
     }
@@ -86,7 +86,7 @@ class BooksController(
     @ResponseStatus(HttpStatus.OK)
     fun deleteBookNumberOfPages(@PathVariable id: UUID): BookResource {
         val bookRecord = collection.updateBook(BookId(id)) {
-            changeNumberOfPages(null)
+            it.changeNumberOfPages(null)
         }
         return assembler.toResource(bookRecord)
     }

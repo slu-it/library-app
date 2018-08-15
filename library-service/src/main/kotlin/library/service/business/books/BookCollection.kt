@@ -70,12 +70,13 @@ class BookCollection(
      * @throws BookNotFoundException in case there is no book for the given ID
      */
     @CanOnlyBeExecutedByCurators
-    fun updateBook(id: BookId, updateFunction: BookRecord.() -> Unit): BookRecord {
-        val bookRecord = getBook(id).apply { updateFunction() }
-        val updatedRecord = dataStore.createOrUpdate(bookRecord)
+    fun updateBook(id: BookId, updateFunction: (BookRecord) -> BookRecord): BookRecord {
+        val bookRecord = getBook(id)
+        val updatedRecord = updateFunction(bookRecord)
+        val savedAndUpdatedRecord = dataStore.createOrUpdate(updatedRecord)
 
-        dispatch(bookUpdatedEvent(updatedRecord))
-        return updatedRecord
+        dispatch(bookUpdatedEvent(savedAndUpdatedRecord))
+        return savedAndUpdatedRecord
     }
 
     private fun bookUpdatedEvent(bookRecord: BookRecord) = BookUpdated(timestamp = now(), bookRecord = bookRecord)
@@ -148,10 +149,9 @@ class BookCollection(
      */
     @CanBeExecutedByAnyUser
     fun borrowBook(id: BookId, borrower: Borrower): BookRecord {
-        val bookRecord = getBook(id).apply {
-            borrow(borrower, now())
-        }
-        val updatedRecord = dataStore.createOrUpdate(bookRecord)
+        val bookRecord = getBook(id)
+        val borrowedBookRecord = bookRecord.borrow(borrower, now())
+        val updatedRecord = dataStore.createOrUpdate(borrowedBookRecord)
 
         dispatch(bookBorrowedEvent(updatedRecord))
         return updatedRecord
@@ -175,10 +175,9 @@ class BookCollection(
      */
     @CanBeExecutedByAnyUser
     fun returnBook(id: BookId): BookRecord {
-        val bookRecord = getBook(id).apply {
-            `return`()
-        }
-        val updatedRecord = dataStore.createOrUpdate(bookRecord)
+        val bookRecord = getBook(id)
+        val returnedBookRecord = bookRecord.`return`()
+        val updatedRecord = dataStore.createOrUpdate(returnedBookRecord)
 
         dispatch(bookReturnedEvent(updatedRecord))
         return updatedRecord

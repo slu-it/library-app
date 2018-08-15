@@ -75,31 +75,22 @@ internal class BookCollectionTest {
     @Nested inner class `updating a book` {
 
         val id = BookId.generate()
-        val book = Books.THE_DARK_TOWER_VII
-        val bookRecord = BookRecord(id, book)
-
-        val mockFunction: BookRecord.() -> Unit = mock()
-
-        @Test fun `executes update function if book was found in data store`() {
-            given { dataStore.findById(id) } willReturn { bookRecord }
-            cut.updateBook(id, mockFunction)
-            verify(mockFunction).invoke(bookRecord)
-        }
+        val bookRecord = BookRecord(id, Books.THE_DARK_TOWER_VII)
+        val updatedBookRecord = bookRecord.changeNumberOfPages(42)
 
         @Test fun `updates the record in the database`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
-            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
 
-            val updatedBook = cut.updateBook(id, mockFunction)
+            val updatedBook = cut.updateBook(id) { updatedBookRecord }
 
-            assertThat(updatedBook).isSameAs(bookRecord)
+            assertThat(updatedBook).isEqualTo(updatedBook)
+            verify(dataStore).createOrUpdate(updatedBook)
         }
 
         @Test fun `dispatches a BookUpdated event`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
-            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
 
-            cut.updateBook(id, mockFunction)
+            cut.updateBook(id) { updatedBookRecord }
 
             verify(eventDispatcher).dispatch(check<BookUpdated> {
                 assertThat(it.bookId).isEqualTo("$id")
@@ -110,7 +101,7 @@ internal class BookCollectionTest {
         @Test fun `throws exception if it was not found in data store`() {
             given { dataStore.findById(id) } willReturn { null }
             assertThrows(BookNotFoundException::class) {
-                cut.updateBook(id, mockFunction)
+                cut.updateBook(id) { updatedBookRecord }
             }
         }
 
@@ -119,8 +110,7 @@ internal class BookCollectionTest {
     @Nested inner class `getting a book` {
 
         val id = BookId.generate()
-        val book = Books.THE_DARK_TOWER_I
-        val bookRecord = BookRecord(id, book)
+        val bookRecord = BookRecord(id, Books.THE_DARK_TOWER_I)
 
         @Test fun `returns it if it was found in data store`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
@@ -154,8 +144,7 @@ internal class BookCollectionTest {
     @Nested inner class `removing a book` {
 
         val id = BookId.generate()
-        val book = Books.THE_DARK_TOWER_IV
-        val bookRecord = BookRecord(id, book)
+        val bookRecord = BookRecord(id, Books.THE_DARK_TOWER_IV)
 
         @Test fun `deletes it from the data store if found`() {
             given { dataStore.findById(id) } willReturn { bookRecord }
@@ -192,22 +181,20 @@ internal class BookCollectionTest {
     @Nested inner class `borrowing a book` {
 
         val id = BookId.generate()
-        val book = Books.THE_DARK_TOWER_V
-        val bookRecord = BookRecord(id, book)
+        val availableBookRecord = BookRecord(id, Books.THE_DARK_TOWER_V)
+        val borrowedBookRecord = availableBookRecord.borrow(Borrower("Someone"), OffsetDateTime.now())
 
         @Test fun `changes its state and updates it in the data store`() {
-            given { dataStore.findById(id) } willReturn { bookRecord }
-            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
+            given { dataStore.findById(id) } willReturn { availableBookRecord }
 
             val borrowedBook = cut.borrowBook(id, Borrower("Someone"))
 
             assertThat(borrowedBook.state).isInstanceOf(Borrowed::class.java)
-            assertThat(borrowedBook).isSameAs(bookRecord)
+            assertThat(borrowedBook).isEqualTo(borrowedBook)
         }
 
         @Test fun `dispatches a BookBorrowed event`() {
-            given { dataStore.findById(id) } willReturn { bookRecord }
-            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
+            given { dataStore.findById(id) } willReturn { availableBookRecord }
 
             cut.borrowBook(id, Borrower("Someone"))
 
@@ -225,8 +212,7 @@ internal class BookCollectionTest {
         }
 
         @Test fun `throws exception if it is already 'borrowed'`() {
-            bookRecord.borrow(Borrower("Someone"), OffsetDateTime.now())
-            given { dataStore.findById(id) } willReturn { bookRecord }
+            given { dataStore.findById(id) } willReturn { borrowedBookRecord }
             assertThrows(BookAlreadyBorrowedException::class) {
                 cut.borrowBook(id, Borrower("Someone Else"))
             }
@@ -245,24 +231,20 @@ internal class BookCollectionTest {
     @Nested inner class `returning a book` {
 
         val id = BookId.generate()
-        val book = Books.THE_DARK_TOWER_VI
-        val bookRecord = BookRecord(id, book).apply {
-            borrow(Borrower("Someone"), OffsetDateTime.now())
-        }
+        val availableBookRecord = BookRecord(id, Books.THE_DARK_TOWER_VI)
+        val borrowedBookRecord = availableBookRecord.borrow(Borrower("Someone"), OffsetDateTime.now())
 
         @Test fun `changes its state and updates it in the data store`() {
-            given { dataStore.findById(id) } willReturn { bookRecord }
-            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
+            given { dataStore.findById(id) } willReturn { borrowedBookRecord }
 
-            val returnedBook = cut.returnBook(id)
+            val result = cut.returnBook(id)
 
-            assertThat(returnedBook.state).isEqualTo(Available)
-            assertThat(returnedBook).isSameAs(bookRecord)
+            assertThat(result.state).isEqualTo(Available)
+            assertThat(result).isEqualTo(availableBookRecord)
         }
 
         @Test fun `dispatches a BookReturned event`() {
-            given { dataStore.findById(id) } willReturn { bookRecord }
-            given { dataStore.createOrUpdate(bookRecord) } willReturn { bookRecord }
+            given { dataStore.findById(id) } willReturn { borrowedBookRecord }
 
             cut.returnBook(id)
 
@@ -280,8 +262,7 @@ internal class BookCollectionTest {
         }
 
         @Test fun `throws exception if it is already 'returned'`() {
-            given { dataStore.findById(id) } willReturn { bookRecord }
-            bookRecord.`return`()
+            given { dataStore.findById(id) } willReturn { availableBookRecord }
             assertThrows(BookAlreadyReturnedException::class) {
                 cut.returnBook(id)
             }

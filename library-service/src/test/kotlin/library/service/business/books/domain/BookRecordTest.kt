@@ -2,7 +2,6 @@ package library.service.business.books.domain
 
 import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.states.Available
-import library.service.business.books.domain.states.BookState
 import library.service.business.books.domain.states.Borrowed
 import library.service.business.books.domain.types.*
 import library.service.business.books.exceptions.BookAlreadyBorrowedException
@@ -21,8 +20,6 @@ internal class BookRecordTest {
     val book = Books.A_KNIGHT_OF_THE_SEVEN_KINGDOMS
     val bookId = BookId.generate()
 
-    val borrowed = Borrowed(Borrower("Duncan the Tall"), OffsetDateTime.now())
-
     @Test fun `books are initialized as 'available'`() {
         val minimalBook = BookRecord(bookId, book)
         assertThat(minimalBook.state).isEqualTo(Available)
@@ -33,8 +30,9 @@ internal class BookRecordTest {
         val availableBook = BookRecord(bookId, book, Available)
 
         @Test fun `it can be 'borrowed'`() {
-            availableBook.borrow(borrowed.by, borrowed.on)
-            assertThat(availableBook.state).isEqualTo(borrowed)
+            val borrowed = Borrowed(Borrower("Duncan the Tall"), OffsetDateTime.now())
+            val borrowedBook = availableBook.borrow(borrowed.by, borrowed.on)
+            assertThat(borrowedBook.state).isEqualTo(borrowed)
         }
 
         @Test fun `trying to return it will throw an exception`() {
@@ -47,11 +45,12 @@ internal class BookRecordTest {
 
     @Nested inner class `given a 'borrowed' book` {
 
+        val borrowed = Borrowed(Borrower("Duncan the Tall"), OffsetDateTime.now())
         val borrowedBook = BookRecord(bookId, book, borrowed)
 
         @Test fun `it can be returned in order to make it 'available' again`() {
-            borrowedBook.`return`()
-            assertThat(borrowedBook.state).isEqualTo(Available)
+            val returnedBook = borrowedBook.`return`()
+            assertThat(returnedBook.state).isEqualTo(Available)
         }
 
         @Test fun `trying to borrow it will throw an exception`() {
@@ -72,68 +71,29 @@ internal class BookRecordTest {
         )
         val bookRecord = BookRecord(id = BookId.generate(), book = book)
 
-        @Test fun `title can be changed`(): Unit = with(bookRecord) {
-            changeTitle(Title("New Title"))
-            assertThat(book.title).isEqualTo(Title("New Title"))
+        @Test fun `title can be changed`() {
+            val changedBook = bookRecord.changeTitle(Title("New Title"))
+            assertThat(changedBook.book.title).isEqualTo(Title("New Title"))
         }
 
-        @Test fun `authors can be changed`(): Unit = with(bookRecord) {
-            changeAuthors(listOf(Author("New Author")))
-            assertThat(book.authors).containsExactly(Author("New Author"))
+        @Test fun `authors can be changed`() {
+            val changedBook = bookRecord.changeAuthors(listOf(Author("New Author")))
+            assertThat(changedBook.book.authors).containsExactly(Author("New Author"))
         }
 
-        @Test fun `authors can be removed`(): Unit = with(bookRecord) {
-            changeAuthors(emptyList())
-            assertThat(book.authors).isEmpty()
+        @Test fun `authors can be removed`() {
+            val changedBook = bookRecord.changeAuthors(emptyList())
+            assertThat(changedBook.book.authors).isEmpty()
         }
 
-        @Test fun `number of pages can be changed`(): Unit = with(bookRecord) {
-            changeNumberOfPages(256)
-            assertThat(book.numberOfPages).isEqualTo(256)
+        @Test fun `number of pages can be changed`() {
+            val changedBook = bookRecord.changeNumberOfPages(256)
+            assertThat(changedBook.book.numberOfPages).isEqualTo(256)
         }
 
-        @Test fun `number of pages can be removed`(): Unit = with(bookRecord) {
-            changeNumberOfPages(null)
-            assertThat(book.numberOfPages).isNull()
-        }
-
-    }
-
-    @Nested inner class `book records can be checked for equality` {
-
-        @Test fun `two records with the same data are equal`() {
-            val id = BookId.generate()
-            val bookRecord1 = BookRecord(id, Books.THE_LORD_OF_THE_RINGS_1, Available)
-            val bookRecord2 = BookRecord(id, Books.THE_LORD_OF_THE_RINGS_1, Available)
-            assertThat(bookRecord1).isEqualTo(bookRecord2)
-        }
-
-        @Nested inner class `two records with different data are unequal` {
-
-            val id = BookId.generate()
-            val anotherId = BookId.generate()
-
-            @Test fun `id`() {
-                assertThat(bookRecord(id = id))
-                        .isNotEqualTo(bookRecord(id = anotherId))
-            }
-
-            @Test fun `book`() {
-                assertThat(bookRecord(book = Books.THE_LORD_OF_THE_RINGS_1))
-                        .isNotEqualTo(bookRecord(book = Books.THE_LORD_OF_THE_RINGS_2))
-            }
-
-            @Test fun `state`() {
-                assertThat(bookRecord(state = Available))
-                        .isNotEqualTo(bookRecord(state = Borrowed(Borrower("Frodo"), OffsetDateTime.now())))
-            }
-
-            fun bookRecord(
-                    id: BookId = this.id,
-                    book: Book = Books.THE_LORD_OF_THE_RINGS_1,
-                    state: BookState = Available
-            ) = BookRecord(id, book, state)
-
+        @Test fun `number of pages can be removed`() {
+            val changedBook = bookRecord.changeNumberOfPages(null)
+            assertThat(changedBook.book.numberOfPages).isNull()
         }
 
     }

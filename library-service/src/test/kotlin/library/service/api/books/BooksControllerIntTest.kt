@@ -3,7 +3,6 @@ package library.service.api.books
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.willReturn
-import library.service.correlation.CorrelationIdHolder
 import library.service.business.books.BookDataStore
 import library.service.business.books.BookIdGenerator
 import library.service.business.books.domain.BookRecord
@@ -13,6 +12,7 @@ import library.service.business.books.domain.types.Author
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.business.events.EventDispatcher
+import library.service.correlation.CorrelationIdHolder
 import library.service.security.UserContext
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -1045,9 +1045,8 @@ internal class BooksControllerIntTest {
     }
 
     private fun availableBook(id: BookId, book: Book) = BookRecord(id, book)
-    private fun borrowedBook(id: BookId, book: Book, borrowedBy: String, borrowedOn: String) = availableBook(id, book).apply {
-        borrow(Borrower(borrowedBy), OffsetDateTime.parse(borrowedOn))
-    }
+    private fun borrowedBook(id: BookId, book: Book, borrowedBy: String, borrowedOn: String) = availableBook(id, book)
+            .borrow(Borrower(borrowedBy), OffsetDateTime.parse(borrowedOn))
 
     private fun List<Author>.toJson() = joinToString(separator = "\", \"", prefix = "[\"", postfix = "\"]")
 
