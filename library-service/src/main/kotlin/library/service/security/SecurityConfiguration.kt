@@ -18,6 +18,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.User
+import org.springframework.security.crypto.factory.PasswordEncoderFactories
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -35,6 +37,8 @@ class SecurityConfiguration(
 
     private val infoEndpoint = InfoEndpoint::class.java
     private val healthEndpoint = HealthEndpoint::class.java
+
+    private val encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     override fun configure(http: HttpSecurity): Unit = with(http) {
         csrf().disable().cors()
@@ -71,9 +75,8 @@ class SecurityConfiguration(
     }
 
     private fun UserSettings.UserCredentials.toUser(vararg roles: String) = User
-            .withDefaultPasswordEncoder()
-            .username(username)
-            .password(password)
+            .withUsername(username)
+            .password(encoder.encode(password))
             .roles(*roles)
             .build()
 

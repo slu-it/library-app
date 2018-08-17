@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.User
+import org.springframework.security.crypto.factory.PasswordEncoderFactories
 
 @Configuration
 @Profile("!unsecured")
@@ -29,6 +30,8 @@ class SecurityConfiguration(
 
     private val infoEndpoint = InfoEndpoint::class.java
     private val healthEndpoint = HealthEndpoint::class.java
+
+    private val encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     override fun configure(http: HttpSecurity): Unit = with(http) {
         csrf().disable()
@@ -50,9 +53,8 @@ class SecurityConfiguration(
     @Bean override fun authenticationManagerBean(): AuthenticationManager = super.authenticationManagerBean()
 
     private fun UserSettings.UserCredentials.toUser(vararg roles: String) = User
-            .withDefaultPasswordEncoder()
-            .username(username)
-            .password(password)
+            .withUsername(username)
+            .password(encoder.encode(password))
             .roles(*roles)
             .build()
 
