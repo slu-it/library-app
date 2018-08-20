@@ -7,7 +7,7 @@ class BookAddedEventHandler(
         private val slack: Slack
 ) {
     fun handleBookAdded(event: BookAddedEvent) {
-        val bookAddedText = "The book '${event.bookId}'was just added to the library."
+        val bookAddedText = "The book '${event.title}' (isbn: ${event.isbn}) was just added to the library."
         slack.postMessage(bookAddedText)
     }
 }
