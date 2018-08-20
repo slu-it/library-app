@@ -22,9 +22,8 @@ class BookAddedMessageConsumerTest {
     val cut = BookAddedMessageConsumer(objectMapper, bookAddedEventHandler)
 
     val bookAddedEvent = BookAddedEvent(
-            bookId = "book-id-test",
-            id = "event-id-test",
-            isbn = "9780132350884"
+            isbn = "9780132350884",
+            title = "Clean Code: A Handbook of Agile Software Craftsmanship"
     )
 
     private val expectedLog: String = "Message could not be processed because of an exception";
