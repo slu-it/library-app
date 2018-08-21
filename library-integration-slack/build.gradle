@@ -53,6 +53,8 @@ dependencies {
             "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
     testCompile("com.nhaarman.mockitokotlin2:mockito-kotlin:${mockitoKotlinVersion}")
     testCompile("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}")
+    testCompile("com.github.tomakehurst:wiremock-standalone:${wiremockVersion}")
+    testCompile("org.springframework.cloud:spring-cloud-contract-wiremock:${springCloudWiremockVersion}")
 
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
             "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
@@ -67,10 +69,16 @@ task unitTest(type: Test) {
     testLogging { events "skipped", "failed" }
 }
 
+task integrationTest(type: Test) {
+    dependsOn unitTest
+    useJUnitPlatform() { includeTags 'integration-test' }
+    testLogging { events "skipped", "failed" }
+}
+
 task aggregateTestReports(type: TestReport) {
     destinationDir = test.reports.html.destination
     reportOn unitTest
 }
 
 tasks.check.dependsOn.remove(test)
-tasks.check.dependsOn unitTest
+tasks.check.dependsOn integrationTest

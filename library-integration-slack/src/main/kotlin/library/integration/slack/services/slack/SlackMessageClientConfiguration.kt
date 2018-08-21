@@ -4,6 +4,7 @@ import feign.Feign
 import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import feign.slf4j.Slf4jLogger
+import library.integration.slack.services.DynamicUrlTarget
 import library.integration.slack.services.error.handling.SlackErrorDecoder
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -15,7 +16,10 @@ class SlackMessageClientConfiguration {
 
     @Bean
     fun slackMessageClient(slackSettings: SlackSettings): SlackMessageClient {
-        val slackMsgPostUrl = slackSettings.baseUrl + slackSettings.channelWebhook
+        // val slackMsgPostUrl = slackSettings.baseUrl + slackSettings.channelWebhook
+
+        val target: DynamicUrlTarget<SlackMessageClient> = DynamicUrlTarget("slack", SlackMessageClient::class
+        ) { slackSettings.baseUrl + slackSettings.channelWebhook }
 
         return Feign
                 .builder()
@@ -24,6 +28,6 @@ class SlackMessageClientConfiguration {
                 .errorDecoder(SlackErrorDecoder())
                 .logger(Slf4jLogger())
                 .logLevel(slackSettings.logLevel)
-                .target(SlackMessageClient::class.java, slackMsgPostUrl)
+                .target(target)
     }
 }

@@ -16,7 +16,7 @@ class SlackErrorDecoderTest {
 
     private val cut = SlackErrorDecoder()
 
-    private val headers = mapOf("Content-type" to arrayListOf("Applicatin/json"))
+    private val headers = mapOf("Content-type" to arrayListOf("application/json"))
 
     private val methodKey = "methodKey"
 
