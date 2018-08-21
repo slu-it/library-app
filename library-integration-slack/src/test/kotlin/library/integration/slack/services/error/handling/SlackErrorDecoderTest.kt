@@ -27,7 +27,6 @@ class SlackErrorDecoderTest {
                 .builder()
                 .status(400)
                 .headers(headers)
-                .reason("invalid_payload")
                 .build()
 
         val result = cut.decode(methodKey, response)
@@ -42,7 +41,6 @@ class SlackErrorDecoderTest {
                 .builder()
                 .status(403)
                 .headers(headers)
-                .reason("action_prohibited")
                 .build()
 
         val result = cut.decode(methodKey, response)
@@ -57,7 +55,6 @@ class SlackErrorDecoderTest {
                 .builder()
                 .status(404)
                 .headers(headers)
-                .reason("channel_not_found")
                 .build()
 
         val result = cut.decode(methodKey, response)
@@ -72,7 +69,6 @@ class SlackErrorDecoderTest {
                 .builder()
                 .status(410)
                 .headers(headers)
-                .reason("channel_is_archived")
                 .build()
 
         val result = cut.decode(methodKey, response)
@@ -87,7 +83,6 @@ class SlackErrorDecoderTest {
                 .builder()
                 .status(500)
                 .headers(headers)
-                .reason("rollup_error")
                 .build()
 
         val result = cut.decode(methodKey, response)
@@ -107,7 +102,5 @@ class SlackErrorDecoderTest {
         val result = cut.decode(methodKey, response)
 
         assertThat(result).isInstanceOf(FeignException::class.java)
-
-
     }
 }

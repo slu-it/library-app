@@ -5,14 +5,14 @@ import library.integration.slack.services.error.handling.*
 class ErrorHandlerDataProvider {
 
     companion object {
-        val slackChannelNotFoundException = SlackChannelNotFoundException(404, "channel_not_found")
+        val slackChannelNotFoundException = SlackChannelNotFoundException(404)
 
-        val slackChannelProhibitedException = SlackChannelProhibitedException(403, "action_prohibited")
+        val slackChannelProhibitedException = SlackChannelProhibitedException(403)
 
-        val slackInvalidPayloadException = SlackInvalidPayloadException(400, "invalid_payload")
+        val slackInvalidPayloadException = SlackInvalidPayloadException(400)
 
-        val slackChannelArchivedException = SlackChannelArchivedException(410, "channel_is_archived")
+        val slackChannelArchivedException = SlackChannelArchivedException(410)
 
-        val slackServerException = SlackServerException(500, "rollup_error")
+        val slackServerException = SlackServerException(500)
     }
 }
