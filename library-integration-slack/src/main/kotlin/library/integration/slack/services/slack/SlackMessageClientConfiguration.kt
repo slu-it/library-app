@@ -16,7 +16,6 @@ class SlackMessageClientConfiguration {
 
     @Bean
     fun slackMessageClient(slackSettings: SlackSettings): SlackMessageClient {
-        // val slackMsgPostUrl = slackSettings.baseUrl + slackSettings.channelWebhook
 
         val target: DynamicUrlTarget<SlackMessageClient> = DynamicUrlTarget("slack", SlackMessageClient::class
         ) { slackSettings.baseUrl + slackSettings.channelWebhook }
