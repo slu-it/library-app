@@ -4,6 +4,8 @@ import feign.FeignException
 import feign.Response
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import utils.classification.UnitTest
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackChannelArchivedException
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackChannelNotFoundException
@@ -16,7 +18,7 @@ class SlackErrorDecoderTest {
 
     private val cut = SlackErrorDecoder()
 
-    private val headers = mapOf("Content-type" to arrayListOf("application/json"))
+    private val headers = mapOf(CONTENT_TYPE to arrayListOf(APPLICATION_JSON_VALUE))
 
     private val methodKey = "methodKey"
 
