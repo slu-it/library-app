@@ -53,7 +53,6 @@ dependencies {
             "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
     testCompile("com.nhaarman.mockitokotlin2:mockito-kotlin:${mockitoKotlinVersion}")
     testCompile("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}")
-    testCompile("com.github.tomakehurst:wiremock-standalone:${wiremockVersion}")
     testCompile("org.springframework.cloud:spring-cloud-contract-wiremock:${springCloudWiremockVersion}")
 
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
@@ -77,7 +76,7 @@ task integrationTest(type: Test) {
 
 task aggregateTestReports(type: TestReport) {
     destinationDir = test.reports.html.destination
-    reportOn unitTest
+    reportOn unitTest, integrationTest
 }
 
 tasks.check.dependsOn.remove(test)

@@ -1,12 +1,11 @@
 package library.integration.slack.services.slack
 
-import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import library.integration.slack.services.error.handling.ErrorHandler
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -15,12 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpStatus.*
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
 import utils.classification.IntegrationTest
+import utils.extensions.EnableSpringExtension
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackChannelArchivedException
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackChannelNotFoundException
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackChannelProhibitedException
@@ -28,10 +29,11 @@ import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackInv
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackServerException
 import java.util.stream.Stream
 
-@ExtendWith(SpringExtension::class)
+
 @SpringBootTest
 @IntegrationTest
-@AutoConfigureWireMock(port = 9999)
+@EnableSpringExtension
+@AutoConfigureWireMock(port = 0)
 @ContextConfiguration(classes = [TestConfiguration::class])
 class SlackMessageAccessorIntegrationTest {
 
@@ -50,19 +52,21 @@ class SlackMessageAccessorIntegrationTest {
     @Autowired
     lateinit var errorHandler: ErrorHandler
 
+    @Autowired
+    lateinit var wireMockServer: WireMockServer
+
     val slackMessage = "some msg"
 
     @BeforeEach
     fun setUp() {
-        //TODO: externalize port config
-        slackSettings.baseUrl = "http://localhost:9999"
+        slackSettings.baseUrl = "http://localhost:${wireMockServer.port()}"
     }
 
     @RecordLoggers(SlackMessageAccessor::class)
     @Test
     fun `posting correct message to slack channel`(log: LogRecord) {
-        WireMock.stubFor(post(urlPathEqualTo(slackSettings.channelWebhook))
-                .withHeader("Content-type", equalTo("application/json"))
+        wireMockServer.givenThat(post(urlPathEqualTo(slackSettings.channelWebhook))
+                .withHeader(CONTENT_TYPE, equalTo(APPLICATION_JSON_VALUE))
                 .withRequestBody(equalToJson("""{"text": "some msg"}"""))
                 .willReturn(aResponse().withStatus(OK.value())))
 
@@ -75,8 +79,8 @@ class SlackMessageAccessorIntegrationTest {
     @ParameterizedTest
     @MethodSource("createSlackMessageAccessorTestData")
     fun `posting correct message to slack channel and getting an error`(status: Int, reason: String, log: LogRecord) {
-        WireMock.stubFor(post(urlPathEqualTo(slackSettings.channelWebhook))
-                .withHeader("Content-type", equalTo("application/json"))
+        wireMockServer.givenThat(post(urlPathEqualTo(slackSettings.channelWebhook))
+                .withHeader(CONTENT_TYPE, equalTo(APPLICATION_JSON_VALUE))
                 .withRequestBody(equalToJson("""{"text": "some msg"}"""))
                 .willReturn(aResponse().withStatus(status)))
 
@@ -91,8 +95,8 @@ class SlackMessageAccessorIntegrationTest {
     @RecordLoggers(ErrorHandler::class)
     @Test
     fun `posting correct message to slack channel and getting unexpected error`(log: LogRecord) {
-        WireMock.stubFor(post(urlPathEqualTo(slackSettings.channelWebhook))
-                .withHeader("Content-type", equalTo("application/json"))
+        wireMockServer.givenThat(post(urlPathEqualTo(slackSettings.channelWebhook))
+                .withHeader(CONTENT_TYPE, equalTo(APPLICATION_JSON_VALUE))
                 .withRequestBody(equalToJson("""{"text": "some msg"}"""))
                 .willReturn(aResponse().withStatus(401)))
 
