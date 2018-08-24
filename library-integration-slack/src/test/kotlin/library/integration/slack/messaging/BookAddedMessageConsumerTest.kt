@@ -11,6 +11,7 @@ import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
 import utils.messaging.toMessageConverter
 import org.assertj.core.api.Assertions.assertThat
+import utils.messaging.BookEventsMessageProvider.Companion.bookAddedEvent
 import java.io.IOException
 
 @UnitTest
@@ -20,11 +21,6 @@ class BookAddedMessageConsumerTest {
     val objectMapper: ObjectMapper = spy(objectMapper())
 
     val cut = BookAddedMessageConsumer(objectMapper, bookAddedEventHandler)
-
-    val bookAddedEvent = BookAddedEvent(
-            isbn = "9780132350884",
-            title = "Clean Code: A Handbook of Agile Software Craftsmanship"
-    )
 
     private val expectedLog: String = "Message could not be processed because of an exception";
 
