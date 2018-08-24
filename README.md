@@ -18,6 +18,8 @@ dispatches domain events and manages consistency.
 - The `library-enrichment` is a background service which reacts to `book-added`
 domain events by looking up additional information about newly added books. If
 it finds any, it will update the book record via the `library-service`.
+- The `library-integration-slack` is a  service which reacts to `book-added`
+domain events by posting them to a configured slack channel.
 - The `library-ui` is a client side frontend for the `library-service`. It allows
 for the management of the library as well as the borrowing and returning
 of books by customers.
