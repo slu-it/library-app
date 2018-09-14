@@ -55,7 +55,7 @@ dependencies {
     testCompile("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}")
     testCompile("org.springframework.cloud:spring-cloud-contract-wiremock:${springCloudWiremockVersion}")
     testCompile("au.com.dius:pact-jvm-consumer_2.12:${pactVersion}",
-            "au.com.dius:pact-jvm-consumer-junit_2.12:${pactVersion}")
+            "au.com.dius:pact-jvm-consumer-junit5_2.12:${pactVersion}")
 
 
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
@@ -81,6 +81,7 @@ task contractTest(type: Test) {
     dependsOn integrationTest
     useJUnitPlatform() { includeTags 'contract-test' }
     testLogging { events "skipped", "failed" }
+    systemProperties['pact.rootDir'] = 'build/pacts'
 }
 
 task aggregateTestReports(type: TestReport) {
