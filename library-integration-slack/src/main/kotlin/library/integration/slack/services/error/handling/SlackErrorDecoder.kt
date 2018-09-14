@@ -26,11 +26,13 @@ class SlackErrorDecoder : ErrorDecoder {
 
 data class SlackInvalidPayloadException(val status: Int, val reason: String = "invalid_payload") : RuntimeException()
 
-data class SlackChannelProhibitedException(val status: Int, val reason: String = "action_prohibited") : RuntimeException()
+data class SlackChannelProhibitedException(val status: Int, val reason: String = "action_prohibited") :
+    RuntimeException()
 
 data class SlackChannelNotFoundException(val status: Int, val reason: String = "channel_not_found") : RuntimeException()
 
-data class SlackChannelArchivedException(val status: Int, val reason: String = "channel_is_archived") : RuntimeException()
+data class SlackChannelArchivedException(val status: Int, val reason: String = "channel_is_archived") :
+    RuntimeException()
 
 data class SlackServerException(val status: Int, val reason: String = "rollup_error") : RuntimeException()
 

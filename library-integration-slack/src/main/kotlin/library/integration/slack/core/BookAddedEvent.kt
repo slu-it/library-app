@@ -7,6 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class BookAddedEvent(
-        val isbn: String,
-        val title: String
+    val isbn: String,
+    val title: String
 ) : BookEvent

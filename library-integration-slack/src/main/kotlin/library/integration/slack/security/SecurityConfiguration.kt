@@ -26,7 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableConfigurationProperties(UserSettings::class)
 class SecurityConfiguration(
-        private val userSettings: UserSettings
+    private val userSettings: UserSettings
 ) : WebSecurityConfigurerAdapter() {
     private val infoEndpoint = InfoEndpoint::class.java
     private val healthEndpoint = HealthEndpoint::class.java
@@ -54,17 +54,17 @@ class SecurityConfiguration(
     override fun authenticationManagerBean(): AuthenticationManager = super.authenticationManagerBean()
 
     private fun UserSettings.UserCredentials.toUser(vararg roles: String) = User
-            .withUsername(username)
-            .password(encoder.encode(password))
-            .roles(*roles)
-            .build()
+        .withUsername(username)
+        .password(encoder.encode(password))
+        .roles(*roles)
+        .build()
 
     private fun HttpSecurity.authorizeRequests(
-            body: ExpressionUrlAuthorizationConfigurer<*>.ExpressionInterceptUrlRegistry.() -> Unit
+        body: ExpressionUrlAuthorizationConfigurer<*>.ExpressionInterceptUrlRegistry.() -> Unit
     ) = body(this.authorizeRequests())
 
     private fun AuthenticationManagerBuilder.inMemoryAuthentication(
-            body: InMemoryUserDetailsManagerConfigurer<*>.() -> Unit
+        body: InMemoryUserDetailsManagerConfigurer<*>.() -> Unit
     ) = body(this.inMemoryAuthentication())
 
 }

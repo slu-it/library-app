@@ -26,10 +26,10 @@ class SlackErrorDecoderTest {
     fun `given Response with status 400, then SlackInvalidPayloadException will be returned`() {
 
         val response = Response
-                .builder()
-                .status(400)
-                .headers(headers)
-                .build()
+            .builder()
+            .status(400)
+            .headers(headers)
+            .build()
 
         val result = cut.decode(methodKey, response)
 
@@ -40,10 +40,10 @@ class SlackErrorDecoderTest {
     fun `given Response with status 403, then SlackChannelProhibitedException will be returned`() {
 
         val response = Response
-                .builder()
-                .status(403)
-                .headers(headers)
-                .build()
+            .builder()
+            .status(403)
+            .headers(headers)
+            .build()
 
         val result = cut.decode(methodKey, response)
 
@@ -54,10 +54,10 @@ class SlackErrorDecoderTest {
     fun `given Response with status 404, then SlackChannelNotFoundException will be returned`() {
 
         val response = Response
-                .builder()
-                .status(404)
-                .headers(headers)
-                .build()
+            .builder()
+            .status(404)
+            .headers(headers)
+            .build()
 
         val result = cut.decode(methodKey, response)
 
@@ -68,10 +68,10 @@ class SlackErrorDecoderTest {
     fun `given Response with status 410, then SlackChannelArchivedException will be returned`() {
 
         val response = Response
-                .builder()
-                .status(410)
-                .headers(headers)
-                .build()
+            .builder()
+            .status(410)
+            .headers(headers)
+            .build()
 
         val result = cut.decode(methodKey, response)
 
@@ -82,10 +82,10 @@ class SlackErrorDecoderTest {
     fun `given Response with status 500, then SlackServerException will be returned`() {
 
         val response = Response
-                .builder()
-                .status(500)
-                .headers(headers)
-                .build()
+            .builder()
+            .status(500)
+            .headers(headers)
+            .build()
 
         val result = cut.decode(methodKey, response)
 
@@ -96,10 +96,10 @@ class SlackErrorDecoderTest {
     fun `given Response with unexpected status 405, then FeignException will be returned`() {
 
         val response = Response
-                .builder()
-                .status(405)
-                .headers(headers)
-                .build()
+            .builder()
+            .status(405)
+            .headers(headers)
+            .build()
 
         val result = cut.decode(methodKey, response)
 
