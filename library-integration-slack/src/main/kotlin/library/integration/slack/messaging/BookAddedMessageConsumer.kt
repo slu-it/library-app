@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component
  */
 @Component
 class BookAddedMessageConsumer(
-        private val objectMapper: ObjectMapper,
-        private val bookAddedEventHandler: BookAddedEventHandler
+    private val objectMapper: ObjectMapper,
+    private val bookAddedEventHandler: BookAddedEventHandler
 ) : MessageListener {
     private val log = logger {}
 

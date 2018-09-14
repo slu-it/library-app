@@ -17,16 +17,17 @@ class SlackMessageClientConfiguration {
     @Bean
     fun slackMessageClient(slackSettings: SlackSettings): SlackMessageClient {
 
-        val target = DynamicUrlTarget("slack", SlackMessageClient::class
+        val target = DynamicUrlTarget(
+            "slack", SlackMessageClient::class
         ) { slackSettings.baseUrl + slackSettings.channelWebhook }
 
         return Feign
-                .builder()
-                .encoder(JacksonEncoder())
-                .decoder(JacksonDecoder())
-                .errorDecoder(SlackErrorDecoder())
-                .logger(Slf4jLogger())
-                .logLevel(slackSettings.logLevel)
-                .target(target)
+            .builder()
+            .encoder(JacksonEncoder())
+            .decoder(JacksonDecoder())
+            .errorDecoder(SlackErrorDecoder())
+            .logger(Slf4jLogger())
+            .logLevel(slackSettings.logLevel)
+            .target(target)
     }
 }

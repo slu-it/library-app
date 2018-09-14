@@ -65,10 +65,12 @@ class SlackMessageAccessorIntegrationTest {
     @RecordLoggers(SlackMessageAccessor::class)
     @Test
     fun `posting correct message to slack channel`(log: LogRecord) {
-        wireMockServer.givenThat(post(urlPathEqualTo(slackSettings.channelWebhook))
+        wireMockServer.givenThat(
+            post(urlPathEqualTo(slackSettings.channelWebhook))
                 .withHeader(CONTENT_TYPE, equalTo(APPLICATION_JSON_VALUE))
                 .withRequestBody(equalToJson("""{"text": "some msg"}"""))
-                .willReturn(aResponse().withStatus(OK.value())))
+                .willReturn(aResponse().withStatus(OK.value()))
+        )
 
         slackMessageAccessor.postMessage(slackMessage)
 
@@ -79,43 +81,47 @@ class SlackMessageAccessorIntegrationTest {
     @ParameterizedTest
     @MethodSource("createSlackMessageAccessorTestData")
     fun `posting correct message to slack channel and getting an error`(status: Int, reason: String, log: LogRecord) {
-        wireMockServer.givenThat(post(urlPathEqualTo(slackSettings.channelWebhook))
+        wireMockServer.givenThat(
+            post(urlPathEqualTo(slackSettings.channelWebhook))
                 .withHeader(CONTENT_TYPE, equalTo(APPLICATION_JSON_VALUE))
                 .withRequestBody(equalToJson("""{"text": "some msg"}"""))
-                .willReturn(aResponse().withStatus(status)))
+                .willReturn(aResponse().withStatus(status))
+        )
 
         slackMessageAccessor.postMessage(slackMessage)
 
         assertThat(log.messages).containsOnly(
-                "Error with statusCode [$status] and reason [$reason] " +
-                        "when trying to post message with body [$slackMessage]."
+            "Error with statusCode [$status] and reason [$reason] " +
+                    "when trying to post message with body [$slackMessage]."
         )
     }
 
     @RecordLoggers(ErrorHandler::class)
     @Test
     fun `posting correct message to slack channel and getting unexpected error`(log: LogRecord) {
-        wireMockServer.givenThat(post(urlPathEqualTo(slackSettings.channelWebhook))
+        wireMockServer.givenThat(
+            post(urlPathEqualTo(slackSettings.channelWebhook))
                 .withHeader(CONTENT_TYPE, equalTo(APPLICATION_JSON_VALUE))
                 .withRequestBody(equalToJson("""{"text": "some msg"}"""))
-                .willReturn(aResponse().withStatus(401)))
+                .willReturn(aResponse().withStatus(401))
+        )
 
         slackMessageAccessor.postMessage(slackMessage)
 
         assertThat(log.messages).containsOnly(
-                "Unexpected error occurred  when trying to post message with body [$slackMessage]."
+            "Unexpected error occurred  when trying to post message with body [$slackMessage]."
         )
     }
 
     companion object {
         @JvmStatic
         fun createSlackMessageAccessorTestData(): Stream<Arguments> =
-                Stream.of(
-                        Arguments.of(slackChannelNotFoundException.status, slackChannelNotFoundException.reason),
-                        Arguments.of(slackChannelProhibitedException.status, slackChannelProhibitedException.reason),
-                        Arguments.of(slackInvalidPayloadException.status, slackInvalidPayloadException.reason),
-                        Arguments.of(slackChannelArchivedException.status, slackChannelArchivedException.reason),
-                        Arguments.of(slackServerException.status, slackServerException.reason)
-                )
+            Stream.of(
+                Arguments.of(slackChannelNotFoundException.status, slackChannelNotFoundException.reason),
+                Arguments.of(slackChannelProhibitedException.status, slackChannelProhibitedException.reason),
+                Arguments.of(slackInvalidPayloadException.status, slackInvalidPayloadException.reason),
+                Arguments.of(slackChannelArchivedException.status, slackChannelArchivedException.reason),
+                Arguments.of(slackServerException.status, slackServerException.reason)
+            )
     }
 }

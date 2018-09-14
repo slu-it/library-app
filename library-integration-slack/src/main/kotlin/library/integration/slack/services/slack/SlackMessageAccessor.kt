@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class SlackMessageAccessor(
-        private val slackMessageClient: SlackMessageClient,
-        private val errorHandler: ErrorHandler)
-    : Slack {
+    private val slackMessageClient: SlackMessageClient,
+    private val errorHandler: ErrorHandler
+) : Slack {
 
     private val log = logger {}
 

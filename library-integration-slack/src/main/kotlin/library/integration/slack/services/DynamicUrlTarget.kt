@@ -23,9 +23,9 @@ import kotlin.reflect.KClass
  */
 
 class DynamicUrlTarget<T : Any>(
-        private val name: String,
-        private val type: KClass<T>,
-        private val urlSupplier: () -> String
+    private val name: String,
+    private val type: KClass<T>,
+    private val urlSupplier: () -> String
 ) : Target<T> {
 
     override fun type() = type.java

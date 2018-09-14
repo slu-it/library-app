@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class MessageConfiguration(
-        private val connectionFactory: ConnectionFactory
+    private val connectionFactory: ConnectionFactory
 ) {
     companion object {
         const val BOOK_EVENTS_TOPIC = "book-events"
@@ -41,21 +41,21 @@ class MessageConfiguration(
 
     @Bean
     fun bookAddedEventBinding(bookAddedQueue: Queue, bookEventsTopicExchange: TopicExchange) = BindingBuilder
-            .bind(bookAddedQueue)
-            .to(bookEventsTopicExchange)
-            .with(ROUTING_KEY)
+        .bind(bookAddedQueue)
+        .to(bookEventsTopicExchange)
+        .with(ROUTING_KEY)
 
     @Bean
     fun messageListenerContainer(consumer: BookAddedMessageConsumer): MessageListenerContainer =
-            SimpleMessageListenerContainer(connectionFactory)
-                    .apply {
-                        setQueueNames(BOOK_ADDED_QUEUE)
-                        setMessageListener(consumer)
-                    }
+        SimpleMessageListenerContainer(connectionFactory)
+            .apply {
+                setQueueNames(BOOK_ADDED_QUEUE)
+                setMessageListener(consumer)
+            }
 
     @Bean
     fun rabbitOperations(messageConverter: MessageConverter): RabbitOperations =
-            RabbitTemplate(connectionFactory)
-                    .also { it.messageConverter = messageConverter }
+        RabbitTemplate(connectionFactory)
+            .also { it.messageConverter = messageConverter }
 }
 

@@ -26,7 +26,12 @@ class ErrorHandlerTest {
     @RecordLoggers(ErrorHandler::class)
     @ParameterizedTest
     @MethodSource("createSlackServiceExceptionTestData")
-    fun `given SlackService Exception and slackMessage = 'some msg', when handleSlackServiceErrors() is executed, then corresponding log will be provided`(e: Exception, status: Int, reason: String, log: LogRecord) {
+    fun `given SlackService Exception and slackMessage = 'some msg', when handleSlackServiceErrors() is executed, then corresponding log will be provided`(
+        e: Exception,
+        status: Int,
+        reason: String,
+        log: LogRecord
+    ) {
         val expectedLog = "Error with statusCode [$status] and reason [$reason] " +
                 "when trying to post message with body [some msg]."
 
@@ -37,7 +42,9 @@ class ErrorHandlerTest {
 
     @RecordLoggers(ErrorHandler::class)
     @Test
-    fun `given Unexpected Exception and slackMessage = 'some msg', when handleSlackServiceErrors() is executed, then corresponding log will be provided`(log: LogRecord) {
+    fun `given Unexpected Exception and slackMessage = 'some msg', when handleSlackServiceErrors() is executed, then corresponding log will be provided`(
+        log: LogRecord
+    ) {
         val expectedLog = "Unexpected error occurred  when trying to post message with body [some msg]."
         val ioException: IOException = IOException()
 
@@ -50,13 +57,29 @@ class ErrorHandlerTest {
 
         @JvmStatic
         fun createSlackServiceExceptionTestData(): Stream<Arguments> =
-                Stream.of(
-                        Arguments.of(slackChannelNotFoundException, slackChannelNotFoundException.status, slackChannelNotFoundException.reason),
-                        Arguments.of(slackChannelProhibitedException, slackChannelProhibitedException.status, slackChannelProhibitedException.reason),
-                        Arguments.of(slackInvalidPayloadException, slackInvalidPayloadException.status, slackInvalidPayloadException.reason),
-                        Arguments.of(slackChannelArchivedException, slackChannelArchivedException.status, slackChannelArchivedException.reason),
-                        Arguments.of(slackServerException, slackServerException.status, slackServerException.reason)
-                )
+            Stream.of(
+                Arguments.of(
+                    slackChannelNotFoundException,
+                    slackChannelNotFoundException.status,
+                    slackChannelNotFoundException.reason
+                ),
+                Arguments.of(
+                    slackChannelProhibitedException,
+                    slackChannelProhibitedException.status,
+                    slackChannelProhibitedException.reason
+                ),
+                Arguments.of(
+                    slackInvalidPayloadException,
+                    slackInvalidPayloadException.status,
+                    slackInvalidPayloadException.reason
+                ),
+                Arguments.of(
+                    slackChannelArchivedException,
+                    slackChannelArchivedException.status,
+                    slackChannelArchivedException.reason
+                ),
+                Arguments.of(slackServerException, slackServerException.status, slackServerException.reason)
+            )
     }
 
 }
