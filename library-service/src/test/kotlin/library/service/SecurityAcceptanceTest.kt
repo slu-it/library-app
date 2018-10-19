@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.context.ActiveProfiles
 import utils.Books
 import utils.classification.AcceptanceTest
 import utils.executeAsUserWithRole
@@ -38,7 +37,6 @@ import utils.extensions.RabbitMqExtension
             "spring.rabbitmq.port=\${RABBITMQ_PORT}"
         ]
 )
-@ActiveProfiles("test")
 internal class SecurityAcceptanceTest {
 
     val book = Books.THE_MARTIAN

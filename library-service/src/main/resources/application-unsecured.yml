@@ -1,6 +1,0 @@
-info:
-  application: "Library Service (Unsecured)"
-
-management:
-  endpoints:
-    enabled-by-default: true

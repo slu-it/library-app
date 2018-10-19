@@ -32,14 +32,14 @@ import java.time.OffsetDateTime
 @IntegrationTest
 @WebMvcTest(BooksController::class, secure = false)
 @AutoConfigureRestDocs("build/generated-snippets/books")
-internal class BooksControllerDocTest {
+internal class BooksControllerDocTest(
+        @Autowired val mvc: MockMvc
+) {
 
     @SpyBean lateinit var userContext: UserContext
     @SpyBean lateinit var correlationIdHolder: CorrelationIdHolder
     @SpyBean lateinit var bookResourceAssembler: BookResourceAssembler
     @MockBean lateinit var bookCollection: BookCollection
-
-    @Autowired lateinit var mvc: MockMvc
 
     // POST on /api/books
 

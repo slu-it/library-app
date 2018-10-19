@@ -2,3 +2,7 @@ logging:
   level:
     root: error
     library.service: error
+
+spring:
+  main:
+    banner-mode: "off"

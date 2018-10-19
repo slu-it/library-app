@@ -2,40 +2,36 @@ package library.service.logging
 
 import library.service.correlation.CorrelationIdHolder
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.context.annotation.Bean
+import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Profile
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
+import utils.MutableClock
 import utils.classification.IntegrationTest
-import utils.clockWithFixedTime
 import utils.testapi.TestController
 import utils.testapi.TestService
-import java.time.Clock
 
 @IntegrationTest
 @WebMvcTest(TestController::class, secure = false)
 @ComponentScan("utils.testapi")
-@ActiveProfiles("test", "request-logger-test")
-internal class RequestLoggingFilterIntTest {
+internal class RequestLoggingFilterIntTest(
+        @Autowired val clock: MutableClock
+) {
 
-    @TestConfiguration
-    @Profile("request-logger-test")
-    class CustomTestConfiguration {
-        @Bean fun clock(): Clock = clockWithFixedTime("2017-09-01T12:34:56.789Z")
-        @Bean fun correlationIdHolder() = CorrelationIdHolder()
-    }
-
+    @SpyBean lateinit var correlationIdHolder: CorrelationIdHolder
     @MockBean lateinit var testService: TestService
     @Autowired lateinit var mockMvc: MockMvc
+
+    @BeforeEach fun setTime() {
+        clock.setFixedTime("2017-09-01T12:34:56.789Z")
+    }
 
     @RecordLoggers(RequestLoggingFilter::class)
     @Test fun `processing a request generates 2 log entries`(log: LogRecord) = aRequestWillProduceLog(log) { messages ->

@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.context.ActiveProfiles
 import org.testit.pact.provider.http.ProviderState
 import org.testit.pact.provider.http.RequestResponsePacts
 import org.testit.pact.provider.junit.PactTestFactory
@@ -23,8 +22,11 @@ import utils.Books
 import utils.classification.ContractTest
 
 @ContractTest
-@SpringBootTest(classes = [Application::class], webEnvironment = RANDOM_PORT)
-@ActiveProfiles("test", "unsecured")
+@SpringBootTest(
+        classes = [Application::class],
+        webEnvironment = RANDOM_PORT,
+        properties = ["application.secured=false"]
+)
 class HttpContractTest {
 
     @MockBean lateinit var dataStore: BookDataStore

@@ -1,7 +1,6 @@
 package library.service.api.books
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
 import library.service.business.books.domain.BookRecord
 import org.springframework.hateoas.ResourceSupport

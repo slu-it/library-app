@@ -1,11 +1,21 @@
 package utils.classification
 
 import org.junit.jupiter.api.Tag
+import org.springframework.context.annotation.Import
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ActiveProfiles
+import utils.testconfiguration.BaseTestConfiguration
+import utils.testconfiguration.IntegrationTestConfiguration
 
 /**
  * Qualifier for Integration Tests:
  *
  * - [tagged][Tag] as `integration-test`
+ * - if annotated class is a Spring Boot test:
+ * -- imports [BaseTestConfiguration]
+ * -- imports [IntegrationTestConfiguration]
+ * -- activates profiles: `test` and `integration-test`
+ * -- enables [DirtiesContext]
  *
  * An integration test is a test integrating one or more components of a
  * system. A component can be a module, a set of classes, a framework or
@@ -19,4 +29,7 @@ import org.junit.jupiter.api.Tag
 @Retention
 @Target(AnnotationTarget.CLASS)
 @Tag("integration-test")
+@DirtiesContext
+@Import(BaseTestConfiguration::class, IntegrationTestConfiguration::class)
+@ActiveProfiles("test", "integration-test")
 annotation class IntegrationTest

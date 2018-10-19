@@ -3,10 +3,10 @@ package library.service.security
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
 import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.boot.actuate.info.InfoEndpoint
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -19,7 +19,6 @@ import org.springframework.security.config.annotation.web.configurers.Expression
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -29,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 class SecurityConfiguration {
 
     @Configuration
-    @Profile("unsecured")
+    @ConditionalOnProperty("application.secured", havingValue = "false", matchIfMissing = false)
     class UnsecuredConfiguration : WebSecurityConfigurerAdapter() {
 
         override fun configure(http: HttpSecurity): Unit = with(http) {
@@ -41,7 +40,7 @@ class SecurityConfiguration {
     }
 
     @Configuration
-    @Profile("!unsecured")
+    @ConditionalOnProperty("application.secured", havingValue = "true", matchIfMissing = true)
     @EnableGlobalMethodSecurity(prePostEnabled = true)
     @EnableConfigurationProperties(UserSettings::class, CorsSettings::class)
     class SecuredConfiguration(

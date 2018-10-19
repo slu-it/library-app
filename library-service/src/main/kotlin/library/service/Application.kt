@@ -1,6 +1,7 @@
 package library.service
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 import org.springframework.boot.runApplication
@@ -17,6 +18,7 @@ import java.time.Clock
 ])
 class Application {
 
+    @ConditionalOnMissingBean
     @Bean fun utcClock(): Clock = Clock.systemUTC()
 
     @Controller

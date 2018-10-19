@@ -8,14 +8,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.EnableAspectJAutoProxy
-import org.springframework.test.context.ActiveProfiles
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
 import utils.classification.IntegrationTest
 
 @IntegrationTest
 @SpringBootTest(classes = [TestConfiguration::class])
-@ActiveProfiles("test")
 internal class MethodEntryExitLoggingIntTest {
 
     @ComponentScan

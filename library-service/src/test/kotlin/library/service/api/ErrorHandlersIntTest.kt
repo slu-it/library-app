@@ -8,22 +8,20 @@ import library.service.business.exceptions.MalformedValueException
 import library.service.business.exceptions.NotFoundException
 import library.service.business.exceptions.NotPossibleException
 import library.service.correlation.CorrelationIdHolder
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Answers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.context.annotation.Bean
+import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpInputMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -33,31 +31,29 @@ import org.springframework.validation.FieldError
 import org.springframework.validation.ObjectError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import utils.MutableClock
 import utils.classification.IntegrationTest
-import utils.clockWithFixedTime
 import utils.testapi.TestController
 import utils.testapi.TestService
-import java.time.Clock
 import java.util.*
 
 
 @IntegrationTest
 @WebMvcTest(TestController::class, secure = false)
 @ComponentScan("utils.testapi")
-@ActiveProfiles("test", "error-handlers-test")
-internal class ErrorHandlersIntTest {
-
-    @TestConfiguration
-    @Profile("error-handlers-test")
-    class CustomTestConfiguration {
-        @Bean fun clock(): Clock = clockWithFixedTime("2017-09-01T12:34:56.789Z")
-        @Bean fun correlationIdHolder() = CorrelationIdHolder()
-    }
+internal class ErrorHandlersIntTest(
+        @Autowired val mockMvc: MockMvc,
+        @Autowired val clock: MutableClock
+) {
 
     val correlationId = UUID.randomUUID().toString()
 
+    @SpyBean lateinit var correlationIdHolder: CorrelationIdHolder
     @MockBean lateinit var testService: TestService
-    @Autowired lateinit var mockMvc: MockMvc
+
+    @BeforeEach fun setTime() {
+        clock.setFixedTime("2017-09-01T12:34:56.789Z")
+    }
 
     @Test fun `NotFoundException is handled`() {
         executionWillThrow { NotFoundException("something was not found") }

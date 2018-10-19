@@ -18,7 +18,6 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.hal.Jackson2HalModule
-import org.springframework.test.context.ActiveProfiles
 import utils.classification.AcceptanceTest
 import utils.extensions.MongoDbExtension
 import utils.extensions.RabbitMqExtension
@@ -29,20 +28,20 @@ import java.net.URL
 @SpringBootTest(
         webEnvironment = RANDOM_PORT,
         properties = [
+            "application.secured=false",
             "spring.data.mongodb.port=\${MONGODB_PORT}",
             "spring.rabbitmq.port=\${RABBITMQ_PORT}"
         ]
 )
-@ActiveProfiles("test", "unsecured")
-internal class FunctionalAcceptanceTest {
+internal class FunctionalAcceptanceTest(
+        @Autowired val bookRepository: BookRepository
+) {
 
-    val objectMapper = ObjectMapper().apply {
+    val consumerObjectMapper = ObjectMapper().apply {
         findAndRegisterModules()
         registerModule(Jackson2HalModule())
         configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
-
-    @Autowired lateinit var bookRepository: BookRepository
 
     @LocalServerPort
     fun setupRestAssured(port: Int) {
@@ -240,25 +239,25 @@ internal class FunctionalAcceptanceTest {
     private fun createBook(requestBody: String): BookResource {
         // @formatter:off
         val response =
-            given()
-                .header("Content-Type", "application/json")
-                .body(requestBody)
-            .`when`()
-                .post("/api/books")
-            .then()
-                .statusCode(201)
-                .contentType("application/hal+json;charset=UTF-8")
-            .and()
-                .extract().body().asString()
+                given()
+                        .header("Content-Type", "application/json")
+                        .body(requestBody)
+                        .`when`()
+                        .post("/api/books")
+                        .then()
+                        .statusCode(201)
+                        .contentType("application/hal+json;charset=UTF-8")
+                        .and()
+                        .extract().body().asString()
         // @formatter:on
-        return objectMapper.readValue(response, BookResource::class.java)
+        return consumerObjectMapper.readValue(response, BookResource::class.java)
     }
 
     private fun deleteBookExpecting(bookLink: Link, expectedStatus: Int) {
         // @formatter:off
-            `when`()
+        `when`()
                 .delete(toUrl(bookLink))
-            .then()
+                .then()
                 .statusCode(expectedStatus)
         // @formatter:on
     }
@@ -266,28 +265,28 @@ internal class FunctionalAcceptanceTest {
     private fun borrowBook(borrowLink: Link, requestBody: String): BookResource {
         // @formatter:off
         val response =
-            given()
-                .header("Content-Type", "application/json")
-                .body(requestBody)
-            .`when`()
-                .post(toUrl(borrowLink))
-            .then()
-                .statusCode(200)
-                .contentType("application/hal+json;charset=UTF-8")
-            .and()
-                .extract().body().asString()
+                given()
+                        .header("Content-Type", "application/json")
+                        .body(requestBody)
+                        .`when`()
+                        .post(toUrl(borrowLink))
+                        .then()
+                        .statusCode(200)
+                        .contentType("application/hal+json;charset=UTF-8")
+                        .and()
+                        .extract().body().asString()
         // @formatter:on
-        return objectMapper.readValue(response, BookResource::class.java)
+        return consumerObjectMapper.readValue(response, BookResource::class.java)
     }
 
     private fun borrowBookExpecting(borrowLink: Link, expectedStatus: Int) {
         // @formatter:off
-            given()
+        given()
                 .header("Content-Type", "application/json")
                 .body(""" { "borrower": "No One" }""")
-            .`when`()
+                .`when`()
                 .post(toUrl(borrowLink))
-            .then()
+                .then()
                 .statusCode(expectedStatus)
         // @formatter:on
     }
@@ -295,22 +294,22 @@ internal class FunctionalAcceptanceTest {
     private fun returnBook(returnLink: Link): BookResource {
         // @formatter:off
         val response =
-            `when`()
-                .post(toUrl(returnLink))
-            .then()
-                .statusCode(200)
-                .contentType("application/hal+json;charset=UTF-8")
-            .and()
-                .extract().body().asString()
+                `when`()
+                        .post(toUrl(returnLink))
+                        .then()
+                        .statusCode(200)
+                        .contentType("application/hal+json;charset=UTF-8")
+                        .and()
+                        .extract().body().asString()
         // @formatter:on
-        return objectMapper.readValue(response, BookResource::class.java)
+        return consumerObjectMapper.readValue(response, BookResource::class.java)
     }
 
     private fun returnBookExpecting(returnLink: Link, expectedStatus: Int) {
         // @formatter:off
-            `when`()
+        `when`()
                 .post(toUrl(returnLink))
-            .then()
+                .then()
                 .statusCode(expectedStatus)
         // @formatter:on
     }
@@ -318,87 +317,87 @@ internal class FunctionalAcceptanceTest {
     private fun getAllBooks(): BookListResource {
         // @formatter:off
         val response =
-            `when`()
-                .get("/api/books")
-            .then()
-                .statusCode(200)
-                .contentType("application/hal+json;charset=UTF-8")
-            .and()
-                .extract().body().asString()
+                `when`()
+                        .get("/api/books")
+                        .then()
+                        .statusCode(200)
+                        .contentType("application/hal+json;charset=UTF-8")
+                        .and()
+                        .extract().body().asString()
         // @formatter:on
-        return objectMapper.readValue(response, BookListResource::class.java)
+        return consumerObjectMapper.readValue(response, BookListResource::class.java)
     }
 
     private fun getBook(bookLink: Link): BookResource {
         // @formatter:off
         val response =
-            `when`()
-                .get(toUrl(bookLink))
-            .then()
-                .statusCode(200)
-                .contentType("application/hal+json;charset=UTF-8")
-            .and()
-                .extract().body().asString()
+                `when`()
+                        .get(toUrl(bookLink))
+                        .then()
+                        .statusCode(200)
+                        .contentType("application/hal+json;charset=UTF-8")
+                        .and()
+                        .extract().body().asString()
         // @formatter:on
-        return objectMapper.readValue(response, BookResource::class.java)
+        return consumerObjectMapper.readValue(response, BookResource::class.java)
     }
 
     private fun updateBookTitle(bookLink: Link, requestBody: String) {
         // @formatter:off
         given()
-            .header("Content-Type", "application/json")
-            .body(requestBody)
-        .`when`()
-            .put(toUrl(bookLink, "/title"))
-        .then()
-            .statusCode(200)
-            .contentType("application/hal+json;charset=UTF-8")
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .`when`()
+                .put(toUrl(bookLink, "/title"))
+                .then()
+                .statusCode(200)
+                .contentType("application/hal+json;charset=UTF-8")
         // @formatter:on
     }
 
     private fun updateBookAuthors(bookLink: Link, requestBody: String) {
         // @formatter:off
         given()
-            .header("Content-Type", "application/json")
-            .body(requestBody)
-        .`when`()
-            .put(toUrl(bookLink, "/authors"))
-        .then()
-            .statusCode(200)
-            .contentType("application/hal+json;charset=UTF-8")
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .`when`()
+                .put(toUrl(bookLink, "/authors"))
+                .then()
+                .statusCode(200)
+                .contentType("application/hal+json;charset=UTF-8")
         // @formatter:on
     }
 
     private fun updateBookNumberOfPages(bookLink: Link, requestBody: String) {
         // @formatter:off
         given()
-            .header("Content-Type", "application/json")
-            .body(requestBody)
-        .`when`()
-            .put(toUrl(bookLink, "/numberOfPages"))
-        .then()
-            .statusCode(200)
-            .contentType("application/hal+json;charset=UTF-8")
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .`when`()
+                .put(toUrl(bookLink, "/numberOfPages"))
+                .then()
+                .statusCode(200)
+                .contentType("application/hal+json;charset=UTF-8")
         // @formatter:on
     }
 
     private fun removeBookAuthors(bookLink: Link) {
         // @formatter:off
         `when`()
-            .delete(toUrl(bookLink, "/authors"))
-        .then()
-            .statusCode(200)
-            .contentType("application/hal+json;charset=UTF-8")
+                .delete(toUrl(bookLink, "/authors"))
+                .then()
+                .statusCode(200)
+                .contentType("application/hal+json;charset=UTF-8")
         // @formatter:on
     }
 
     private fun removeBookNumberOfPages(bookLink: Link) {
         // @formatter:off
         `when`()
-            .delete(toUrl(bookLink, "/numberOfPages"))
-        .then()
-            .statusCode(200)
-            .contentType("application/hal+json;charset=UTF-8")
+                .delete(toUrl(bookLink, "/numberOfPages"))
+                .then()
+                .statusCode(200)
+                .contentType("application/hal+json;charset=UTF-8")
         // @formatter:on
     }
 
