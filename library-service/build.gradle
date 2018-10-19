@@ -48,34 +48,34 @@ repositories {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}",
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}",
             "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    compile("org.springframework.boot:spring-boot-starter-actuator",
+    implementation("org.springframework.boot:spring-boot-starter-actuator",
             "org.springframework.boot:spring-boot-starter-aop",
             "org.springframework.boot:spring-boot-starter-amqp",
             "org.springframework.boot:spring-boot-starter-data-mongodb",
             "org.springframework.boot:spring-boot-starter-hateoas",
             "org.springframework.boot:spring-boot-starter-security",
             "org.springframework.boot:spring-boot-starter-web")
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin")
-    compile("io.micrometer:micrometer-registry-prometheus")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("io.micrometer:micrometer-registry-prometheus")
 
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor")
 
-    testCompile("org.springframework.boot:spring-boot-starter-test",
-                "org.springframework.restdocs:spring-restdocs-mockmvc",
-                "org.springframework.security:spring-security-test")
-    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
-                "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
-    testCompile("io.rest-assured:rest-assured")
-    testCompile("com.tngtech.archunit:archunit:${archunitVersion}")
-    testCompile("com.nhaarman.mockitokotlin2:mockito-kotlin:${mockitoKotlinVersion}")
-    testCompile("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}",
-                "info.novatec.testit:pact-provider-junit5:${pactProviderVersion}")
-    testCompile("org.testcontainers:testcontainers:1.8.1")
+    testImplementation("org.springframework.boot:spring-boot-starter-test",
+            "org.springframework.restdocs:spring-restdocs-mockmvc",
+            "org.springframework.security:spring-security-test")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
+            "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
+    testImplementation("io.rest-assured:rest-assured")
+    testImplementation("com.tngtech.archunit:archunit:${archunitVersion}")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:${mockitoKotlinVersion}")
+    testImplementation("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}",
+            "info.novatec.testit:pact-provider-junit5:${pactProviderVersion}")
+    testImplementation("org.testcontainers:testcontainers:1.8.1")
 
-    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}",
-                "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}",
+            "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 }
 
 task unitTest(type: Test) {
