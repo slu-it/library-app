@@ -72,7 +72,7 @@ dependencies {
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:${mockitoKotlinVersion}")
     testImplementation("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}",
             "info.novatec.testit:pact-provider-junit5:${pactProviderVersion}")
-    testImplementation("org.testcontainers:testcontainers:1.8.1")
+    testImplementation("org.testcontainers:testcontainers:${testContainersVersion}")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}",
             "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")

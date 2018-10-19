@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.context.TestPropertySource
 import utils.Books
 import utils.classification.IntegrationTest
 import utils.extensions.MongoDbExtension
@@ -24,8 +24,8 @@ import java.time.ZoneOffset
 
 @DataMongoTest
 @IntegrationTest
-@SpringBootTest(properties = ["spring.data.mongodb.port=\${MONGODB_PORT}"])
-@ExtendWith(MongoDbExtension::class, SpringExtension::class)
+@ExtendWith(MongoDbExtension::class)
+@TestPropertySource(properties = ["spring.data.mongodb.port=\${MONGODB_PORT}"])
 @ComponentScan("library.service.database")
 internal class MongoBookDataStoreIntTest {
 

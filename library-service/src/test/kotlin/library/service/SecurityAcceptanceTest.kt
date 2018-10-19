@@ -23,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.Books
 import utils.classification.AcceptanceTest
 import utils.executeAsUserWithRole
@@ -31,7 +30,7 @@ import utils.extensions.MongoDbExtension
 import utils.extensions.RabbitMqExtension
 
 @AcceptanceTest
-@ExtendWith(MongoDbExtension::class, RabbitMqExtension::class, SpringExtension::class)
+@ExtendWith(MongoDbExtension::class, RabbitMqExtension::class)
 @SpringBootTest(
         webEnvironment = RANDOM_PORT,
         properties = [

@@ -3,20 +3,17 @@ package library.service.logging
 import library.service.logging.MethodEntryExitLoggingIntTest.TestConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
 import utils.classification.IntegrationTest
 
 @IntegrationTest
-@ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [TestConfiguration::class])
 @ActiveProfiles("test")
 internal class MethodEntryExitLoggingIntTest {

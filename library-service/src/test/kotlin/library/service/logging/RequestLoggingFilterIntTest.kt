@@ -3,7 +3,6 @@ package library.service.logging
 import library.service.correlation.CorrelationIdHolder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Profile
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.testit.testutils.logrecorder.api.LogRecord
@@ -24,7 +22,6 @@ import utils.testapi.TestService
 import java.time.Clock
 
 @IntegrationTest
-@ExtendWith(SpringExtension::class)
 @WebMvcTest(TestController::class, secure = false)
 @ComponentScan("utils.testapi")
 @ActiveProfiles("test", "request-logger-test")

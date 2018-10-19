@@ -19,14 +19,13 @@ import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.hal.Jackson2HalModule
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.classification.AcceptanceTest
 import utils.extensions.MongoDbExtension
 import utils.extensions.RabbitMqExtension
 import java.net.URL
 
 @AcceptanceTest
-@ExtendWith(MongoDbExtension::class, RabbitMqExtension::class, SpringExtension::class)
+@ExtendWith(MongoDbExtension::class, RabbitMqExtension::class)
 @SpringBootTest(
         webEnvironment = RANDOM_PORT,
         properties = [

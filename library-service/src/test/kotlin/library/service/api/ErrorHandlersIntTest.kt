@@ -4,12 +4,12 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.willThrow
-import library.service.correlation.CorrelationIdHolder
 import library.service.business.exceptions.MalformedValueException
 import library.service.business.exceptions.NotFoundException
 import library.service.business.exceptions.NotPossibleException
+import library.service.correlation.CorrelationIdHolder
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Answers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -17,13 +17,13 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Profile
+import org.springframework.http.HttpInputMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -42,7 +42,6 @@ import java.util.*
 
 
 @IntegrationTest
-@ExtendWith(SpringExtension::class)
 @WebMvcTest(TestController::class, secure = false)
 @ComponentScan("utils.testapi")
 @ActiveProfiles("test", "error-handlers-test")
@@ -121,7 +120,7 @@ internal class ErrorHandlersIntTest {
     }
 
     @Test fun `HttpMessageNotReadableException is handled`() {
-        executionWillThrow { HttpMessageNotReadableException("this will not be exposed") }
+        executionWillThrow { HttpMessageNotReadableException("this will not be exposed", mock<HttpInputMessage>()) }
         executeAndExpect(BAD_REQUEST) {
             """
             {
@@ -137,7 +136,7 @@ internal class ErrorHandlersIntTest {
 
     @Test fun `MethodArgumentNotValidException is handled`() {
         val bindingResult = bindingResult()
-        executionWillThrow { MethodArgumentNotValidException(mock(), bindingResult) }
+        executionWillThrow { MethodArgumentNotValidException(mock(defaultAnswer = Answers.RETURNS_MOCKS), bindingResult) }
         executeAndExpect(BAD_REQUEST) {
             """
             {

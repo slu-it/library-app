@@ -14,13 +14,11 @@ import library.service.business.books.exceptions.BookNotFoundException
 import library.service.correlation.CorrelationIdHolder
 import library.service.security.UserContext
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.mock.mockito.SpyBean
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -32,7 +30,6 @@ import java.time.OffsetDateTime
 
 
 @IntegrationTest
-@ExtendWith(SpringExtension::class)
 @WebMvcTest(BooksController::class, secure = false)
 @AutoConfigureRestDocs("build/generated-snippets/books")
 internal class BooksControllerDocTest {
