@@ -3,7 +3,7 @@ applications:
 - name: library-integration-slack
   buildpack: https://github.com/cloudfoundry/java-buildpack.git#v4.15
   path: build/libs/library-integration-slack.jar
-  memory: 512M
+  memory: 768M
   disk_quota: 256M
   instances: 1
   host: nt-ca-aqe-library-integration-slack
