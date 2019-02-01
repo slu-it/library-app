@@ -34,6 +34,6 @@ internal class LibraryHealthIndicatorTest {
         }
     }
 
-    internal class SomeFeignException : FeignException(401, "message")
+    internal class SomeFeignException : FeignException(401, "message", "".toByteArray())
 
 }

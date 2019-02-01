@@ -1,5 +1,6 @@
 package library.enrichment.gateways
 
+import feign.Request.HttpMethod.GET
 import feign.RequestTemplate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -36,11 +37,13 @@ internal class DynamicUrlTargetTest {
     }
 
     @Test fun `requests are modified with correct base url`() {
-        val requestTemplate = RequestTemplate().apply {
-            method("GET")
-            append("/some/endpoint")
-            query("param1", "value")
-        }
+        val requestTemplate = RequestTemplate()
+            .apply {
+                method(GET)
+                uri("/some/endpoint")
+                query("param1", "value")
+            }
+            .resolve(emptyMap<String, Any>())
         val request = cut.apply(requestTemplate)
         assertThat(request.url()).isEqualTo("http://example.com/some/endpoint?param1=value")
     }

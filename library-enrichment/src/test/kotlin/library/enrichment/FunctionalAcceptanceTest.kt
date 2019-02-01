@@ -17,7 +17,7 @@ import org.springframework.amqp.core.TopicExchange
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -29,7 +29,7 @@ import utils.readFile
 @AcceptanceTest
 @ExtendWith(RabbitMqExtension::class, SpringExtension::class)
 @SpringBootTest(
-        webEnvironment = NONE,
+        webEnvironment = RANDOM_PORT,
         properties = ["spring.rabbitmq.port=\${RABBITMQ_PORT}"]
 )
 @ActiveProfiles("test", "unsecured")

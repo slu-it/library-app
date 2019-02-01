@@ -13,7 +13,6 @@ buildscript {
 
 apply plugin: 'docker'
 apply plugin: 'kotlin'
-//apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-spring'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
@@ -21,13 +20,11 @@ apply plugin: 'io.spring.dependency-management'
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.2"
     }
 }
 compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.2"
     }
 }
 
@@ -64,10 +61,6 @@ dependencies {
 
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
             "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-
-    // enable @ConfigurationProperties annotation processing
-    // kapt("org.springframework.boot:spring-boot-configuration-processor")
-    // annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 springBoot {

@@ -24,9 +24,9 @@ import kotlin.reflect.KClass
  * @see OpenLibraryConfiguration
  */
 class DynamicUrlTarget<T : Any>(
-        private val name: String,
-        private val type: KClass<T>,
-        private val urlSupplier: () -> String
+    private val name: String,
+    private val type: KClass<T>,
+    private val urlSupplier: () -> String
 ) : Target<T> {
 
     override fun type() = type.java
@@ -34,7 +34,7 @@ class DynamicUrlTarget<T : Any>(
     override fun url() = urlSupplier()
 
     override fun apply(input: RequestTemplate): Request {
-        input.insert(0, url())
+        input.target(url())
         return input.request()
     }
 
