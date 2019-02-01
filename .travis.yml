@@ -76,9 +76,9 @@ jobs:
       script:
         - cd library-integration-slack
         - ./gradlew build
-    - stage: build
-      jdk: openjdk11
-      env: LIBRARY_INTEGRATION_SLACK
-      script:
-        - cd library-integration-slack
-        - ./gradlew build
+#    - stage: build
+#      jdk: openjdk11
+#      env: LIBRARY_INTEGRATION_SLACK
+#      script:
+#        - cd library-integration-slack
+#        - ./gradlew build
