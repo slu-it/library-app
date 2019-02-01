@@ -56,7 +56,7 @@ internal class RequestLoggingFilterIntTest(
 
     @RecordLoggers(RequestLoggingFilter::class)
     @Test fun `request headers are logged`(log: LogRecord) = aRequestWillProduceLog(log) { messages ->
-        assertThat(messages[0]).contains("headers={}")
+        assertThat(messages[0]).contains("headers=[]")
     }
 
     fun aRequestWillProduceLog(log: LogRecord, body: (List<String>) -> Unit) {
