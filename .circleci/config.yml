@@ -1,7 +1,8 @@
 version: 2
+
 jobs:
-  build:
-    working_directory: ~/library-service-jdk8
+  jdk8-library-service:
+    working_directory: ~/jdk8-library-service
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
@@ -10,12 +11,33 @@ jobs:
       - run: cd library-service && ./gradlew build
       - store_test_results:
           path: library-service/build/test-results
-          destination: library-service
+
+  jdk8-library-enrichment:
+    working_directory: ~/jdk8-library-enrichment
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - setup_remote_docker
       - run: cd library-enrichment && ./gradlew build
       - store_test_results:
           path: library-enrichment/build/test-results
-          destination: library-enrichment
+
+  jdk8-library-integration-slack:
+    working_directory: ~/jdk8-library-integration-slack
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - setup_remote_docker
       - run: cd library-integration-slack && ./gradlew build
       - store_test_results:
           path: library-integration-slack/build/test-results
-          destination: library-integration-slack
+
+workflows:
+  version: 2
+  jdk8:
+    jobs:
+    - jdk8-library-service
+    - jdk8-library-enrichment
+    - jdk8-library-integration-slack
