@@ -1,29 +1,25 @@
 package library.service.api.books
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.willReturn
+import io.mockk.every
+import io.mockk.mockk
+import library.service.business.books.BookCollection
 import library.service.business.books.BookDataStore
 import library.service.business.books.BookIdGenerator
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.composites.Book
-import library.service.business.books.domain.events.BookEvent
 import library.service.business.books.domain.types.Author
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
-import library.service.business.events.EventDispatcher
 import library.service.correlation.CorrelationIdHolder
 import library.service.security.UserContext
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.test.mock.mockito.SpyBean
-import org.springframework.context.annotation.ComponentScan
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
 import org.springframework.hateoas.MediaTypes.HAL_JSON_UTF8
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import org.springframework.test.web.servlet.MockMvc
@@ -33,33 +29,46 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import utils.Books
 import utils.MutableClock
+import utils.ResetMocksAfterEachTest
 import utils.classification.IntegrationTest
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 
 @IntegrationTest
+@ResetMocksAfterEachTest
 @WebMvcTest(BooksController::class, secure = false)
-@ComponentScan("library.service.api.books", "library.service.business.books")
 internal class BooksControllerIntTest(
-        @Autowired val mockMvc: MockMvc,
-        @Autowired val clock: MutableClock
+    @Autowired val bookDataStore: BookDataStore,
+    @Autowired val bookIdGenerator: BookIdGenerator,
+    @Autowired val mockMvc: MockMvc,
+    @Autowired val clock: MutableClock
 ) {
 
-    val correlationId = UUID.randomUUID().toString()
+    @TestConfiguration
+    class AdditionalBeans {
+        @Bean fun correlationIdHolder() = CorrelationIdHolder()
+        @Bean fun bookResourceAssembler() = BookResourceAssembler(UserContext())
+        @Bean fun bookCollection(clock: Clock) = BookCollection(
+            clock = clock,
+            dataStore = bookDataStore(),
+            idGenerator = bookIdGenerator(),
+            eventDispatcher = mockk(relaxed = true)
+        )
 
-    @SpyBean lateinit var correlationIdHolder: CorrelationIdHolder
-    @SpyBean lateinit var userContext: UserContext
-    @MockBean lateinit var bookDataStore: BookDataStore
-    @MockBean lateinit var bookIdGenerator: BookIdGenerator
-    @MockBean lateinit var bookEventDispatcher: EventDispatcher<BookEvent>
+        @Bean fun bookDataStore(): BookDataStore = mockk()
+        @Bean fun bookIdGenerator(): BookIdGenerator = mockk()
+    }
+
+    val correlationId = UUID.randomUUID().toString()
 
     @BeforeEach fun setTime() {
         clock.setFixedTime("2017-08-20T12:34:56.789Z")
     }
 
     @BeforeEach fun initMocks() {
-        Mockito.reset(bookDataStore, bookIdGenerator, bookEventDispatcher)
-        given { bookDataStore.createOrUpdate(any()) }.willAnswer { it.arguments[0] as BookRecord }
+        every { bookDataStore.findById(any()) } returns null
+        every { bookDataStore.createOrUpdate(any()) } answers { firstArg() }
     }
 
     @DisplayName("/api/books")
@@ -69,6 +78,7 @@ internal class BooksControllerIntTest(
         @Nested inner class GetMethod {
 
             @Test fun `when there are no books, the response only contains a self link`() {
+                every { bookDataStore.findAll() } returns emptyList()
                 val request = get("/api/books")
                 val expectedResponse = """
                     {
@@ -78,23 +88,23 @@ internal class BooksControllerIntTest(
                     }
                 """
                 mockMvc.perform(request)
-                        .andExpect(status().isOk)
-                        .andExpect(content().contentType(HAL_JSON_UTF8))
-                        .andExpect(content().json(expectedResponse, true))
+                    .andExpect(status().isOk)
+                    .andExpect(content().contentType(HAL_JSON_UTF8))
+                    .andExpect(content().json(expectedResponse, true))
             }
 
             @Test fun `when there are books, the response contains them with all relevant links`() {
                 val availableBook = availableBook(
-                        id = BookId.from("883a2931-325b-4482-8972-8cb6f7d33816"),
-                        book = Books.CLEAN_CODE
+                    id = BookId.from("883a2931-325b-4482-8972-8cb6f7d33816"),
+                    book = Books.CLEAN_CODE
                 )
                 val borrowedBook = borrowedBook(
-                        id = BookId.from("53397dc0-932d-4198-801a-3e00b2742ba7"),
-                        book = Books.CLEAN_CODER,
-                        borrowedBy = "Uncle Bob",
-                        borrowedOn = "2017-08-20T12:34:56.789Z"
+                    id = BookId.from("53397dc0-932d-4198-801a-3e00b2742ba7"),
+                    book = Books.CLEAN_CODER,
+                    borrowedBy = "Uncle Bob",
+                    borrowedOn = "2017-08-20T12:34:56.789Z"
                 )
-                given { bookDataStore.findAll() }.willReturn(listOf(availableBook, borrowedBook))
+                every { bookDataStore.findAll() } returns listOf(availableBook, borrowedBook)
 
                 val request = get("/api/books")
                 val expectedResponse = """
@@ -149,10 +159,10 @@ internal class BooksControllerIntTest(
                     }
                 """
                 mockMvc.perform(request)
-                        .andDo(MockMvcResultHandlers.print())
-                        .andExpect(status().isOk)
-                        .andExpect(content().contentType(HAL_JSON_UTF8))
-                        .andExpect(content().json(expectedResponse, true))
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk)
+                    .andExpect(content().contentType(HAL_JSON_UTF8))
+                    .andExpect(content().json(expectedResponse, true))
             }
 
         }
@@ -162,7 +172,7 @@ internal class BooksControllerIntTest(
 
             @Test fun `creates a book and responds with its resource representation`() {
                 val bookId = BookId.generate()
-                given { bookIdGenerator.generate() } willReturn { bookId }
+                every { bookIdGenerator.generate() } returns bookId
 
                 val requestBody = """
                     {
@@ -171,8 +181,8 @@ internal class BooksControllerIntTest(
                     }
                 """
                 val request = post("/api/books")
-                        .contentType(APPLICATION_JSON_UTF8)
-                        .content(requestBody)
+                    .contentType(APPLICATION_JSON_UTF8)
+                    .content(requestBody)
                 val expectedResponse = """
                     {
                       "isbn": "9780132350884",
@@ -192,9 +202,9 @@ internal class BooksControllerIntTest(
                     }
                 """
                 mockMvc.perform(request)
-                        .andExpect(status().isCreated)
-                        .andExpect(content().contentType(HAL_JSON_UTF8))
-                        .andExpect(content().json(expectedResponse, true))
+                    .andExpect(status().isCreated)
+                    .andExpect(content().contentType(HAL_JSON_UTF8))
+                    .andExpect(content().json(expectedResponse, true))
             }
 
             @Test fun `400 BAD REQUEST for invalid ISBN`() {
@@ -205,9 +215,9 @@ internal class BooksControllerIntTest(
                     }
                 """
                 val request = post("/api/books")
-                        .header("X-Correlation-ID", correlationId)
-                        .contentType(APPLICATION_JSON_UTF8)
-                        .content(requestBody)
+                    .header("X-Correlation-ID", correlationId)
+                    .contentType(APPLICATION_JSON_UTF8)
+                    .content(requestBody)
                 val expectedResponse = """
                     {
                       "status": 400,
@@ -219,16 +229,16 @@ internal class BooksControllerIntTest(
                     }
                 """
                 mockMvc.perform(request)
-                        .andExpect(status().isBadRequest)
-                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                        .andExpect(content().json(expectedResponse, true))
+                    .andExpect(status().isBadRequest)
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                    .andExpect(content().json(expectedResponse, true))
             }
 
             @Test fun `400 BAD REQUEST for missing required properties`() {
                 val request = post("/api/books")
-                        .header("X-Correlation-ID", correlationId)
-                        .contentType(APPLICATION_JSON_UTF8)
-                        .content(" { } ")
+                    .header("X-Correlation-ID", correlationId)
+                    .contentType(APPLICATION_JSON_UTF8)
+                    .content(" { } ")
                 val expectedResponse = """
                     {
                       "status": 400,
@@ -243,14 +253,14 @@ internal class BooksControllerIntTest(
                     }
                 """
                 mockMvc.perform(request)
-                        .andExpect(status().isBadRequest)
-                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                        .andExpect(content().json(expectedResponse, true))
+                    .andExpect(status().isBadRequest)
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                    .andExpect(content().json(expectedResponse, true))
             }
 
             @Test fun `400 BAD REQUEST for malformed request`() {
                 val request = post("/api/books")
-                        .header("X-Correlation-ID", correlationId)
+                    .header("X-Correlation-ID", correlationId)
                 val expectedResponse = """
                     {
                       "status": 400,
@@ -261,9 +271,9 @@ internal class BooksControllerIntTest(
                     }
                 """
                 mockMvc.perform(request)
-                        .andExpect(status().isBadRequest)
-                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                        .andExpect(content().json(expectedResponse, true))
+                    .andExpect(status().isBadRequest)
+                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                    .andExpect(content().json(expectedResponse, true))
             }
 
         }
@@ -280,7 +290,7 @@ internal class BooksControllerIntTest(
             @Nested inner class GetMethod {
 
                 @Test fun `responds with book's resource representation for existing available book`() {
-                    given { bookDataStore.findById(id) }.willReturn(availableBookRecord)
+                    every { bookDataStore.findById(id) } returns availableBookRecord
 
                     val request = get("/api/books/$id")
                     val expectedResponse = """
@@ -303,13 +313,13 @@ internal class BooksControllerIntTest(
                         }
                     """
                     mockMvc.perform(request)
-                            .andExpect(status().isOk)
-                            .andExpect(content().contentType(HAL_JSON_UTF8))
-                            .andExpect(content().json(expectedResponse, true))
+                        .andExpect(status().isOk)
+                        .andExpect(content().contentType(HAL_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
                 }
 
                 @Test fun `responds with book's resource representation for existing borrowed book`() {
-                    given { bookDataStore.findById(id) }.willReturn(borrowedBookRecord)
+                    every { bookDataStore.findById(id) } returns borrowedBookRecord
 
                     val request = get("/api/books/$id")
                     val expectedResponse = """
@@ -336,16 +346,14 @@ internal class BooksControllerIntTest(
                         }
                     """
                     mockMvc.perform(request)
-                            .andExpect(status().isOk)
-                            .andExpect(content().contentType(HAL_JSON_UTF8))
-                            .andExpect(content().json(expectedResponse, true))
+                        .andExpect(status().isOk)
+                        .andExpect(content().contentType(HAL_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
                 }
 
                 @Test fun `404 NOT FOUND for non-existing book`() {
-                    given { bookDataStore.findById(id) }.willReturn(null)
-
                     val request = get("/api/books/$id")
-                            .header("X-Correlation-ID", correlationId)
+                        .header("X-Correlation-ID", correlationId)
                     val expectedResponse = """
                         {
                           "status": 404,
@@ -356,14 +364,14 @@ internal class BooksControllerIntTest(
                         }
                     """
                     mockMvc.perform(request)
-                            .andExpect(status().isNotFound)
-                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                            .andExpect(content().json(expectedResponse, true))
+                        .andExpect(status().isNotFound)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
                 }
 
                 @Test fun `400 BAD REQUEST for malformed ID`() {
                     val request = get("/api/books/malformed-id")
-                            .header("X-Correlation-ID", correlationId)
+                        .header("X-Correlation-ID", correlationId)
                     val expectedResponse = """
                         {
                           "status": 400,
@@ -374,9 +382,9 @@ internal class BooksControllerIntTest(
                         }
                     """
                     mockMvc.perform(request)
-                            .andExpect(status().isBadRequest)
-                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                            .andExpect(content().json(expectedResponse, true))
+                        .andExpect(status().isBadRequest)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
                 }
 
             }
@@ -385,17 +393,16 @@ internal class BooksControllerIntTest(
             @Nested inner class DeleteMethod {
 
                 @Test fun `existing book is deleted and response is empty 204 NO CONTENT`() {
-                    given { bookDataStore.findById(id) }.willReturn(availableBookRecord)
+                    every { bookDataStore.findById(id) } returns availableBookRecord
+                    every { bookDataStore.delete(availableBookRecord) } returns Unit
 
                     mockMvc.perform(delete("/api/books/$id"))
-                            .andExpect(status().isNoContent)
+                        .andExpect(status().isNoContent)
                 }
 
                 @Test fun `404 NOT FOUND for non-existing book`() {
-                    given { bookDataStore.findById(id) }.willReturn(null)
-
                     val request = delete("/api/books/$id")
-                            .header("X-Correlation-ID", correlationId)
+                        .header("X-Correlation-ID", correlationId)
                     val expectedResponse = """
                         {
                           "status": 404,
@@ -406,14 +413,14 @@ internal class BooksControllerIntTest(
                         }
                     """
                     mockMvc.perform(request)
-                            .andExpect(status().isNotFound)
-                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                            .andExpect(content().json(expectedResponse, true))
+                        .andExpect(status().isNotFound)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
                 }
 
                 @Test fun `400 BAD REQUEST for malformed ID`() {
                     val request = delete("/api/books/malformed-id")
-                            .header("X-Correlation-ID", correlationId)
+                        .header("X-Correlation-ID", correlationId)
                     val expectedResponse = """
                         {
                           "status": 400,
@@ -424,9 +431,9 @@ internal class BooksControllerIntTest(
                         }
                     """
                     mockMvc.perform(request)
-                            .andExpect(status().isBadRequest)
-                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                            .andExpect(content().json(expectedResponse, true))
+                        .andExpect(status().isBadRequest)
+                        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                        .andExpect(content().json(expectedResponse, true))
                 }
 
             }
@@ -438,11 +445,11 @@ internal class BooksControllerIntTest(
                 @Nested inner class PutMethod {
 
                     @Test fun `replaces authors of book and responds with its resource representation`() {
-                        given { bookDataStore.findById(id) }.willReturn(availableBookRecord)
+                        every { bookDataStore.findById(id) } returns availableBookRecord
 
                         val request = put("/api/books/$id/authors")
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(""" { "authors": ["Foo", "Bar"] } """)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(""" { "authors": ["Foo", "Bar"] } """)
                         val expectedResponse = """
                             {
                               "isbn": "${book.isbn}",
@@ -463,37 +470,36 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isOk)
-                                .andExpect(content().contentType(HAL_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isOk)
+                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `404 NOT FOUND for non-existing book`() {
-                        val unknownId = BookId.generate()
-                        val request = put("/api/books/$unknownId/authors")
-                                .header("X-Correlation-ID", correlationId)
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(""" { "authors": ["Foo", "Bar"] } """)
+                        val request = put("/api/books/$id/authors")
+                            .header("X-Correlation-ID", correlationId)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(""" { "authors": ["Foo", "Bar"] } """)
                         val expectedResponse = """
                             {
                               "status": 404,
                               "error": "Not Found",
                               "timestamp": "2017-08-20T12:34:56.789Z",
                               "correlationId": "$correlationId",
-                              "message": "The book with ID: $unknownId does not exist!"
+                              "message": "The book with ID: $id does not exist!"
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isNotFound)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isNotFound)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `400 BAD REQUEST for missing required properties`() {
                         val request = put("/api/books/$id/authors")
-                                .header("X-Correlation-ID", correlationId)
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(" { } ")
+                            .header("X-Correlation-ID", correlationId)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(" { } ")
                         val expectedResponse = """
                             {
                               "status": 400,
@@ -505,9 +511,9 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isBadRequest)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isBadRequest)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                 }
@@ -516,7 +522,7 @@ internal class BooksControllerIntTest(
                 @Nested inner class DeleteMethod {
 
                     @Test fun `removes authors from book and responds with its resource representation`() {
-                        given { bookDataStore.findById(id) }.willReturn(availableBookRecord)
+                        every { bookDataStore.findById(id) } returns availableBookRecord
 
                         val request = delete("/api/books/$id/authors")
                         val expectedResponse = """
@@ -539,28 +545,27 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isOk)
-                                .andExpect(content().contentType(HAL_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isOk)
+                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `404 NOT FOUND for non-existing book`() {
-                        val unknownId = BookId.generate()
-                        val request = delete("/api/books/$unknownId/authors")
-                                .header("X-Correlation-ID", correlationId)
+                        val request = delete("/api/books/$id/authors")
+                            .header("X-Correlation-ID", correlationId)
                         val expectedResponse = """
                             {
                               "status": 404,
                               "error": "Not Found",
                               "timestamp": "2017-08-20T12:34:56.789Z",
                               "correlationId": "$correlationId",
-                              "message": "The book with ID: $unknownId does not exist!"
+                              "message": "The book with ID: $id does not exist!"
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isNotFound)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isNotFound)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                 }
@@ -574,11 +579,11 @@ internal class BooksControllerIntTest(
                 @Nested inner class PostMethod {
 
                     @Test fun `borrows book and responds with its updated resource representation`() {
-                        given { bookDataStore.findById(id) }.willReturn(availableBookRecord)
+                        every { bookDataStore.findById(id) } returns availableBookRecord
 
                         val request = post("/api/books/$id/borrow")
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(""" { "borrower": "Uncle Bob" } """)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(""" { "borrower": "Uncle Bob" } """)
                         val expectedResponse = """
                             {
                               "isbn": "${Books.CLEAN_CODE.isbn}",
@@ -603,18 +608,18 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isOk)
-                                .andExpect(content().contentType(HAL_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isOk)
+                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `409 CONFLICT for already borrowed book`() {
-                        given { bookDataStore.findById(id) }.willReturn(borrowedBookRecord)
+                        every { bookDataStore.findById(id) } returns borrowedBookRecord
 
                         val request = post("/api/books/$id/borrow")
-                                .header("X-Correlation-ID", correlationId)
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(""" { "borrower": "Uncle Bob" } """)
+                            .header("X-Correlation-ID", correlationId)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(""" { "borrower": "Uncle Bob" } """)
                         val expectedResponse = """
                             {
                               "status": 409,
@@ -625,16 +630,16 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isConflict)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isConflict)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `404 NOT FOUND for non-existing book`() {
                         val request = post("/api/books/$id/borrow")
-                                .header("X-Correlation-ID", correlationId)
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(""" { "borrower": "Uncle Bob" } """)
+                            .header("X-Correlation-ID", correlationId)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(""" { "borrower": "Uncle Bob" } """)
                         val expectedResponse = """
                             {
                               "status": 404,
@@ -645,16 +650,16 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isNotFound)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isNotFound)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `400 BAD REQUEST for missing required properties`() {
                         val request = post("/api/books/$id/borrow")
-                                .header("X-Correlation-ID", correlationId)
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(" { } ")
+                            .header("X-Correlation-ID", correlationId)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(" { } ")
                         val expectedResponse = """
                             {
                               "status": 400,
@@ -666,14 +671,14 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isBadRequest)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isBadRequest)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `400 BAD REQUEST for malformed request`() {
                         val request = post("/api/books/$id/borrow")
-                                .header("X-Correlation-ID", correlationId)
+                            .header("X-Correlation-ID", correlationId)
                         val expectedResponse = """
                             {
                               "status": 400,
@@ -684,14 +689,14 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isBadRequest)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isBadRequest)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `400 BAD REQUEST for malformed ID`() {
                         val request = post("/api/books/malformed-id/borrow")
-                                .header("X-Correlation-ID", correlationId)
+                            .header("X-Correlation-ID", correlationId)
                         val expectedResponse = """
                             {
                               "status": 400,
@@ -702,9 +707,9 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isBadRequest)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isBadRequest)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                 }
@@ -718,11 +723,11 @@ internal class BooksControllerIntTest(
                 @Nested inner class PutMethod {
 
                     @Test fun `replaces number of pages of book and responds with its resource representation`() {
-                        given { bookDataStore.findById(id) }.willReturn(availableBookRecord)
+                        every { bookDataStore.findById(id) } returns availableBookRecord
 
                         val request = put("/api/books/$id/numberOfPages")
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(""" { "numberOfPages": 128 } """)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(""" { "numberOfPages": 128 } """)
                         val expectedResponse = """
                             {
                               "isbn": "${book.isbn}",
@@ -743,38 +748,37 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isOk)
-                                .andExpect(content().contentType(HAL_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isOk)
+                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `404 NOT FOUND for non-existing book`() {
-                        val unknownId = BookId.generate()
-                        val request = put("/api/books/$unknownId/numberOfPages")
-                                .header("X-Correlation-ID", correlationId)
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(""" { "numberOfPages": 128 } """)
+                        val request = put("/api/books/$id/numberOfPages")
+                            .header("X-Correlation-ID", correlationId)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(""" { "numberOfPages": 128 } """)
                         val expectedResponse = """
                             {
                               "status": 404,
                               "error": "Not Found",
                               "timestamp": "2017-08-20T12:34:56.789Z",
                               "correlationId": "$correlationId",
-                              "message": "The book with ID: $unknownId does not exist!"
+                              "message": "The book with ID: $id does not exist!"
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isNotFound)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isNotFound)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `400 BAD REQUEST for missing required properties`() {
                         val idValue = BookId.generate().toString()
                         val request = put("/api/books/$idValue/numberOfPages")
-                                .header("X-Correlation-ID", correlationId)
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(" { } ")
+                            .header("X-Correlation-ID", correlationId)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(" { } ")
                         val expectedResponse = """
                             {
                               "status": 400,
@@ -786,9 +790,9 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isBadRequest)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isBadRequest)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                 }
@@ -797,7 +801,7 @@ internal class BooksControllerIntTest(
                 @Nested inner class DeleteMethod {
 
                     @Test fun `removes number of pages from book and responds with its resource representation`() {
-                        given { bookDataStore.findById(id) }.willReturn(availableBookRecord)
+                        every { bookDataStore.findById(id) } returns availableBookRecord
 
                         val request = delete("/api/books/$id/numberOfPages")
                         val expectedResponse = """
@@ -819,28 +823,27 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isOk)
-                                .andExpect(content().contentType(HAL_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isOk)
+                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `404 NOT FOUND for non-existing book`() {
-                        val unknownId = BookId.generate()
-                        val request = delete("/api/books/$unknownId/numberOfPages")
-                                .header("X-Correlation-ID", correlationId)
+                        val request = delete("/api/books/$id/numberOfPages")
+                            .header("X-Correlation-ID", correlationId)
                         val expectedResponse = """
                             {
                               "status": 404,
                               "error": "Not Found",
                               "timestamp": "2017-08-20T12:34:56.789Z",
                               "correlationId": "$correlationId",
-                              "message": "The book with ID: $unknownId does not exist!"
+                              "message": "The book with ID: $id does not exist!"
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isNotFound)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isNotFound)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                 }
@@ -854,7 +857,7 @@ internal class BooksControllerIntTest(
                 @Nested inner class PostMethod {
 
                     @Test fun `returns book and responds with its updated resource representation`() {
-                        given { bookDataStore.findById(id) }.willReturn(borrowedBookRecord)
+                        every { bookDataStore.findById(id) } returns borrowedBookRecord
 
                         val request = post("/api/books/$id/return")
                         val expectedResponse = """
@@ -877,16 +880,16 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isOk)
-                                .andExpect(content().contentType(HAL_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isOk)
+                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `409 CONFLICT for already returned book`() {
-                        given { bookDataStore.findById(id) }.willReturn(availableBookRecord)
+                        every { bookDataStore.findById(id) } returns availableBookRecord
 
                         val request = post("/api/books/$id/return")
-                                .header("X-Correlation-ID", correlationId)
+                            .header("X-Correlation-ID", correlationId)
                         val expectedResponse = """
                             {
                               "status": 409,
@@ -897,14 +900,14 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isConflict)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isConflict)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `404 NOT FOUND for non-existing book`() {
                         val request = post("/api/books/$id/return")
-                                .header("X-Correlation-ID", correlationId)
+                            .header("X-Correlation-ID", correlationId)
                         val expectedResponse = """
                             {
                               "status": 404,
@@ -915,14 +918,14 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isNotFound)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isNotFound)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `400 BAD REQUEST for malformed ID`() {
                         val request = post("/api/books/malformed-id/return")
-                                .header("X-Correlation-ID", correlationId)
+                            .header("X-Correlation-ID", correlationId)
                         val expectedResponse = """
                             {
                               "status": 400,
@@ -933,9 +936,9 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isBadRequest)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isBadRequest)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                 }
@@ -949,11 +952,11 @@ internal class BooksControllerIntTest(
                 @Nested inner class PutMethod {
 
                     @Test fun `replaces title of book and responds with its resource representation`() {
-                        given { bookDataStore.findById(id) }.willReturn(availableBookRecord)
+                        every { bookDataStore.findById(id) } returns availableBookRecord
 
                         val request = put("/api/books/$id/title")
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(""" { "title": "New Title" } """)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(""" { "title": "New Title" } """)
                         val expectedResponse = """
                             {
                               "isbn": "${book.isbn}",
@@ -974,38 +977,37 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isOk)
-                                .andExpect(content().contentType(HAL_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isOk)
+                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `404 NOT FOUND for non-existing book`() {
-                        val unknownId = BookId.generate()
-                        val request = put("/api/books/$unknownId/title")
-                                .header("X-Correlation-ID", correlationId)
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(""" { "title": "New Title" } """)
+                        val request = put("/api/books/$id/title")
+                            .header("X-Correlation-ID", correlationId)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(""" { "title": "New Title" } """)
                         val expectedResponse = """
                             {
                               "status": 404,
                               "error": "Not Found",
                               "timestamp": "2017-08-20T12:34:56.789Z",
                               "correlationId": "$correlationId",
-                              "message": "The book with ID: $unknownId does not exist!"
+                              "message": "The book with ID: $id does not exist!"
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isNotFound)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isNotFound)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                     @Test fun `400 BAD REQUEST for missing required properties`() {
                         val idValue = BookId.generate().toString()
                         val request = put("/api/books/$idValue/title")
-                                .header("X-Correlation-ID", correlationId)
-                                .contentType(APPLICATION_JSON_UTF8)
-                                .content(" { } ")
+                            .header("X-Correlation-ID", correlationId)
+                            .contentType(APPLICATION_JSON_UTF8)
+                            .content(" { } ")
                         val expectedResponse = """
                             {
                               "status": 400,
@@ -1017,9 +1019,9 @@ internal class BooksControllerIntTest(
                             }
                         """
                         mockMvc.perform(request)
-                                .andExpect(status().isBadRequest)
-                                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                                .andExpect(content().json(expectedResponse, true))
+                            .andExpect(status().isBadRequest)
+                            .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                            .andExpect(content().json(expectedResponse, true))
                     }
 
                 }
@@ -1032,7 +1034,7 @@ internal class BooksControllerIntTest(
 
     private fun availableBook(id: BookId, book: Book) = BookRecord(id, book)
     private fun borrowedBook(id: BookId, book: Book, borrowedBy: String, borrowedOn: String) = availableBook(id, book)
-            .borrow(Borrower(borrowedBy), OffsetDateTime.parse(borrowedOn))
+        .borrow(Borrower(borrowedBy), OffsetDateTime.parse(borrowedOn))
 
     private fun List<Author>.toJson() = joinToString(separator = "\", \"", prefix = "[\"", postfix = "\"]")
 
