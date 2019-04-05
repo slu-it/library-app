@@ -1,0 +1,9 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/library-service-jdk8
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run: cd library-service && ./gradlew build
