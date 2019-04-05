@@ -15,31 +15,7 @@ jobs:
         - cd library-enrichment
         - ./gradlew build
     - stage: build
-      jdk: openjdk9
-      env: LIBRARY_ENRICHMENT
-      script:
-        - cd library-enrichment
-        - ./gradlew build
-    - stage: build
-      jdk: openjdk10
-      env: LIBRARY_ENRICHMENT
-      script:
-        - cd library-enrichment
-        - ./gradlew build
-    - stage: build
-      jdk: oraclejdk8
-      env: LIBRARY_ENRICHMENT
-      script:
-        - cd library-enrichment
-        - ./gradlew build
-    - stage: build
-      jdk: oraclejdk9
-      env: LIBRARY_ENRICHMENT
-      script:
-        - cd library-enrichment
-        - ./gradlew build
-    - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk11
       env: LIBRARY_ENRICHMENT
       script:
         - cd library-enrichment
@@ -52,31 +28,7 @@ jobs:
         - cd library-service
         - ./gradlew build
     - stage: build
-      jdk: openjdk9
-      env: LIBRARY_SERVICE
-      script:
-        - cd library-service
-        - ./gradlew build
-    - stage: build
-      jdk: openjdk10
-      env: LIBRARY_SERVICE
-      script:
-        - cd library-service
-        - ./gradlew build
-    - stage: build
-      jdk: oraclejdk8
-      env: LIBRARY_SERVICE
-      script:
-        - cd library-service
-        - ./gradlew build
-    - stage: build
-      jdk: oraclejdk9
-      env: LIBRARY_SERVICE
-      script:
-        - cd library-service
-        - ./gradlew build
-    - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk11
       env: LIBRARY_SERVICE
       script:
         - cd library-service
@@ -89,31 +41,7 @@ jobs:
         - cd library-integration-slack
         - ./gradlew build
     - stage: build
-      jdk: openjdk9
-      env: LIBRARY_INTEGRATION_SLACK
-      script:
-        - cd library-integration-slack
-        - ./gradlew build
-    - stage: build
-      jdk: openjdk10
-      env: LIBRARY_INTEGRATION_SLACK
-      script:
-        - cd library-integration-slack
-        - ./gradlew build
-    - stage: build
-      jdk: oraclejdk8
-      env: LIBRARY_INTEGRATION_SLACK
-      script:
-        - cd library-integration-slack
-        - ./gradlew build
-    - stage: build
-      jdk: oraclejdk9
-      env: LIBRARY_INTEGRATION_SLACK
-      script:
-        - cd library-integration-slack
-        - ./gradlew build
-    - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk11
       env: LIBRARY_INTEGRATION_SLACK
       script:
         - cd library-integration-slack
