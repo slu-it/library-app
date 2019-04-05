@@ -8,5 +8,14 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: cd library-service && ./gradlew build
+      - store_test_results:
+          path: library-service/build/test-results
+          destination: library-service
       - run: cd library-enrichment && ./gradlew build
+      - store_test_results:
+          path: library-enrichment/build/test-results
+          destination: library-enrichment
       - run: cd library-integration-slack && ./gradlew build
+      - store_test_results:
+          path: library-integration-slack/build/test-results
+          destination: library-integration-slack
