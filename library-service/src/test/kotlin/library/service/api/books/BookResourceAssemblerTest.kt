@@ -1,13 +1,13 @@
 package library.service.api.books
 
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.willReturn
+import io.mockk.every
+import io.mockk.mockk
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Borrower
 import library.service.security.UserContext
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import utils.Books
@@ -17,12 +17,16 @@ import java.time.OffsetDateTime
 @UnitTest
 internal class BookResourceAssemblerTest {
 
-    val currentUser: UserContext = mock()
+    val currentUser: UserContext = mockk()
     val cut = BookResourceAssembler(currentUser)
 
     val id = BookId.generate()
     val book = Books.THE_MARTIAN
     val bookRecord = BookRecord(id, book)
+
+    @BeforeEach fun setMockDefaults(){
+        every { currentUser.isCurator() } returns false
+    }
 
     @Test fun `book with 'available' state is assembled correctly`() {
         val resource = cut.toResource(bookRecord)
@@ -59,13 +63,13 @@ internal class BookResourceAssemblerTest {
     @Nested inner class `delete link` {
 
         @Test fun `is generate for curators`() {
-            given { currentUser.isCurator() } willReturn { true }
+            every { currentUser.isCurator() } returns true
             val resource = cut.toResource(bookRecord)
             assertThat(resource.getLink("delete")).isNotNull()
         }
 
         @Test fun `is not generated for users`() {
-            given { currentUser.isCurator() } willReturn { false }
+            every { currentUser.isCurator() } returns false
             val resource = cut.toResource(bookRecord)
             assertThat(resource.getLink("delete")).isNull()
         }

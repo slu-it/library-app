@@ -27,14 +27,14 @@ class MessageContractTest {
     val pacts = MessagePacts(LocalFiles("src/test/pacts/message"), "library-service")
 
     @TestFactory fun `library-enrichment consumer contract tests`() =
-            PactTestFactory.createTests(pacts, "library-enrichment", this)
+        PactTestFactory.createTests(pacts, "library-enrichment", this)
 
     @MessageProducer("'The Martian' was added event")
     fun `verify The Martian was added event`(): ActualMessage {
         val event = BookAdded(
-                id = UUID.randomUUID(),
-                timestamp = OffsetDateTime.now(),
-                bookRecord = BookRecord(BookId.generate(), Books.THE_MARTIAN)
+            id = UUID.randomUUID(),
+            timestamp = OffsetDateTime.now(),
+            bookRecord = BookRecord(BookId.generate(), Books.THE_MARTIAN)
         )
         val message = messageConverter.toMessage(event, MessageProperties())
         return ActualMessage(message.body)

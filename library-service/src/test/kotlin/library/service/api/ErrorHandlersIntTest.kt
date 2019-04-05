@@ -1,20 +1,17 @@
 package library.service.api
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.willThrow
+import io.mockk.every
+import io.mockk.mockk
 import library.service.business.exceptions.MalformedValueException
 import library.service.business.exceptions.NotFoundException
 import library.service.business.exceptions.NotPossibleException
 import library.service.correlation.CorrelationIdHolder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Answers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.test.mock.mockito.SpyBean
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.http.HttpInputMessage
 import org.springframework.http.HttpStatus
@@ -42,14 +39,18 @@ import java.util.*
 @WebMvcTest(TestController::class, secure = false)
 @ComponentScan("utils.testapi")
 internal class ErrorHandlersIntTest(
-        @Autowired val mockMvc: MockMvc,
-        @Autowired val clock: MutableClock
+    @Autowired val mockMvc: MockMvc,
+    @Autowired val clock: MutableClock,
+    @Autowired val testService: TestService
 ) {
 
     val correlationId = UUID.randomUUID().toString()
 
-    @SpyBean lateinit var correlationIdHolder: CorrelationIdHolder
-    @MockBean lateinit var testService: TestService
+    @TestConfiguration
+    class AdditionalBeans {
+        @Bean fun correlationIdHolder() = CorrelationIdHolder()
+        @Bean fun testService(): TestService = mockk()
+    }
 
     @BeforeEach fun setTime() {
         clock.setFixedTime("2017-09-01T12:34:56.789Z")
@@ -101,7 +102,9 @@ internal class ErrorHandlersIntTest(
     }
 
     @Test fun `MethodArgumentTypeMismatchException is handled`() {
-        executionWillThrow { MethodArgumentTypeMismatchException("value", String::class.java, "myArgument", mock(), mock()) }
+        executionWillThrow {
+            MethodArgumentTypeMismatchException("value", String::class.java, "myArgument", mockk(), mockk())
+        }
         executeAndExpect(BAD_REQUEST) {
             """
             {
@@ -116,7 +119,7 @@ internal class ErrorHandlersIntTest(
     }
 
     @Test fun `HttpMessageNotReadableException is handled`() {
-        executionWillThrow { HttpMessageNotReadableException("this will not be exposed", mock<HttpInputMessage>()) }
+        executionWillThrow { HttpMessageNotReadableException("this will not be exposed", mockk<HttpInputMessage>()) }
         executeAndExpect(BAD_REQUEST) {
             """
             {
@@ -132,7 +135,7 @@ internal class ErrorHandlersIntTest(
 
     @Test fun `MethodArgumentNotValidException is handled`() {
         val bindingResult = bindingResult()
-        executionWillThrow { MethodArgumentNotValidException(mock(defaultAnswer = Answers.RETURNS_MOCKS), bindingResult) }
+        executionWillThrow { MethodArgumentNotValidException(mockk(), bindingResult) }
         executeAndExpect(BAD_REQUEST) {
             """
             {
@@ -158,9 +161,9 @@ internal class ErrorHandlersIntTest(
         val globalError1 = ObjectError("objectName", "Gloabl Message 1")
         val globalError2 = ObjectError("objectName", "Gloabl Message 2")
 
-        return mock {
-            on { fieldErrors } doReturn listOf(fieldError1, fieldError2)
-            on { globalErrors } doReturn listOf(globalError1, globalError2)
+        return mockk() {
+            every { fieldErrors } returns listOf(fieldError1, fieldError2)
+            every { globalErrors } returns listOf(globalError1, globalError2)
         }
     }
 
@@ -195,15 +198,16 @@ internal class ErrorHandlersIntTest(
     }
 
     private fun executionWillThrow(exceptionSupplier: () -> Throwable) {
-        given { testService.doSomething() } willThrow (exceptionSupplier)
+        every { testService.doSomething() } throws exceptionSupplier()
     }
 
     private fun executeAndExpect(expectedStatus: HttpStatus, expectedResponseSupplier: () -> String) {
-        mockMvc.perform(post("/test")
-                .header("X-Correlation-ID", correlationId))
-                .andExpect(status().`is`(expectedStatus.value()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(expectedResponseSupplier(), true))
+        val request = post("/test")
+            .header("X-Correlation-ID", correlationId)
+        mockMvc.perform(request)
+            .andExpect(status().`is`(expectedStatus.value()))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(expectedResponseSupplier(), true))
     }
 
 }

@@ -1,9 +1,9 @@
 package library.service.correlation
 
-import com.nhaarman.mockitokotlin2.*
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import utils.classification.UnitTest
 import java.util.*
 import javax.servlet.FilterChain
@@ -13,73 +13,77 @@ import javax.servlet.http.HttpServletResponse
 @UnitTest
 internal class CorrelationIdServletFilterTest {
 
-    val correlationIdHolder: CorrelationIdHolder = mock()
+    val correlationIdHolder: CorrelationIdHolder = mockk(relaxed = true)
     val cut = CorrelationIdServletFilter(correlationIdHolder)
 
-    val request: HttpServletRequest = mock()
-    val response: HttpServletResponse = mock()
-    val filterChain: FilterChain = mock()
+    val request: HttpServletRequest = mockk(relaxed = true)
+    val response: HttpServletResponse = mockk(relaxed = true)
+    val filterChain: FilterChain = mockk(relaxed = true)
 
     @Test fun `correlation ID is taken from request and removed when request was processed`() {
-        given { request.getHeader("X-Correlation-ID") }.willReturn("abc-123")
+        every { request.getHeader("X-Correlation-ID") } returns "abc-123"
 
         cut.doFilter(request, response, filterChain)
 
-        with(inOrder(correlationIdHolder, filterChain)) {
-            verify(correlationIdHolder).set("abc-123")
-            verify(filterChain).doFilter(request, response)
-            verify(correlationIdHolder).remove()
+        verifyOrder {
+            correlationIdHolder.set("abc-123")
+            filterChain.doFilter(request, response)
+            correlationIdHolder.remove()
         }
     }
 
     @Test fun `if no correlation ID is provided one is generated`() {
-        given { request.getHeader("X-Correlation-ID") }.willReturn(null)
+        val idSlot = slot<String>()
+        every { request.getHeader("X-Correlation-ID") } returns null
 
         cut.doFilter(request, response, filterChain)
 
-        with(inOrder(correlationIdHolder, filterChain)) {
-            verify(correlationIdHolder).set(check {
-                assertThat(it).isNotBlank()
-                assertThat(UUID.fromString(it)).isNotNull()
-            })
-            verify(filterChain).doFilter(request, response)
-            verify(correlationIdHolder).remove()
+        verifyOrder {
+            correlationIdHolder.set(capture(idSlot))
+            filterChain.doFilter(request, response)
+            correlationIdHolder.remove()
+        }
+        with(idSlot.captured) {
+            assertThat(this).isNotBlank()
+            assertThat(UUID.fromString(this)).isNotNull()
         }
     }
 
     @Test fun `custom correlation ID header is set on response`() {
-        given { request.getHeader("X-Correlation-ID") }.willReturn("abc-123")
+        every { request.getHeader("X-Correlation-ID") } returns "abc-123"
 
         cut.doFilter(request, response, filterChain)
 
-        with(inOrder(response, filterChain)) {
-            verify(response).setHeader("X-Correlation-ID", "abc-123")
-            verify(filterChain).doFilter(request, response)
+        verifyOrder {
+            response.setHeader("X-Correlation-ID", "abc-123")
+            filterChain.doFilter(request, response)
         }
     }
 
     @Test fun `generated correlation ID header is set on response`() {
-        given { request.getHeader("X-Correlation-ID") }.willReturn(null)
+        val headerSlot = slot<String>()
+        every { request.getHeader("X-Correlation-ID") } returns null
 
         cut.doFilter(request, response, filterChain)
 
-        with(inOrder(response, filterChain)) {
-            verify(response).setHeader(eq("X-Correlation-ID"), check {
-                assertThat(it).isNotBlank()
-                assertThat(UUID.fromString(it)).isNotNull()
-            })
-            verify(filterChain).doFilter(request, response)
+        verifyOrder {
+            response.setHeader("X-Correlation-ID", capture(headerSlot))
+            filterChain.doFilter(request, response)
+        }
+        with(headerSlot.captured) {
+            assertThat(this).isNotBlank()
+            assertThat(UUID.fromString(this)).isNotNull()
         }
     }
 
     @Test fun `correlation ID removed, even is case of an exception`() {
-        given { filterChain.doFilter(any(), any()) }.willThrow(RuntimeException::class.java)
+        every { filterChain.doFilter(any(), any()) } throws RuntimeException()
 
-        assertThrows(RuntimeException::class.java, {
+        assertThrows<RuntimeException> {
             cut.doFilter(request, response, filterChain)
-        })
+        }
 
-        verify(correlationIdHolder).remove()
+        verify { correlationIdHolder.remove() }
     }
 
 }

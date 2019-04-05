@@ -1,53 +1,72 @@
 package pact
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.willReturn
+import au.com.dius.pact.provider.junit.Provider
+import au.com.dius.pact.provider.junit.State
+import au.com.dius.pact.provider.junit.VerificationReports
+import au.com.dius.pact.provider.junit.loader.PactFolder
+import au.com.dius.pact.provider.junit5.HttpTestTarget
+import au.com.dius.pact.provider.junit5.PactVerificationContext
+import au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvider
+import io.mockk.every
+import io.mockk.mockk
 import library.service.Application
 import library.service.business.books.BookDataStore
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.events.BookEvent
 import library.service.business.books.domain.types.BookId
 import library.service.business.events.EventDispatcher
-import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.TestTemplate
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.web.server.LocalServerPort
-import org.testit.pact.provider.http.ProviderState
-import org.testit.pact.provider.http.RequestResponsePacts
-import org.testit.pact.provider.junit.PactTestFactory
-import org.testit.pact.provider.sources.LocalFiles
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
 import utils.Books
+import utils.ResetMocksAfterEachTest
 import utils.classification.ContractTest
 
 @ContractTest
+@ResetMocksAfterEachTest
+@Provider("library-service")
+@PactFolder("src/test/pacts/http")
+@VerificationReports("console")
 @SpringBootTest(
-        classes = [Application::class],
-        webEnvironment = RANDOM_PORT,
-        properties = ["application.secured=false"]
+    classes = [Application::class, HttpContractTest.AdditionalBeans::class],
+    webEnvironment = RANDOM_PORT,
+    properties = ["application.secured=false"]
 )
-class HttpContractTest {
+@TestInstance(PER_CLASS) // PACT needs this ... for some reason ...
+@ExtendWith(PactVerificationInvocationContextProvider::class)
+class HttpContractTest(
+    @Autowired val dataStore: BookDataStore
+) {
 
-    @MockBean lateinit var dataStore: BookDataStore
-    @MockBean lateinit var eventDispatcher: EventDispatcher<BookEvent>
-
-    val pacts = RequestResponsePacts(LocalFiles("src/test/pacts/http"), "library-service")
-
-    @LocalServerPort
-    fun init(port: Int) {
-        pacts.target.bindPort { port }
+    class AdditionalBeans {
+        @Primary @Bean fun bookDataStore(): BookDataStore = mockk()
+        @Primary @Bean fun eventDispatcher(): EventDispatcher<BookEvent> = mockk(relaxed = true)
     }
 
-    @TestFactory fun `library enrichment contract tests`() =
-            PactTestFactory.createTests(pacts, "library-enrichment", this)
+    @BeforeEach
+    fun setTarget(context: PactVerificationContext, @LocalServerPort port: Int) {
+        context.target = HttpTestTarget("localhost", port)
+    }
 
-    @ProviderState("A book with the ID {bookId} exists")
+    @TestTemplate
+    fun pactVerificationTestTemplate(context: PactVerificationContext) {
+        context.verifyInteraction()
+    }
+
+    @State("A book with the ID {bookId} exists")
     fun `book with fixed ID exists`(params: Map<String, String>) {
         val bookId = BookId.from(params["bookId"]!!)
         val bookRecord = BookRecord(bookId, Books.THE_MARTIAN)
-        given { dataStore.findById(bookId) }.willReturn { bookRecord }
-        given { dataStore.createOrUpdate(any()) }.willAnswer { it.arguments[0] as BookRecord }
+        every { dataStore.findById(bookId) } returns bookRecord
+        every { dataStore.createOrUpdate(any()) } answers { firstArg() }
     }
 
 }
