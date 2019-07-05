@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/nt-ca-aqe/library-app.svg?branch=master)](https://travis-ci.org/nt-ca-aqe/library-app)
+[![Build Status](https://circleci.com/gh/nt-ca-aqe/library-app/tree/master.svg?style=svg)][1]
 
 # Library Application
 
@@ -47,3 +47,5 @@ of books by customers.
 - Test Automation
  - Unit, Integration and Acceptance Tests
  - Testing application slices
+
+[1]:https://circleci.com/gh/nt-ca-aqe/library-app/tree/master
