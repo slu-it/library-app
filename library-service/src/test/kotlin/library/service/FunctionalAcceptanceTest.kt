@@ -15,9 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.Resources
-import org.springframework.hateoas.hal.Jackson2HalModule
+import org.springframework.hateoas.mediatype.hal.Jackson2HalModule
 import utils.classification.AcceptanceTest
 import utils.extensions.MongoDbExtension
 import utils.extensions.RabbitMqExtension
@@ -49,7 +49,8 @@ internal class FunctionalAcceptanceTest(
         RestAssured.port = port
     }
 
-    @AfterEach fun deleteAllBooks() {
+    @AfterEach
+    fun deleteAllBooks() {
         bookRepository.deleteAll()
     }
 
@@ -75,7 +76,7 @@ internal class FunctionalAcceptanceTest(
         }
 
         // step 2: delete the book
-        val bookLink = createdBook.getLink("self")
+        val bookLink = createdBook.getLink("self").get()
         deleteBookExpecting(bookLink, 204)
         deleteBookExpecting(bookLink, 404)
 
@@ -88,7 +89,7 @@ internal class FunctionalAcceptanceTest(
                 "isbn": "9780553573404",
                 "title": "A Game of Thrones: A Song of Ice and Fire (1)"
         } """
-        val bookLink = createBook(createBookRequest).getLink("self")
+        val bookLink = createBook(createBookRequest).getLink("self").get()
 
         // step 2: updating all updateable data
         updateBookTitle(bookLink, """ { "title": "The Updated Title" } """)
@@ -135,7 +136,7 @@ internal class FunctionalAcceptanceTest(
         }
 
         // step 2: borrow the book
-        val borrowLink = createdBook.getLink("borrow")
+        val borrowLink = createdBook.getLink("borrow").get()
         val borrowBookRequest = """ {
             "borrower": "Rob Stark"
         } """
@@ -154,7 +155,7 @@ internal class FunctionalAcceptanceTest(
         }
 
         // step 3: return the book
-        val returnLink = borrowedBook.getLink("return")
+        val returnLink = borrowedBook.getLink("return").get()
         val returnedBook = returnBook(returnLink)
 
         with(returnedBook) {
@@ -179,7 +180,7 @@ internal class FunctionalAcceptanceTest(
         val createdBook = createBook(createBookRequest)
 
         // step 2: borrow the book twice
-        val borrowLink = createdBook.getLink("borrow")
+        val borrowLink = createdBook.getLink("borrow").get()
         borrowBookExpecting(borrowLink, 200)
         borrowBookExpecting(borrowLink, 409)
 
@@ -195,14 +196,14 @@ internal class FunctionalAcceptanceTest(
         val createdBook = createBook(createBookRequest)
 
         // step 2: borrow the book
-        val borrowLink = createdBook.getLink("borrow")
+        val borrowLink = createdBook.getLink("borrow").get()
         val borrowBookRequest = """ {
             "borrower": "Arya Stark"
         } """
         val borrowedBook = borrowBook(borrowLink, borrowBookRequest)
 
         // step 3: return the book twice
-        val returnLink = borrowedBook.getLink("return")
+        val returnLink = borrowedBook.getLink("return").get()
         returnBookExpecting(returnLink, 200)
         returnBookExpecting(returnLink, 409)
 
@@ -403,6 +404,6 @@ internal class FunctionalAcceptanceTest(
 
     private fun toUrl(link: Link, postFix: String = "") = URL(link.href + postFix)
 
-    open class BookListResource : Resources<BookResource>()
+    open class BookListResource : CollectionModel<BookResource>()
 
 }

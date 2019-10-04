@@ -1,17 +1,34 @@
 package library.service.api.books
 
-import library.service.api.books.payload.*
+import library.service.api.books.payload.BorrowBookRequest
+import library.service.api.books.payload.CreateBookRequest
+import library.service.api.books.payload.UpdateAuthorsRequest
+import library.service.api.books.payload.UpdateNumberOfPagesRequest
+import library.service.api.books.payload.UpdateTitleRequest
 import library.service.business.books.BookCollection
 import library.service.business.books.domain.composites.Book
-import library.service.business.books.domain.types.*
+import library.service.business.books.domain.types.Author
+import library.service.business.books.domain.types.BookId
+import library.service.business.books.domain.types.Borrower
+import library.service.business.books.domain.types.Isbn13
+import library.service.business.books.domain.types.Title
 import library.service.logging.LogMethodEntryAndExit
-import org.springframework.hateoas.Resources
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
+import org.springframework.hateoas.CollectionModel
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.*
-import java.util.*
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 import javax.validation.Valid
 
 @Validated
@@ -26,11 +43,11 @@ class BooksController(
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun getBooks(): Resources<BookResource> {
+    fun getBooks(): CollectionModel<BookResource> {
         val allBookRecords = collection.getAllBooks()
         val selfLink = linkTo(methodOn(javaClass).getBooks()).withSelfRel()
-        val bookResources = assembler.toResources(allBookRecords)
-        return Resources(bookResources, selfLink)
+        return assembler.toCollectionModel(allBookRecords)
+                .apply { add(selfLink) }
     }
 
     @PostMapping
@@ -43,7 +60,7 @@ class BooksController(
                 numberOfPages = null
         )
         val bookRecord = collection.addBook(book)
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @PutMapping("/{id}/title")
@@ -52,7 +69,7 @@ class BooksController(
         val bookRecord = collection.updateBook(BookId(id)) {
             it.changeTitle(Title(body.title!!))
         }
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @PutMapping("/{id}/authors")
@@ -61,7 +78,7 @@ class BooksController(
         val bookRecord = collection.updateBook(BookId(id)) {
             it.changeAuthors(body.authors!!.map { Author(it) })
         }
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @DeleteMapping("/{id}/authors")
@@ -70,7 +87,7 @@ class BooksController(
         val bookRecord = collection.updateBook(BookId(id)) {
             it.changeAuthors(emptyList())
         }
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @PutMapping("/{id}/numberOfPages")
@@ -79,7 +96,7 @@ class BooksController(
         val bookRecord = collection.updateBook(BookId(id)) {
             it.changeNumberOfPages(body.numberOfPages)
         }
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @DeleteMapping("/{id}/numberOfPages")
@@ -88,14 +105,14 @@ class BooksController(
         val bookRecord = collection.updateBook(BookId(id)) {
             it.changeNumberOfPages(null)
         }
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun getBook(@PathVariable id: UUID): BookResource {
         val bookRecord = collection.getBook(BookId(id))
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @DeleteMapping("/{id}")
@@ -108,14 +125,14 @@ class BooksController(
     @ResponseStatus(HttpStatus.OK)
     fun postBorrowBook(@PathVariable id: UUID, @Valid @RequestBody body: BorrowBookRequest): BookResource {
         val bookRecord = collection.borrowBook(BookId(id), Borrower(body.borrower!!))
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @PostMapping("/{id}/return")
     @ResponseStatus(HttpStatus.OK)
     fun postReturnBook(@PathVariable id: UUID): BookResource {
         val bookRecord = collection.returnBook(BookId(id))
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
 }

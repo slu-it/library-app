@@ -4,8 +4,8 @@ import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.states.Available
 import library.service.business.books.domain.states.Borrowed
 import library.service.security.UserContext
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
-import org.springframework.hateoas.mvc.ResourceAssemblerSupport
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Component
 
 /**
@@ -17,11 +17,9 @@ import org.springframework.stereotype.Component
 @Component
 class BookResourceAssembler(
         private val currentUser: UserContext
-) : ResourceAssemblerSupport<BookRecord, BookResource>(BooksController::class.java, BookResource::class.java) {
+) : RepresentationModelAssemblerSupport<BookRecord, BookResource>(BooksController::class.java, BookResource::class.java) {
 
-    private val booksController = BooksController::class.java
-
-    override fun toResource(bookRecord: BookRecord): BookResource = createResourceWithId(bookRecord.id, bookRecord).apply {
+    override fun toModel(bookRecord: BookRecord): BookResource = createModelWithId(bookRecord.id, bookRecord).apply {
         add(when (bookRecord.state) {
             is Available -> linkTo(booksController).slash(bookRecord.id).slash("borrow").withRel("borrow")
             is Borrowed -> linkTo(booksController).slash(bookRecord.id).slash("return").withRel("return")
@@ -31,7 +29,9 @@ class BookResourceAssembler(
         }
     }
 
-    override fun instantiateResource(bookRecord: BookRecord): BookResource {
+    private val booksController = BooksController::class.java
+
+    override fun instantiateModel(bookRecord: BookRecord): BookResource {
         val bookState = bookRecord.state
         return BookResource(
                 isbn = bookRecord.book.isbn.toString(),

@@ -29,7 +29,7 @@ internal class BookResourceAssemblerTest {
     }
 
     @Test fun `book with 'available' state is assembled correctly`() {
-        val resource = cut.toResource(bookRecord)
+        val resource = cut.toModel(bookRecord)
 
         assertThat(resource.isbn).isEqualTo(book.isbn.toString())
         assertThat(resource.title).isEqualTo(book.title.toString())
@@ -46,7 +46,7 @@ internal class BookResourceAssemblerTest {
         val borrowedOn = OffsetDateTime.now()
         val borrowedBookRecord = bookRecord.borrow(borrowedBy, borrowedOn)
 
-        val resource = cut.toResource(borrowedBookRecord)
+        val resource = cut.toModel(borrowedBookRecord)
 
         assertThat(resource.isbn).isEqualTo(book.isbn.toString())
         assertThat(resource.title).isEqualTo(book.title.toString())
@@ -64,13 +64,13 @@ internal class BookResourceAssemblerTest {
 
         @Test fun `is generate for curators`() {
             every { currentUser.isCurator() } returns true
-            val resource = cut.toResource(bookRecord)
+            val resource = cut.toModel(bookRecord)
             assertThat(resource.getLink("delete")).isNotNull()
         }
 
         @Test fun `is not generated for users`() {
             every { currentUser.isCurator() } returns false
-            val resource = cut.toResource(bookRecord)
+            val resource = cut.toModel(bookRecord)
             assertThat(resource.getLink("delete")).isNull()
         }
 

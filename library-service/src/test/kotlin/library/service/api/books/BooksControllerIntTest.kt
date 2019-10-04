@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.hateoas.MediaTypes.HAL_JSON_UTF8
+import org.springframework.hateoas.MediaTypes.HAL_JSON
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -89,7 +89,7 @@ internal class BooksControllerIntTest(
                 """
                 mockMvc.perform(request)
                     .andExpect(status().isOk)
-                    .andExpect(content().contentType(HAL_JSON_UTF8))
+                    .andExpect(content().contentType(HAL_JSON))
                     .andExpect(content().json(expectedResponse, true))
             }
 
@@ -161,7 +161,7 @@ internal class BooksControllerIntTest(
                 mockMvc.perform(request)
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isOk)
-                    .andExpect(content().contentType(HAL_JSON_UTF8))
+                    .andExpect(content().contentType(HAL_JSON))
                     .andExpect(content().json(expectedResponse, true))
             }
 
@@ -203,7 +203,7 @@ internal class BooksControllerIntTest(
                 """
                 mockMvc.perform(request)
                     .andExpect(status().isCreated)
-                    .andExpect(content().contentType(HAL_JSON_UTF8))
+                    .andExpect(content().contentType(HAL_JSON))
                     .andExpect(content().json(expectedResponse, true))
             }
 
@@ -314,7 +314,7 @@ internal class BooksControllerIntTest(
                     """
                     mockMvc.perform(request)
                         .andExpect(status().isOk)
-                        .andExpect(content().contentType(HAL_JSON_UTF8))
+                        .andExpect(content().contentType(HAL_JSON))
                         .andExpect(content().json(expectedResponse, true))
                 }
 
@@ -347,7 +347,7 @@ internal class BooksControllerIntTest(
                     """
                     mockMvc.perform(request)
                         .andExpect(status().isOk)
-                        .andExpect(content().contentType(HAL_JSON_UTF8))
+                        .andExpect(content().contentType(HAL_JSON))
                         .andExpect(content().json(expectedResponse, true))
                 }
 
@@ -471,7 +471,7 @@ internal class BooksControllerIntTest(
                         """
                         mockMvc.perform(request)
                             .andExpect(status().isOk)
-                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().contentType(HAL_JSON))
                             .andExpect(content().json(expectedResponse, true))
                     }
 
@@ -546,7 +546,7 @@ internal class BooksControllerIntTest(
                         """
                         mockMvc.perform(request)
                             .andExpect(status().isOk)
-                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().contentType(HAL_JSON))
                             .andExpect(content().json(expectedResponse, true))
                     }
 
@@ -609,7 +609,7 @@ internal class BooksControllerIntTest(
                         """
                         mockMvc.perform(request)
                             .andExpect(status().isOk)
-                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().contentType(HAL_JSON))
                             .andExpect(content().json(expectedResponse, true))
                     }
 
@@ -749,7 +749,7 @@ internal class BooksControllerIntTest(
                         """
                         mockMvc.perform(request)
                             .andExpect(status().isOk)
-                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().contentType(HAL_JSON))
                             .andExpect(content().json(expectedResponse, true))
                     }
 
@@ -824,7 +824,7 @@ internal class BooksControllerIntTest(
                         """
                         mockMvc.perform(request)
                             .andExpect(status().isOk)
-                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().contentType(HAL_JSON))
                             .andExpect(content().json(expectedResponse, true))
                     }
 
@@ -881,7 +881,7 @@ internal class BooksControllerIntTest(
                         """
                         mockMvc.perform(request)
                             .andExpect(status().isOk)
-                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().contentType(HAL_JSON))
                             .andExpect(content().json(expectedResponse, true))
                     }
 
@@ -978,7 +978,7 @@ internal class BooksControllerIntTest(
                         """
                         mockMvc.perform(request)
                             .andExpect(status().isOk)
-                            .andExpect(content().contentType(HAL_JSON_UTF8))
+                            .andExpect(content().contentType(HAL_JSON))
                             .andExpect(content().json(expectedResponse, true))
                     }
 

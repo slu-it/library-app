@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.context.annotation.Bean
-import org.springframework.hateoas.MediaTypes.HAL_JSON_UTF8
+import org.springframework.hateoas.MediaTypes.HAL_JSON
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -44,7 +43,7 @@ internal class IndexControllerIntTest(
             """
         mockMvc.perform(request)
             .andExpect(status().isOk)
-            .andExpect(content().contentType(HAL_JSON_UTF8))
+            .andExpect(content().contentType(HAL_JSON))
             .andExpect(content().json(expectedResponse, true))
             .andDo(document("getIndex"))
     }
