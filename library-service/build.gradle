@@ -59,13 +59,11 @@ dependencies {
 
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude group: 'org.mockito'
-    }
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("com.tngtech.archunit:archunit:${archunitVersion}")
     testImplementation("io.mockk:mockk:${mockkVersion}")
@@ -74,8 +72,8 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:${testContainersVersion}")
     testImplementation("au.com.dius:pact-jvm-provider-junit5_2.12:${pactVersion}")
 
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
 task unitTest(type: Test) {

@@ -47,7 +47,7 @@ internal class ArchitectureTest {
     object AnyTestClassification : DescribedPredicate<JavaAnnotation>("Test Classification") {
 
         override fun apply(input: JavaAnnotation): Boolean {
-            val javaClass = input.type
+            val javaClass = input.rawType
             return when {
                 javaClass.isEquivalentTo(UnitTest::class.java) -> true
                 javaClass.isEquivalentTo(IntegrationTest::class.java) -> true
