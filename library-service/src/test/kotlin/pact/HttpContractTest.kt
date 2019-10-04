@@ -41,7 +41,6 @@ import utils.classification.ContractTest
     properties = ["application.secured=false"]
 )
 @TestInstance(PER_CLASS) // PACT needs this ... for some reason ...
-@ExtendWith(PactVerificationInvocationContextProvider::class)
 class HttpContractTest(
     @Autowired val dataStore: BookDataStore
 ) {
@@ -57,6 +56,7 @@ class HttpContractTest(
     }
 
     @TestTemplate
+    @ExtendWith(PactVerificationInvocationContextProvider::class)
     fun pactVerificationTestTemplate(context: PactVerificationContext) {
         context.verifyInteraction()
     }
