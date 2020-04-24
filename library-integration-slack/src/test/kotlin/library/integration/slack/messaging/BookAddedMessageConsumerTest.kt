@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
 import utils.messaging.toMessageConverter
-import org.assertj.core.api.Assertions.assertThat
+import utils.shouldContainOnly
 import utils.messaging.BookEventsMessageProvider.Companion.bookAddedEvent
 import java.io.IOException
 
@@ -42,7 +42,7 @@ class BookAddedMessageConsumerTest {
 
         cut.onMessage(message)
 
-        assertThat(log.messages).containsOnly(expectedLog)
+        log.messages shouldContainOnly expectedLog
     }
 
     @RecordLoggers(BookAddedMessageConsumer::class)
@@ -54,7 +54,7 @@ class BookAddedMessageConsumerTest {
 
         cut.onMessage(message)
 
-        assertThat(log.messages).containsOnly(expectedLog)
+        log.messages shouldContainOnly expectedLog
         verify(bookAddedEventHandler, times(0)).handleBookAdded(bookAddedEvent)
     }
 }

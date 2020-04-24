@@ -3,7 +3,6 @@ package library.integration.slack.services.slack
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import library.integration.slack.services.error.handling.ErrorHandler
-import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -20,6 +19,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ContextConfiguration
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
+import utils.shouldContainOnly
 import utils.classification.IntegrationTest
 import utils.extensions.EnableSpringExtension
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackChannelArchivedException
@@ -74,7 +74,7 @@ class SlackMessageAccessorIntegrationTest {
 
         slackMessageAccessor.postMessage(slackMessage)
 
-        assertThat(log.messages).containsOnly("Message with body [$slackMessage] has been send successful.")
+        log.messages shouldContainOnly "Message with body [$slackMessage] has been send successful."
     }
 
     @RecordLoggers(ErrorHandler::class)
@@ -90,10 +90,8 @@ class SlackMessageAccessorIntegrationTest {
 
         slackMessageAccessor.postMessage(slackMessage)
 
-        assertThat(log.messages).containsOnly(
-            "Error with statusCode [$status] and reason [$reason] " +
-                    "when trying to post message with body [$slackMessage]."
-        )
+        log.messages shouldContainOnly "Error with statusCode [$status] and reason [$reason] " +
+                "when trying to post message with body [$slackMessage]."
     }
 
     @RecordLoggers(ErrorHandler::class)
@@ -108,9 +106,7 @@ class SlackMessageAccessorIntegrationTest {
 
         slackMessageAccessor.postMessage(slackMessage)
 
-        assertThat(log.messages).containsOnly(
-            "Unexpected error occurred  when trying to post message with body [$slackMessage]."
-        )
+        log.messages shouldContainOnly "Unexpected error occurred  when trying to post message with body [$slackMessage]."
     }
 
     companion object {
