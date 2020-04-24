@@ -1,12 +1,12 @@
 package library.integration.slack.services.error.handling
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
+import utils.shouldContainOnly
 import utils.classification.UnitTest
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackChannelArchivedException
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackChannelNotFoundException
@@ -37,7 +37,7 @@ class ErrorHandlerTest {
 
         cut.handleSlackServiceErrors(e, slackMessage)
 
-        assertThat(log.messages).containsOnly(expectedLog)
+        log.messages shouldContainOnly expectedLog
     }
 
     @RecordLoggers(ErrorHandler::class)
@@ -50,7 +50,7 @@ class ErrorHandlerTest {
 
         cut.handleSlackServiceErrors(ioException, slackMessage)
 
-        assertThat(log.messages).containsOnly(expectedLog)
+        log.messages shouldContainOnly expectedLog
     }
 
     companion object {

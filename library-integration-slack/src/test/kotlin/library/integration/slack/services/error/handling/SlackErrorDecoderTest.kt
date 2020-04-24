@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import utils.shouldBeEqualTo
 import utils.classification.UnitTest
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackChannelArchivedException
 import utils.services.error.handling.ErrorHandlerDataProvider.Companion.slackChannelNotFoundException
@@ -33,7 +34,7 @@ class SlackErrorDecoderTest {
 
         val result = cut.decode(methodKey, response)
 
-        assertThat(slackInvalidPayloadException).isEqualTo(result)
+        result shouldBeEqualTo slackInvalidPayloadException
     }
 
     @Test
@@ -47,7 +48,7 @@ class SlackErrorDecoderTest {
 
         val result = cut.decode(methodKey, response)
 
-        assertThat(slackChannelProhibitedException).isEqualTo(result)
+        result shouldBeEqualTo slackChannelProhibitedException
     }
 
     @Test
@@ -61,7 +62,7 @@ class SlackErrorDecoderTest {
 
         val result = cut.decode(methodKey, response)
 
-        assertThat(slackChannelNotFoundException).isEqualTo(result)
+        result shouldBeEqualTo slackChannelNotFoundException
     }
 
     @Test
@@ -75,7 +76,7 @@ class SlackErrorDecoderTest {
 
         val result = cut.decode(methodKey, response)
 
-        assertThat(slackChannelArchivedException).isEqualTo(result)
+        result shouldBeEqualTo slackChannelArchivedException
     }
 
     @Test
@@ -89,7 +90,7 @@ class SlackErrorDecoderTest {
 
         val result = cut.decode(methodKey, response)
 
-        assertThat(slackServerException).isEqualTo(result)
+        result shouldBeEqualTo slackServerException
     }
 
     @Test
