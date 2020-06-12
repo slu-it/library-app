@@ -16,7 +16,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.http.HttpInputMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
-import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.test.web.servlet.MockMvc
@@ -36,7 +36,7 @@ import java.util.*
 
 
 @IntegrationTest
-@WebMvcTest(TestController::class, secure = false)
+@WebMvcTest(TestController::class)
 @ComponentScan("utils.testapi")
 internal class ErrorHandlersIntTest(
     @Autowired val mockMvc: MockMvc,
@@ -161,7 +161,7 @@ internal class ErrorHandlersIntTest(
         val globalError1 = ObjectError("objectName", "Gloabl Message 1")
         val globalError2 = ObjectError("objectName", "Gloabl Message 2")
 
-        return mockk() {
+        return mockk {
             every { fieldErrors } returns listOf(fieldError1, fieldError2)
             every { globalErrors } returns listOf(globalError1, globalError2)
         }
@@ -203,11 +203,11 @@ internal class ErrorHandlersIntTest(
 
     private fun executeAndExpect(expectedStatus: HttpStatus, expectedResponseSupplier: () -> String) {
         val request = post("/test")
-            .header("X-Correlation-ID", correlationId)
+                .header("X-Correlation-ID", correlationId)
         mockMvc.perform(request)
-            .andExpect(status().`is`(expectedStatus.value()))
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(content().json(expectedResponseSupplier(), true))
+                .andExpect(status().`is`(expectedStatus.value()))
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(content().json(expectedResponseSupplier(), true))
     }
 
 }

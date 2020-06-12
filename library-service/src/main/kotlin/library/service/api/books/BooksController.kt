@@ -5,9 +5,9 @@ import library.service.business.books.BookCollection
 import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.types.*
 import library.service.logging.LogMethodEntryAndExit
-import org.springframework.hateoas.Resources
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
+import org.springframework.hateoas.CollectionModel
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -26,11 +26,11 @@ class BooksController(
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun getBooks(): Resources<BookResource> {
+    fun getBooks(): CollectionModel<BookResource> {
         val allBookRecords = collection.getAllBooks()
         val selfLink = linkTo(methodOn(javaClass).getBooks()).withSelfRel()
-        val bookResources = assembler.toResources(allBookRecords)
-        return Resources(bookResources, selfLink)
+        return assembler.toCollectionModel(allBookRecords)
+                .apply { add(selfLink) }
     }
 
     @PostMapping
@@ -43,7 +43,7 @@ class BooksController(
                 numberOfPages = null
         )
         val bookRecord = collection.addBook(book)
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @PutMapping("/{id}/title")
@@ -52,7 +52,7 @@ class BooksController(
         val bookRecord = collection.updateBook(BookId(id)) {
             it.changeTitle(Title(body.title!!))
         }
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @PutMapping("/{id}/authors")
@@ -61,7 +61,7 @@ class BooksController(
         val bookRecord = collection.updateBook(BookId(id)) {
             it.changeAuthors(body.authors!!.map { Author(it) })
         }
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @DeleteMapping("/{id}/authors")
@@ -70,7 +70,7 @@ class BooksController(
         val bookRecord = collection.updateBook(BookId(id)) {
             it.changeAuthors(emptyList())
         }
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @PutMapping("/{id}/numberOfPages")
@@ -79,7 +79,7 @@ class BooksController(
         val bookRecord = collection.updateBook(BookId(id)) {
             it.changeNumberOfPages(body.numberOfPages)
         }
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @DeleteMapping("/{id}/numberOfPages")
@@ -88,14 +88,14 @@ class BooksController(
         val bookRecord = collection.updateBook(BookId(id)) {
             it.changeNumberOfPages(null)
         }
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun getBook(@PathVariable id: UUID): BookResource {
         val bookRecord = collection.getBook(BookId(id))
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @DeleteMapping("/{id}")
@@ -108,14 +108,14 @@ class BooksController(
     @ResponseStatus(HttpStatus.OK)
     fun postBorrowBook(@PathVariable id: UUID, @Valid @RequestBody body: BorrowBookRequest): BookResource {
         val bookRecord = collection.borrowBook(BookId(id), Borrower(body.borrower!!))
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
     @PostMapping("/{id}/return")
     @ResponseStatus(HttpStatus.OK)
     fun postReturnBook(@PathVariable id: UUID): BookResource {
         val bookRecord = collection.returnBook(BookId(id))
-        return assembler.toResource(bookRecord)
+        return assembler.toModel(bookRecord)
     }
 
 }

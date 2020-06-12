@@ -29,16 +29,16 @@ internal class BookResourceAssemblerTest {
     }
 
     @Test fun `book with 'available' state is assembled correctly`() {
-        val resource = cut.toResource(bookRecord)
+        val resource = cut.toModel(bookRecord)
 
         assertThat(resource.isbn).isEqualTo(book.isbn.toString())
         assertThat(resource.title).isEqualTo(book.title.toString())
         assertThat(resource.authors).isEqualTo(book.authors.map { it.toString() })
         assertThat(resource.borrowed).isNull()
 
-        assertThat(resource.getLink("self")).isNotNull()
-        assertThat(resource.getLink("borrow")).isNotNull()
-        assertThat(resource.getLink("return")).isNull()
+        assertThat(resource.getLink("self")).isNotNull
+        assertThat(resource.getLink("borrow")).isNotNull
+        assertThat(resource.getLink("return")).isEmpty
     }
 
     @Test fun `book with 'borrowed' state is assembled correctly`() {
@@ -46,32 +46,32 @@ internal class BookResourceAssemblerTest {
         val borrowedOn = OffsetDateTime.now()
         val borrowedBookRecord = bookRecord.borrow(borrowedBy, borrowedOn)
 
-        val resource = cut.toResource(borrowedBookRecord)
+        val resource = cut.toModel(borrowedBookRecord)
 
         assertThat(resource.isbn).isEqualTo(book.isbn.toString())
         assertThat(resource.title).isEqualTo(book.title.toString())
         assertThat(resource.authors).isEqualTo(book.authors.map { it.toString() })
-        assertThat(resource.borrowed).isNotNull()
+        assertThat(resource.borrowed).isNotNull
         assertThat(resource.borrowed!!.by).isEqualTo("Someone")
         assertThat(resource.borrowed!!.on).isEqualTo(borrowedOn.toString())
 
-        assertThat(resource.getLink("self")).isNotNull()
-        assertThat(resource.getLink("borrow")).isNull()
-        assertThat(resource.getLink("return")).isNotNull()
+        assertThat(resource.getLink("self")).isNotNull
+        assertThat(resource.getLink("borrow")).isEmpty
+        assertThat(resource.getLink("return")).isNotNull
     }
 
     @Nested inner class `delete link` {
 
         @Test fun `is generate for curators`() {
             every { currentUser.isCurator() } returns true
-            val resource = cut.toResource(bookRecord)
-            assertThat(resource.getLink("delete")).isNotNull()
+            val resource = cut.toModel(bookRecord)
+            assertThat(resource.getLink("delete")).isNotNull
         }
 
         @Test fun `is not generated for users`() {
             every { currentUser.isCurator() } returns false
-            val resource = cut.toResource(bookRecord)
-            assertThat(resource.getLink("delete")).isNull()
+            val resource = cut.toModel(bookRecord)
+            assertThat(resource.getLink("delete")).isEmpty
         }
 
     }

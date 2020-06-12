@@ -3,8 +3,8 @@ package library.service.api.books
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
 import library.service.business.books.domain.BookRecord
-import org.springframework.hateoas.ResourceSupport
-import org.springframework.hateoas.core.Relation
+import org.springframework.hateoas.RepresentationModel
+import org.springframework.hateoas.server.core.Relation
 
 /** Representation of a [BookRecord] as a REST resource. */
 @JsonInclude(NON_NULL)
@@ -15,7 +15,7 @@ data class BookResource(
         val authors: List<String>?,
         val numberOfPages: Int?,
         val borrowed: Borrowed?
-) : ResourceSupport()
+) : RepresentationModel<BookResource>()
 
 data class Borrowed(
         val by: String,

@@ -1,6 +1,7 @@
 package library.service.security
 
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.to
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.toAnyEndpoint
 import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.boot.actuate.info.InfoEndpoint
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -58,11 +59,11 @@ class SecurityConfiguration {
             cors()
             httpBasic()
             sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            authorizeRequests {
-                antMatchers(HttpMethod.GET, "/", "/help", "/docs", "/docs/**").permitAll()
-                requestMatchers(EndpointRequest.to(infoEndpoint, healthEndpoint)).permitAll()
-                requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(Roles.ACTUATOR)
-                anyRequest().fullyAuthenticated()
+            authorizeRequests { requests ->
+                requests.antMatchers(HttpMethod.GET, "/", "/help", "/docs", "/docs/**").permitAll()
+                requests.requestMatchers(to(infoEndpoint, healthEndpoint)).permitAll()
+                requests.requestMatchers(toAnyEndpoint()).hasRole(Roles.ACTUATOR)
+                requests.anyRequest().fullyAuthenticated()
             }
         }
 
