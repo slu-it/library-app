@@ -15,9 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.Resources
-import org.springframework.hateoas.hal.Jackson2HalModule
+import org.springframework.hateoas.mediatype.hal.Jackson2HalModule
 import utils.classification.AcceptanceTest
 import utils.extensions.MongoDbExtension
 import utils.extensions.RabbitMqExtension
@@ -26,15 +26,15 @@ import java.net.URL
 @AcceptanceTest
 @ExtendWith(MongoDbExtension::class, RabbitMqExtension::class)
 @SpringBootTest(
-        webEnvironment = RANDOM_PORT,
-        properties = [
-            "application.secured=false",
-            "spring.data.mongodb.port=\${MONGODB_PORT}",
-            "spring.rabbitmq.port=\${RABBITMQ_PORT}"
-        ]
+    webEnvironment = RANDOM_PORT,
+    properties = [
+        "application.secured=false",
+        "spring.data.mongodb.port=\${MONGODB_PORT}",
+        "spring.rabbitmq.port=\${RABBITMQ_PORT}"
+    ]
 )
 internal class FunctionalAcceptanceTest(
-        @Autowired val bookRepository: BookRepository
+    @Autowired val bookRepository: BookRepository
 ) {
 
     val consumerObjectMapper = ObjectMapper().apply {
@@ -49,11 +49,13 @@ internal class FunctionalAcceptanceTest(
         RestAssured.port = port
     }
 
-    @AfterEach fun deleteAllBooks() {
+    @AfterEach
+    fun deleteAllBooks() {
         bookRepository.deleteAll()
     }
 
-    @Test fun `adding a book and then deleting it`() {
+    @Test
+    fun `adding a book and then deleting it`() {
 
         // step 1: create the book
         val createBookRequest = """ {
@@ -69,26 +71,27 @@ internal class FunctionalAcceptanceTest(
             assertThat(numberOfPages).isNull()
             assertThat(borrowed).isNull()
 
-            assertThat(getLink("self")).isNotNull()
-            assertThat(getLink("borrow")).isNotNull()
-            assertThat(getLink("return")).isNull()
+            assertThat(getLink("self")).isNotNull
+            assertThat(getLink("borrow")).isNotNull
+            assertThat(getLink("return")).isEmpty
         }
 
         // step 2: delete the book
-        val bookLink = createdBook.getLink("self")
+        val bookLink = createdBook.getLink("self").get()
         deleteBookExpecting(bookLink, 204)
         deleteBookExpecting(bookLink, 404)
 
     }
 
-    @Test fun `adding a book and updating its data`() {
+    @Test
+    fun `adding a book and updating its data`() {
 
         // step 1: create the book
         val createBookRequest = """ {
                 "isbn": "9780553573404",
                 "title": "A Game of Thrones: A Song of Ice and Fire (1)"
         } """
-        val bookLink = createBook(createBookRequest).getLink("self")
+        val bookLink = createBook(createBookRequest).getLink("self").get()
 
         // step 2: updating all updateable data
         updateBookTitle(bookLink, """ { "title": "The Updated Title" } """)
@@ -115,7 +118,8 @@ internal class FunctionalAcceptanceTest(
 
     }
 
-    @Test fun `adding a book, borrowing it and then returning it`() {
+    @Test
+    fun `adding a book, borrowing it and then returning it`() {
 
         // step 1: create the book
         val createBookRequest = """ {
@@ -129,13 +133,13 @@ internal class FunctionalAcceptanceTest(
             assertThat(title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
             assertThat(borrowed).isNull()
 
-            assertThat(getLink("self")).isNotNull()
-            assertThat(getLink("borrow")).isNotNull()
-            assertThat(getLink("return")).isNull()
+            assertThat(getLink("self")).isNotNull
+            assertThat(getLink("borrow")).isNotNull
+            assertThat(getLink("return")).isEmpty
         }
 
         // step 2: borrow the book
-        val borrowLink = createdBook.getLink("borrow")
+        val borrowLink = createdBook.getLink("borrow").get()
         val borrowBookRequest = """ {
             "borrower": "Rob Stark"
         } """
@@ -148,13 +152,13 @@ internal class FunctionalAcceptanceTest(
             assertThat(borrowed!!.by).isEqualTo("Rob Stark")
             assertThat(borrowed!!.on).isNotNull()
 
-            assertThat(getLink("self")).isNotNull()
-            assertThat(getLink("borrow")).isNull()
-            assertThat(getLink("return")).isNotNull()
+            assertThat(getLink("self")).isNotNull
+            assertThat(getLink("borrow")).isEmpty
+            assertThat(getLink("return")).isNotNull
         }
 
         // step 3: return the book
-        val returnLink = borrowedBook.getLink("return")
+        val returnLink = borrowedBook.getLink("return").get()
         val returnedBook = returnBook(returnLink)
 
         with(returnedBook) {
@@ -162,14 +166,15 @@ internal class FunctionalAcceptanceTest(
             assertThat(title).isEqualTo("A Game of Thrones: A Song of Ice and Fire (1)")
             assertThat(borrowed).isNull()
 
-            assertThat(getLink("self")).isNotNull()
-            assertThat(getLink("borrow")).isNotNull()
-            assertThat(getLink("return")).isNull()
+            assertThat(getLink("self")).isNotNull
+            assertThat(getLink("borrow")).isNotNull
+            assertThat(getLink("return")).isEmpty
         }
 
     }
 
-    @Test fun `books can't be borrowed if already borrowed`() {
+    @Test
+    fun `books can't be borrowed if already borrowed`() {
 
         // step 1: create the book
         val createBookRequest = """ {
@@ -179,13 +184,14 @@ internal class FunctionalAcceptanceTest(
         val createdBook = createBook(createBookRequest)
 
         // step 2: borrow the book twice
-        val borrowLink = createdBook.getLink("borrow")
+        val borrowLink = createdBook.getLink("borrow").get()
         borrowBookExpecting(borrowLink, 200)
         borrowBookExpecting(borrowLink, 409)
 
     }
 
-    @Test fun `books can't be returned if already returned`() {
+    @Test
+    fun `books can't be returned if already returned`() {
 
         // step 1: create the book
         val createBookRequest = """ {
@@ -195,43 +201,50 @@ internal class FunctionalAcceptanceTest(
         val createdBook = createBook(createBookRequest)
 
         // step 2: borrow the book
-        val borrowLink = createdBook.getLink("borrow")
+        val borrowLink = createdBook.getLink("borrow").get()
         val borrowBookRequest = """ {
             "borrower": "Arya Stark"
         } """
         val borrowedBook = borrowBook(borrowLink, borrowBookRequest)
 
         // step 3: return the book twice
-        val returnLink = borrowedBook.getLink("return")
+        val returnLink = borrowedBook.getLink("return").get()
         returnBookExpecting(returnLink, 200)
         returnBookExpecting(returnLink, 409)
 
     }
 
-    @Test fun `listing all books of the library`() {
+    @Test
+    fun `listing all books of the library`() {
 
         // step 1: create some books
 
-        val book1 = createBook(""" {
+        val book1 = createBook(
+            """ {
                 "isbn": "9780553573404",
                 "title": "A Game of Thrones: A Song of Ice and Fire (1)"
-        } """)
-        val book2 = createBook(""" {
+        } """
+        )
+        val book2 = createBook(
+            """ {
                 "isbn": "9780553579901",
                 "title": "A Clash of Kings: A Song of Ice and Fire (2)"
-        } """)
-        val book3 = createBook(""" {
+        } """
+        )
+        val book3 = createBook(
+            """ {
                 "isbn": "9780553573428",
                 "title": "A Storm of Swords: A Song of Ice and Fire (3)"
-        } """)
+        } """
+        )
 
         // step 2: get all books
 
         val allBooks = getAllBooks()
 
         assertThat(allBooks.content)
-                .hasSize(3)
-                .containsOnly(book1, book2, book3)
+            .hasSize(3)
+            .containsOnly(book1, book2, book3)
         assertThat(allBooks.getLink("self")).isNotNull()
 
     }
@@ -239,16 +252,16 @@ internal class FunctionalAcceptanceTest(
     private fun createBook(requestBody: String): BookResource {
         // @formatter:off
         val response =
-                given()
-                        .header("Content-Type", "application/json")
-                        .body(requestBody)
-                        .`when`()
-                        .post("/api/books")
-                        .then()
-                        .statusCode(201)
-                        .contentType("application/hal+json;charset=UTF-8")
-                        .and()
-                        .extract().body().asString()
+            given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .`when`()
+                .post("/api/books")
+                .then()
+                .statusCode(201)
+                .contentType("application/hal+json")
+                .and()
+                .extract().body().asString()
         // @formatter:on
         return consumerObjectMapper.readValue(response, BookResource::class.java)
     }
@@ -256,25 +269,25 @@ internal class FunctionalAcceptanceTest(
     private fun deleteBookExpecting(bookLink: Link, expectedStatus: Int) {
         // @formatter:off
         `when`()
-                .delete(toUrl(bookLink))
-                .then()
-                .statusCode(expectedStatus)
+            .delete(toUrl(bookLink))
+            .then()
+            .statusCode(expectedStatus)
         // @formatter:on
     }
 
     private fun borrowBook(borrowLink: Link, requestBody: String): BookResource {
         // @formatter:off
         val response =
-                given()
-                        .header("Content-Type", "application/json")
-                        .body(requestBody)
-                        .`when`()
-                        .post(toUrl(borrowLink))
-                        .then()
-                        .statusCode(200)
-                        .contentType("application/hal+json;charset=UTF-8")
-                        .and()
-                        .extract().body().asString()
+            given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .`when`()
+                .post(toUrl(borrowLink))
+                .then()
+                .statusCode(200)
+                .contentType("application/hal+json")
+                .and()
+                .extract().body().asString()
         // @formatter:on
         return consumerObjectMapper.readValue(response, BookResource::class.java)
     }
@@ -282,25 +295,25 @@ internal class FunctionalAcceptanceTest(
     private fun borrowBookExpecting(borrowLink: Link, expectedStatus: Int) {
         // @formatter:off
         given()
-                .header("Content-Type", "application/json")
-                .body(""" { "borrower": "No One" }""")
-                .`when`()
-                .post(toUrl(borrowLink))
-                .then()
-                .statusCode(expectedStatus)
+            .header("Content-Type", "application/json")
+            .body(""" { "borrower": "No One" }""")
+            .`when`()
+            .post(toUrl(borrowLink))
+            .then()
+            .statusCode(expectedStatus)
         // @formatter:on
     }
 
     private fun returnBook(returnLink: Link): BookResource {
         // @formatter:off
         val response =
-                `when`()
-                        .post(toUrl(returnLink))
-                        .then()
-                        .statusCode(200)
-                        .contentType("application/hal+json;charset=UTF-8")
-                        .and()
-                        .extract().body().asString()
+            `when`()
+                .post(toUrl(returnLink))
+                .then()
+                .statusCode(200)
+                .contentType("application/hal+json")
+                .and()
+                .extract().body().asString()
         // @formatter:on
         return consumerObjectMapper.readValue(response, BookResource::class.java)
     }
@@ -308,22 +321,22 @@ internal class FunctionalAcceptanceTest(
     private fun returnBookExpecting(returnLink: Link, expectedStatus: Int) {
         // @formatter:off
         `when`()
-                .post(toUrl(returnLink))
-                .then()
-                .statusCode(expectedStatus)
+            .post(toUrl(returnLink))
+            .then()
+            .statusCode(expectedStatus)
         // @formatter:on
     }
 
     private fun getAllBooks(): BookListResource {
         // @formatter:off
         val response =
-                `when`()
-                        .get("/api/books")
-                        .then()
-                        .statusCode(200)
-                        .contentType("application/hal+json;charset=UTF-8")
-                        .and()
-                        .extract().body().asString()
+            `when`()
+                .get("/api/books")
+                .then()
+                .statusCode(200)
+                .contentType("application/hal+json")
+                .and()
+                .extract().body().asString()
         // @formatter:on
         return consumerObjectMapper.readValue(response, BookListResource::class.java)
     }
@@ -331,13 +344,13 @@ internal class FunctionalAcceptanceTest(
     private fun getBook(bookLink: Link): BookResource {
         // @formatter:off
         val response =
-                `when`()
-                        .get(toUrl(bookLink))
-                        .then()
-                        .statusCode(200)
-                        .contentType("application/hal+json;charset=UTF-8")
-                        .and()
-                        .extract().body().asString()
+            `when`()
+                .get(toUrl(bookLink))
+                .then()
+                .statusCode(200)
+                .contentType("application/hal+json")
+                .and()
+                .extract().body().asString()
         // @formatter:on
         return consumerObjectMapper.readValue(response, BookResource::class.java)
     }
@@ -345,64 +358,64 @@ internal class FunctionalAcceptanceTest(
     private fun updateBookTitle(bookLink: Link, requestBody: String) {
         // @formatter:off
         given()
-                .header("Content-Type", "application/json")
-                .body(requestBody)
-                .`when`()
-                .put(toUrl(bookLink, "/title"))
-                .then()
-                .statusCode(200)
-                .contentType("application/hal+json;charset=UTF-8")
+            .header("Content-Type", "application/json")
+            .body(requestBody)
+            .`when`()
+            .put(toUrl(bookLink, "/title"))
+            .then()
+            .statusCode(200)
+            .contentType("application/hal+json")
         // @formatter:on
     }
 
     private fun updateBookAuthors(bookLink: Link, requestBody: String) {
         // @formatter:off
         given()
-                .header("Content-Type", "application/json")
-                .body(requestBody)
-                .`when`()
-                .put(toUrl(bookLink, "/authors"))
-                .then()
-                .statusCode(200)
-                .contentType("application/hal+json;charset=UTF-8")
+            .header("Content-Type", "application/json")
+            .body(requestBody)
+            .`when`()
+            .put(toUrl(bookLink, "/authors"))
+            .then()
+            .statusCode(200)
+            .contentType("application/hal+json")
         // @formatter:on
     }
 
     private fun updateBookNumberOfPages(bookLink: Link, requestBody: String) {
         // @formatter:off
         given()
-                .header("Content-Type", "application/json")
-                .body(requestBody)
-                .`when`()
-                .put(toUrl(bookLink, "/numberOfPages"))
-                .then()
-                .statusCode(200)
-                .contentType("application/hal+json;charset=UTF-8")
+            .header("Content-Type", "application/json")
+            .body(requestBody)
+            .`when`()
+            .put(toUrl(bookLink, "/numberOfPages"))
+            .then()
+            .statusCode(200)
+            .contentType("application/hal+json")
         // @formatter:on
     }
 
     private fun removeBookAuthors(bookLink: Link) {
         // @formatter:off
         `when`()
-                .delete(toUrl(bookLink, "/authors"))
-                .then()
-                .statusCode(200)
-                .contentType("application/hal+json;charset=UTF-8")
+            .delete(toUrl(bookLink, "/authors"))
+            .then()
+            .statusCode(200)
+            .contentType("application/hal+json")
         // @formatter:on
     }
 
     private fun removeBookNumberOfPages(bookLink: Link) {
         // @formatter:off
         `when`()
-                .delete(toUrl(bookLink, "/numberOfPages"))
-                .then()
-                .statusCode(200)
-                .contentType("application/hal+json;charset=UTF-8")
+            .delete(toUrl(bookLink, "/numberOfPages"))
+            .then()
+            .statusCode(200)
+            .contentType("application/hal+json")
         // @formatter:on
     }
 
     private fun toUrl(link: Link, postFix: String = "") = URL(link.href + postFix)
 
-    open class BookListResource : Resources<BookResource>()
+    open class BookListResource : CollectionModel<BookResource>()
 
 }

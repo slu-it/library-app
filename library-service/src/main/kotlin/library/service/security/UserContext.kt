@@ -8,10 +8,9 @@ class UserContext {
 
     fun isCurator() = currentUserHasRole(Authorizations.CURATOR_ROLE)
 
-    private fun currentUserHasRole(role: String)= SecurityContextHolder.getContext()
-            ?.authentication
-            ?.authorities
-            ?.any { it.authority == role }
-            ?: true
-
+    private fun currentUserHasRole(role: String) = SecurityContextHolder.getContext()
+        ?.authentication
+        ?.authorities
+        ?.any { it.authority == role }
+        ?: true
 }

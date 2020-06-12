@@ -19,9 +19,12 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.context.annotation.Bean
 import utils.Books
 import utils.classification.AcceptanceTest
 import utils.executeAsUserWithRole
@@ -38,6 +41,13 @@ import utils.extensions.RabbitMqExtension
         ]
 )
 internal class SecurityAcceptanceTest {
+
+    @TestConfiguration
+    class AdditionalBeans {
+        // required for the 'httptrace' actuator endpoint
+        @Bean
+        fun httpTraceRepository() = InMemoryHttpTraceRepository()
+    }
 
     val book = Books.THE_MARTIAN
 

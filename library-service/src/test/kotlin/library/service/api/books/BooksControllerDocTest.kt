@@ -32,7 +32,7 @@ import java.time.OffsetDateTime
 
 @IntegrationTest
 @ResetMocksAfterEachTest
-@WebMvcTest(BooksController::class, secure = false)
+@WebMvcTest(BooksController::class)
 @AutoConfigureRestDocs("build/generated-snippets/books")
 internal class BooksControllerDocTest(
     @Autowired val bookCollection: BookCollection,
@@ -63,7 +63,7 @@ internal class BooksControllerDocTest(
             )
         mvc.perform(request)
             .andExpect(status().isCreated)
-            .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+            .andExpect(content().contentType("application/hal+json"))
             .andDo(document("postBook-created"))
     }
 
@@ -73,7 +73,7 @@ internal class BooksControllerDocTest(
             .content(""" {} """)
         mvc.perform(request)
             .andExpect(status().isBadRequest)
-            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(content().contentType("application/json"))
             .andDo(document("error-example"))
     }
 
@@ -91,7 +91,7 @@ internal class BooksControllerDocTest(
             .content("""{ "authors": [$authorsValue] }""")
         mvc.perform(request)
             .andExpect(status().isOk)
-            .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+            .andExpect(content().contentType("application/hal+json"))
             .andDo(document("putBookAuthors-ok"))
     }
 
@@ -105,7 +105,7 @@ internal class BooksControllerDocTest(
 
         mvc.perform(delete("/api/books/3c15641e-2598-41f5-9097-b37e2d768be5/authors"))
             .andExpect(status().isOk)
-            .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+            .andExpect(content().contentType("application/hal+json"))
             .andDo(document("deleteBookAuthors-ok"))
     }
 
@@ -123,7 +123,7 @@ internal class BooksControllerDocTest(
             .content("""{ "numberOfPages": $numberOfPages }""")
         mvc.perform(request)
             .andExpect(status().isOk)
-            .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+            .andExpect(content().contentType("application/hal+json"))
             .andDo(document("putBookNumberOfPages-ok"))
     }
 
@@ -137,7 +137,7 @@ internal class BooksControllerDocTest(
 
         mvc.perform(delete("/api/books/3c15641e-2598-41f5-9097-b37e2d768be5/numberOfPages"))
             .andExpect(status().isOk)
-            .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+            .andExpect(content().contentType("application/hal+json"))
             .andDo(document("deleteBookNumberOfPages-ok"))
     }
 
@@ -155,7 +155,7 @@ internal class BooksControllerDocTest(
             .content("""{ "title": "$title" }""")
         mvc.perform(request)
             .andExpect(status().isOk)
-            .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+            .andExpect(content().contentType("application/hal+json"))
             .andDo(document("putBookTitle-ok"))
     }
 
