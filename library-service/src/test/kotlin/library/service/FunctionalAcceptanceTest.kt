@@ -30,7 +30,8 @@ import java.net.URL
     properties = [
         "application.secured=false",
         "spring.data.mongodb.port=\${MONGODB_PORT}",
-        "spring.rabbitmq.port=\${RABBITMQ_PORT}"
+        "spring.rabbitmq.port=\${RABBITMQ_PORT}",
+        "application.runner.enabled=false"
     ]
 )
 internal class FunctionalAcceptanceTest(
