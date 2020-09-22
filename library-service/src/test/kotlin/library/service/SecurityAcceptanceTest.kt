@@ -37,7 +37,8 @@ import utils.extensions.RabbitMqExtension
         webEnvironment = RANDOM_PORT,
         properties = [
             "spring.data.mongodb.port=\${MONGODB_PORT}",
-            "spring.rabbitmq.port=\${RABBITMQ_PORT}"
+            "spring.rabbitmq.port=\${RABBITMQ_PORT}",
+            "application.runner.enabled=false"
         ]
 )
 internal class SecurityAcceptanceTest {

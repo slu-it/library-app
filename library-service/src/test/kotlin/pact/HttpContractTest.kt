@@ -38,7 +38,7 @@ import utils.classification.ContractTest
 @SpringBootTest(
     classes = [Application::class, HttpContractTest.AdditionalBeans::class],
     webEnvironment = RANDOM_PORT,
-    properties = ["application.secured=false"]
+    properties = ["application.secured=false", "application.runner.enabled=false"]
 )
 @TestInstance(PER_CLASS) // PACT needs this ... for some reason ...
 class HttpContractTest(
