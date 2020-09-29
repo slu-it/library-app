@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service
 @ConditionalOnProperty(
     prefix = "application.runner",
     value = ["enabled"],
-    havingValue = "true"
+    havingValue = "true",
+    matchIfMissing = true
 )
 @Service
 class GrpcServerRunner(
