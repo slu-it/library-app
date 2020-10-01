@@ -2,24 +2,29 @@ package library.service.grpc
 
 import io.grpc.Server
 import io.grpc.ServerBuilder
+import library.service.logging.logger
 import org.springframework.stereotype.Component
 
 @Component
-class GrpcServer (
+class GrpcServer(
     private val bookService: BookService
 ) {
-    fun init() = ServerBuilder.forPort(50052) //TODO: Make port configurable
+    private val log = GrpcServer::class.logger
+
+    private val port = 50052
+
+    fun init() = ServerBuilder.forPort(port) //TODO: Make port configurable
         .addService(bookService)
         .build()
 
-    fun start(server: Server){
+    fun start(server: Server) {
         server.start()
-        println("Server started, listening on 50052") //Replace with log
+        log.info("Server started, listening on $port")
         Runtime.getRuntime().addShutdownHook(
             Thread {
-                println("*** shutting down gRPC server since JVM is shutting down")
+                log.info("*** shutting down gRPC server since JVM is shutting down")
                 stop(server)
-                println("*** server shut down")
+                log.info("*** server shut down")
             }
         )
     }

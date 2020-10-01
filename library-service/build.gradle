@@ -23,6 +23,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'org.asciidoctor.convert'
 apply plugin: 'com.google.protobuf'
+apply plugin: 'idea'
 
 sourceCompatibility = 1.8
 compileKotlin {
@@ -115,8 +116,10 @@ task aggregateTestReports(type: TestReport) {
 /**
  * Configuration of Stubs generation from the protocol buffer.
  * Default location for protocol buffers: src/main/proto
+ * Idea plugin has to be enabled to recognize generated sources.
  */
 protobuf {
+    generatedFilesBaseDir = "$projectDir/src/generated"
     protoc {
         artifact = "com.google.protobuf:protoc:${protobufVersion}"
     }
@@ -134,6 +137,13 @@ protobuf {
             grpckt {}
         }
     }
+}
+
+/**
+ * Makes sure that the generated gRPC sources are cleaned.
+ */
+clean {
+    delete protobuf.generatedFilesBaseDir
 }
 
 asciidoctor {

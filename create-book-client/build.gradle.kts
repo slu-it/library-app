@@ -1,5 +1,10 @@
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.id
+import com.google.protobuf.gradle.ofSourceSet
+import com.google.protobuf.gradle.plugins
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import com.google.protobuf.gradle.*
 
 plugins {
 	id("org.springframework.boot") version "2.3.4.RELEASE"
@@ -7,7 +12,7 @@ plugins {
 	kotlin("jvm") version "1.3.72"
 	kotlin("plugin.spring") version "1.3.72"
 	id("com.google.protobuf") version "0.8.13"
-
+	idea
 }
 
 group = "library"
@@ -61,6 +66,7 @@ tasks.withType<KotlinCompile> {
  * Default location for protocol buffers: src/main/proto
  */
 protobuf {
+	generatedFilesBaseDir = "$projectDir/src/generated"
 	protoc {
 		artifact = "com.google.protobuf:protoc:$protobufVersion"
 	}
@@ -80,4 +86,11 @@ protobuf {
 			}
 		}
 	}
+}
+
+/**
+ * Makes sure that the generated gRPC sources are cleaned.
+ */
+tasks.getByName("clean"){
+	delete(protobuf.protobuf.generatedFilesBaseDir)
 }
