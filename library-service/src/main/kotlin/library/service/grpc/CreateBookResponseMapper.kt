@@ -14,7 +14,7 @@ class CreateBookResponseMapper {
     fun toCreateBookResponse(bookRecord: BookRecord) = CreateBookResponse
         .newBuilder()
         .apply {
-            this.isbn = bookRecord.book.toString()
+            this.isbn = bookRecord.book.isbn.toString()
             this.title = bookRecord.book.title.toString()
             this.addAllAuthors(bookRecord.book.authors.map { it.toString() }.toMutableList())
             this.numberOfPages = bookRecord.book.numberOfPages ?: 0

@@ -80,6 +80,7 @@ dependencies {
     testImplementation("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}")
     testImplementation("org.testcontainers:testcontainers:${testContainersVersion}")
     testImplementation("au.com.dius:pact-jvm-provider-junit5:${pactVersion}")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
