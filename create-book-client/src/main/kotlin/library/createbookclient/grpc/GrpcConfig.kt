@@ -1,4 +1,4 @@
-package library.createbookclient
+package library.createbookclient.grpc
 
 import io.grpc.ManagedChannelBuilder
 import org.springframework.context.annotation.Bean
