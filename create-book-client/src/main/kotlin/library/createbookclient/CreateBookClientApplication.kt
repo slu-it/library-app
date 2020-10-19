@@ -1,6 +1,7 @@
 package library.createbookclient
 
 import kotlinx.coroutines.runBlocking
+import library.createbookclient.grpc.CreateBookConsumer
 import mu.KotlinLogging.logger
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication

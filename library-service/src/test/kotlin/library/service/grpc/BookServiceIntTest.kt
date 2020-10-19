@@ -36,16 +36,10 @@ import utils.classification.IntegrationTest
 class BookServiceIntTest {
 
     @Autowired
-    private lateinit var collection: BookCollection
-
-    @Autowired
     private lateinit var mapper: CreateBookResponseMapper
 
     @Autowired
     private lateinit var securityCommons: SecurityCommons
-
-    @Autowired
-    private lateinit var bookService: BookService
 
     @Autowired
     private lateinit var grpcServer: GrpcServer
