@@ -1,0 +1,99 @@
+{
+  "definitions": [
+    {
+      "protopath": "book_create.proto",
+      "def": {
+        "messages": [
+          {
+            "name": "CreateBookRequest",
+            "fields": [
+              {
+                "id": 1,
+                "name": "isbn",
+                "type": "string"
+              },
+              {
+                "id": 2,
+                "name": "title",
+                "type": "string"
+              }
+            ]
+          },
+          {
+            "name": "Borrowed",
+            "fields": [
+              {
+                "id": 1,
+                "name": "by",
+                "type": "string"
+              },
+              {
+                "id": 2,
+                "name": "on",
+                "type": "string"
+              }
+            ]
+          },
+          {
+            "name": "CreateBookResponse",
+            "fields": [
+              {
+                "id": 1,
+                "name": "isbn",
+                "type": "string"
+              },
+              {
+                "id": 2,
+                "name": "title",
+                "type": "string"
+              },
+              {
+                "id": 3,
+                "name": "authors",
+                "type": "string",
+                "is_repeated": true
+              },
+              {
+                "id": 4,
+                "name": "number_of_pages",
+                "type": "int32"
+              },
+              {
+                "id": 5,
+                "name": "borrowed",
+                "type": "Borrowed"
+              }
+            ]
+          }
+        ],
+        "services": [
+          {
+            "name": "CreateBook",
+            "rpcs": [
+              {
+                "name": "CreateBook",
+                "in_type": "CreateBookRequest",
+                "out_type": "CreateBookResponse"
+              }
+            ]
+          }
+        ],
+        "package": {},
+        "options": [
+          {
+            "name": "java_multiple_files",
+            "value": "true"
+          },
+          {
+            "name": "java_package",
+            "value": "library.service.grpc"
+          },
+          {
+            "name": "java_outer_classname",
+            "value": "BookCreateProto"
+          }
+        ]
+      }
+    }
+  ]
+}
