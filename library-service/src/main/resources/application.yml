@@ -70,3 +70,7 @@ management:
       enabled: true
     prometheus:
       enabled: true
+
+grpc:
+  server:
+    port: 50052

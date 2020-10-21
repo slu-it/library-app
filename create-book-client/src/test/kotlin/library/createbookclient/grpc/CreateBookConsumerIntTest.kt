@@ -13,9 +13,12 @@ import org.springframework.test.context.ContextConfiguration
 import org.testit.testutils.logrecorder.api.LogRecord
 import org.testit.testutils.logrecorder.junit5.RecordLoggers
 import utils.GrpcServerInitializer
+import utils.SERVER_PORT_TEST
 import utils.grpcServer
 
-@SpringBootTest
+@SpringBootTest(
+    properties = ["grpc.server.port=$SERVER_PORT_TEST"]
+)
 @ContextConfiguration(
     classes = [CreateBookConsumerIntTest.TestConfiguration::class],
     initializers = [GrpcServerInitializer::class]

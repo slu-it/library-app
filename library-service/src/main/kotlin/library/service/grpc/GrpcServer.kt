@@ -3,17 +3,20 @@ package library.service.grpc
 import io.grpc.Server
 import io.grpc.ServerBuilder
 import library.service.logging.logger
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component
 
 @Component
+@EnableConfigurationProperties(GrpcServerSettings::class)
 class GrpcServer(
-    private val bookService: BookService
+    private val bookService: BookService,
+    private val grpcServerSettings: GrpcServerSettings
 ) {
     private val log = GrpcServer::class.logger
 
-    private val port = 50052
+    private val port = grpcServerSettings.port.toInt()
 
-    fun init() = ServerBuilder.forPort(port) //TODO: Make port configurable
+    fun init() = ServerBuilder.forPort(port)
         .addService(bookService)
         .build()
 
