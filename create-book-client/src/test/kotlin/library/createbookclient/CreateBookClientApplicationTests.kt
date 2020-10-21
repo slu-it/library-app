@@ -10,7 +10,10 @@ import org.springframework.test.context.ContextConfiguration
 import utils.GrpcServerInitializer
 import utils.grpcServer
 
-@SpringBootTest(args = ["HarryPotter,9783551557414"])
+@SpringBootTest(
+    args = ["HarryPotter,9783551557414"],
+    properties = ["grpc.server.port=${utils.SERVER_PORT_TEST}"]
+)
 /**
  * GRPC Server has to be started before the request is being sent.
  */

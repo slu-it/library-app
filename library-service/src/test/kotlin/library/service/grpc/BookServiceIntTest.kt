@@ -29,7 +29,11 @@ import org.springframework.test.context.ContextConfiguration
 import utils.classification.IntegrationTest
 
 @IntegrationTest
-@SpringBootTest
+@SpringBootTest(
+    properties = [
+        "grpc.server.port=50057"
+    ]
+)
 @Import(GrpcServer::class)
 @ContextConfiguration(classes = [BookServiceIntTest.TestConfiguration::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -62,7 +66,7 @@ class BookServiceIntTest {
          * Creates a channel that will connect to the gRPC Server
          */
         channel = ManagedChannelBuilder
-            .forAddress("localhost", 50052)
+            .forAddress("localhost", 50057)
             .usePlaintext()
             .build()
     }
