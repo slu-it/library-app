@@ -23,6 +23,8 @@ domain events by posting them to a configured slack channel.
 - The `library-ui` is a client side frontend for the `library-service`. It allows
 for the management of the library as well as the borrowing and returning
 of books by customers.
+- The `create-book-client` is a gRPC client, that sends request for creating 
+a new book to `library-service`, communicating over gRPC.
 
 ## Technology Showcases
 
@@ -36,6 +38,7 @@ of books by customers.
 - Documentation generation with Asciidoctor (`library-service`)
 - Declarative REST Clients with Feign (`library-enrichment`)
 - Contract Testing with PACT (`library-service` and `library-enrichment`)
+- gRPC with Kotlin (`library-service` and `create-book-client`)
 
 ## Software Engineering Practices
 
