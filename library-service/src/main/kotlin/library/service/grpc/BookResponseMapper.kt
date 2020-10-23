@@ -1,5 +1,7 @@
 package library.service.grpc
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.states.Available
 import org.springframework.stereotype.Component
@@ -9,9 +11,9 @@ import library.service.business.books.domain.states.Borrowed as BorrowedState
  * Component responsible for converting a [BookRecord] into a [CreateBookResponse].
  */
 @Component
-class CreateBookResponseMapper {
+class BookResponseMapper {
 
-    fun toCreateBookResponse(bookRecord: BookRecord) = CreateBookResponse
+    fun toBookResponse(bookRecord: BookRecord) = BookResponse
         .newBuilder()
         .apply {
             this.isbn = bookRecord.book.isbn.toString()
@@ -27,4 +29,8 @@ class CreateBookResponseMapper {
             }
         }
         .build()
+
+    fun toBooksResponse(bookRecords: List<BookRecord>): Flow<BookResponse> = flow {
+        bookRecords.map { bookRecord -> toBookResponse(bookRecord) }
+    }
 }

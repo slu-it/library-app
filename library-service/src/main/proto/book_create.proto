@@ -1,31 +1,21 @@
 syntax = "proto3";
 
+import "book_response.proto";
+
 option java_multiple_files = true;
 option java_package = "library.service.grpc";
 option java_outer_classname = "BookCreateProto";
 
 // The definition of Book creation service.
-service CreateBook{
-    rpc CreateBook(CreateBookRequest) returns (CreateBookResponse){}
+service CreateBook {
+    rpc CreateBook (CreateBookRequest) returns (BookResponse) {
+    }
 }
 
-message CreateBookRequest{
+message CreateBookRequest {
     // 1 to 15 use 1 byte, above 15 2 bytes in the proto message. Thus it is good to reserve
     // the first 15 for frequently used fields.
     string isbn = 1;
     string title = 2;
-}
-
-message Borrowed{
-    string by = 1;
-    string on = 2;
-}
-
-message CreateBookResponse{
-    string isbn = 1;
-    string title = 2;
-    repeated string authors = 3; // defines an array
-    int32 number_of_pages = 4;
-    Borrowed borrowed = 5;
 }
 

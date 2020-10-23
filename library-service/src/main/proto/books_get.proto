@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "book_response.proto";
+
+option java_multiple_files = true;
+option java_package = "library.service.grpc";
+option java_outer_classname = "BookReadProto";
+
+// The definition of Book reading service.
+service GetBooks {
+    rpc GetBooks (google.protobuf.Empty) returns (stream BookResponse) {
+    }
+}

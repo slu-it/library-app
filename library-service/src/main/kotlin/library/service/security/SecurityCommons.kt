@@ -30,4 +30,23 @@ class SecurityCommons(
             }
         }
     }
+
+    fun <T : Any> executeOperationAsUser(operation: () -> T): T {
+        val originalContext = SecurityContextHolder.getContext()
+        try {
+            val authentication =
+                UsernamePasswordAuthenticationToken(
+                    userSettings.user.username, userSettings.user.password,
+                    listOf(SimpleGrantedAuthority(Authorizations.USER_ROLE))
+                )
+            SecurityContextHolder.setContext(SecurityContextImpl(authentication))
+            return operation()
+        } finally {
+            if (originalContext == null) {
+                SecurityContextHolder.clearContext()
+            } else {
+                SecurityContextHolder.setContext(originalContext)
+            }
+        }
+    }
 }

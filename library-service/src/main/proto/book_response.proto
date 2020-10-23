@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "library.service.grpc";
+option java_outer_classname = "BookResponseProto";
+
+message BookResponse {
+    string isbn = 1;
+    string title = 2;
+    repeated string authors = 3; // defines an array
+    int32 number_of_pages = 4;
+    Borrowed borrowed = 5;
+}
+
+message Borrowed {
+    string by = 1;
+    string on = 2;
+}
