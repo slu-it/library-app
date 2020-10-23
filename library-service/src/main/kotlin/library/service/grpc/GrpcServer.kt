@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component
 @Component
 @EnableConfigurationProperties(GrpcServerSettings::class)
 class GrpcServer(
-    private val bookService: BookService,
+    private val createBookService: CreateBookService,
+    private val getBooksService: GetBooksService,
     private val grpcServerSettings: GrpcServerSettings
 ) {
     private val log = GrpcServer::class.logger
@@ -17,7 +18,8 @@ class GrpcServer(
     private val port = grpcServerSettings.port.toInt()
 
     fun init() = ServerBuilder.forPort(port)
-        .addService(bookService)
+        .addService(createBookService)
+        .addService(getBooksService)
         .build()
 
     fun start(server: Server) {

@@ -40,7 +40,7 @@ import utils.classification.IntegrationTest
 class BookServiceIntTest {
 
     @Autowired
-    private lateinit var mapper: CreateBookResponseMapper
+    private lateinit var mapper: BookResponseMapper
 
     @Autowired
     private lateinit var securityCommons: SecurityCommons
@@ -85,13 +85,16 @@ class BookServiceIntTest {
         fun securityCommons() = mockk<SecurityCommons>()
 
         @Bean
-        fun createBookResponseMapper() = mockk<CreateBookResponseMapper>()
+        fun createBookResponseMapper() = mockk<BookResponseMapper>()
 
         @Bean
-        fun bookService(
-            collection: BookCollection, mapper: CreateBookResponseMapper,
+        fun createBookService(
+            collection: BookCollection, mapper: BookResponseMapper,
             securityCommons: SecurityCommons
-        ) = BookService(collection, mapper, securityCommons)
+        ) = CreateBookService(collection, mapper, securityCommons)
+
+        @Bean
+        fun getBookService() = mockk<GetBooksService>(relaxed = true)
     }
 
     @Test
@@ -119,7 +122,7 @@ class BookServiceIntTest {
             .setTitle(title)
             .build()
 
-        val expectedResponse = CreateBookResponse
+        val expectedResponse = BookResponse
             .newBuilder()
             .apply {
                 this.isbn = isbn
@@ -131,7 +134,7 @@ class BookServiceIntTest {
             .build()
 
         every { securityCommons.executeOperationAsCurator(capture(captureCallback)) } answers { bookRecord }
-        every { mapper.toCreateBookResponse(bookRecord) } returns expectedResponse
+        every { mapper.toBookResponse(bookRecord) } returns expectedResponse
 
         val result = runBlocking {
             clientStub.createBook(request)
@@ -140,4 +143,3 @@ class BookServiceIntTest {
         assertThat(result).isEqualTo(expectedResponse)
     }
 }
-
