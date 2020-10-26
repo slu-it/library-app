@@ -31,13 +31,13 @@ import utils.classification.IntegrationTest
 @IntegrationTest
 @SpringBootTest(
     properties = [
-        "grpc.server.port=50057"
+        "grpc.server.port=$GRPC_SERVER_PORT"
     ]
 )
 @Import(GrpcServer::class)
-@ContextConfiguration(classes = [BookServiceIntTest.TestConfiguration::class])
+@ContextConfiguration(classes = [CreateBookServiceIntTest.TestConfiguration::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BookServiceIntTest {
+class CreateBookServiceIntTest {
 
     @Autowired
     private lateinit var mapper: BookResponseMapper
@@ -66,7 +66,7 @@ class BookServiceIntTest {
          * Creates a channel that will connect to the gRPC Server
          */
         channel = ManagedChannelBuilder
-            .forAddress("localhost", 50057)
+            .forAddress("localhost", GRPC_SERVER_PORT)
             .usePlaintext()
             .build()
     }
