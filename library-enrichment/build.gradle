@@ -8,26 +8,28 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+        classpath("com.google.protobuf:protobuf-gradle-plugin:0.8.13")
     }
 }
 
 apply plugin: 'docker'
 apply plugin: 'kotlin'
-//apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-spring'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.google.protobuf'
+apply plugin: 'idea'
 
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.2"
+        languageVersion = "1.3"
     }
 }
 compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.2"
+        languageVersion = "1.3"
     }
 }
 
@@ -36,34 +38,40 @@ repositories {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}",
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}",
             "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    compile("org.springframework.boot:spring-boot-starter-actuator",
+    implementation("org.springframework.boot:spring-boot-starter-actuator",
             "org.springframework.boot:spring-boot-starter-aop",
             "org.springframework.boot:spring-boot-starter-amqp",
             "org.springframework.boot:spring-boot-starter-security",
             "org.springframework.boot:spring-boot-starter-web")
-    compile("io.github.openfeign:feign-core:${feignVersion}",
+    implementation("io.github.openfeign:feign-core:${feignVersion}",
             "io.github.openfeign:feign-jackson:${feignVersion}",
             "io.github.openfeign:feign-slf4j:${feignVersion}")
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin")
-    compile("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
-    compile("io.micrometer:micrometer-registry-prometheus")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("com.google.protobuf:protobuf-java-util:$protobufVersion")
+    implementation("io.grpc:grpc-protobuf:$grpcVersion")
+    implementation("io.grpc:grpc-stub:$grpcVersion")
+    implementation("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    runtimeOnly("io.grpc:grpc-netty-shaded:$grpcVersion")
 
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
-            "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
-    testCompile("io.rest-assured:rest-assured")
-    testCompile("com.tngtech.archunit:archunit:${archunitVersion}")
-    testCompile("com.github.tomakehurst:wiremock-standalone:${wiremockVersion}")
-    testCompile("com.nhaarman.mockitokotlin2:mockito-kotlin:${mockitoKotlinVersion}")
-    testCompile("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}")
-    testCompile("au.com.dius:pact-jvm-consumer_2.12:${pactVersion}",
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.junit.jupiter:junit-jupiter-api",
+            "org.junit.jupiter:junit-jupiter-params")
+    testImplementation("io.rest-assured:rest-assured")
+    testImplementation("com.tngtech.archunit:archunit:${archunitVersion}")
+    testImplementation("com.github.tomakehurst:wiremock-standalone:${wiremockVersion}")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:${mockitoKotlinVersion}")
+    testImplementation("info.novatec.testit:testutils-logrecorder-logback:${logRecorderVersion}")
+    testImplementation("au.com.dius:pact-jvm-consumer_2.12:${pactVersion}",
             "au.com.dius:pact-jvm-consumer-junit_2.12:${pactVersion}")
-    testCompile("org.testcontainers:testcontainers:1.8.1")
+    testImplementation("org.testcontainers:testcontainers:1.14.2")
 
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
-            "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine",
+            "org.junit.platform:junit-platform-launcher")
 
     // enable @ConfigurationProperties annotation processing
     // kapt("org.springframework.boot:spring-boot-configuration-processor")
@@ -72,6 +80,39 @@ dependencies {
 
 springBoot {
     buildInfo()
+}
+
+/**
+ * Configuration of Stubs generation from the protocol buffer.
+ * Default location for protocol buffers: src/main/proto
+ * Idea plugin has to be enabled to recognize generated sources.
+ */
+protobuf {
+    generatedFilesBaseDir = "$projectDir/src/generated"
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+        grpckt {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:${grpcKotlinVersion}"
+        }
+    }
+    generateProtoTasks {
+        ofSourceSet('main')*.plugins {
+            grpc {}
+            grpckt {}
+        }
+    }
+}
+
+/**
+ * Makes sure that the generated gRPC sources are cleaned.
+ */
+clean {
+    delete protobuf.generatedFilesBaseDir
 }
 
 task unitTest(type: Test) {

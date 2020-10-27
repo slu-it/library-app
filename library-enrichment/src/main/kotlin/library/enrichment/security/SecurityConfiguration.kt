@@ -25,7 +25,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableConfigurationProperties(UserSettings::class)
 class SecurityConfiguration(
-        private val userSettings: UserSettings
+    private val userSettings: UserSettings
 ) : WebSecurityConfigurerAdapter() {
 
     private val infoEndpoint = InfoEndpoint::class.java
@@ -38,9 +38,9 @@ class SecurityConfiguration(
         httpBasic()
         sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         authorizeRequests {
-            requestMatchers(EndpointRequest.to(infoEndpoint, healthEndpoint)).permitAll()
-            requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(Roles.ACTUATOR)
-            anyRequest().fullyAuthenticated()
+            it.requestMatchers(EndpointRequest.to(infoEndpoint, healthEndpoint)).permitAll()
+            it.requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(Roles.ACTUATOR)
+            it.anyRequest().fullyAuthenticated()
         }
     }
 
@@ -50,20 +50,21 @@ class SecurityConfiguration(
         }
     }
 
-    @Bean override fun authenticationManagerBean(): AuthenticationManager = super.authenticationManagerBean()
+    @Bean
+    override fun authenticationManagerBean(): AuthenticationManager = super.authenticationManagerBean()
 
     private fun UserSettings.UserCredentials.toUser(vararg roles: String) = User
-            .withUsername(username)
-            .password(encoder.encode(password))
-            .roles(*roles)
-            .build()
+        .withUsername(username)
+        .password(encoder.encode(password))
+        .roles(*roles)
+        .build()
 
     private fun HttpSecurity.authorizeRequests(
-            body: ExpressionUrlAuthorizationConfigurer<*>.ExpressionInterceptUrlRegistry.() -> Unit
+        body: ExpressionUrlAuthorizationConfigurer<*>.ExpressionInterceptUrlRegistry.() -> Unit
     ) = body(this.authorizeRequests())
 
     private fun AuthenticationManagerBuilder.inMemoryAuthentication(
-            body: InMemoryUserDetailsManagerConfigurer<*>.() -> Unit
+        body: InMemoryUserDetailsManagerConfigurer<*>.() -> Unit
     ) = body(this.inMemoryAuthentication())
 
 }
