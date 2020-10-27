@@ -48,7 +48,7 @@ internal class SecurityAcceptanceTest {
         }
 
         @ValueSource(strings = ["beans", "conditions", "configprops", "env", "loggers",
-            "metrics", "scheduledtasks", "httptrace", "mappings", "prometheus"])
+            "metrics", "scheduledtasks", "mappings", "prometheus"])
         @ParameterizedTest fun `any other actuator endpoint can only be accessed by an admin`(endpoint: String) {
             given { auth().none() }
                     .`when` { get("/actuator/$endpoint") }
