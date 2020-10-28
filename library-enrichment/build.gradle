@@ -69,10 +69,9 @@ dependencies {
     testImplementation("au.com.dius:pact-jvm-consumer_2.12:${pactVersion}",
             "au.com.dius:pact-jvm-consumer-junit_2.12:${pactVersion}")
     testImplementation("org.testcontainers:testcontainers:1.14.2")
-
-    testRuntime("org.junit.jupiter:junit-jupiter-engine",
+    
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine",
             "org.junit.platform:junit-platform-launcher")
-
     // enable @ConfigurationProperties annotation processing
     // kapt("org.springframework.boot:spring-boot-configuration-processor")
     // annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

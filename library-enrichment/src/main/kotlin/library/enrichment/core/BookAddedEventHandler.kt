@@ -2,6 +2,7 @@ package library.enrichment.core
 
 import library.enrichment.logging.LogMethodEntryAndExit
 import mu.KotlinLogging.logger
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 /**
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Component
 @LogMethodEntryAndExit
 class BookAddedEventHandler(
         private val dataSources: List<BookDataSource>,
-        private val library: Library
+        @Qualifier("updateBookConsumer") private val library: Library
 ) {
 
     private val log = logger {}

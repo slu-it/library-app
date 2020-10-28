@@ -57,3 +57,8 @@ datasources:
   openlibrary:
     url: "https://openlibrary.org"
     logLevel: "FULL"
+
+grpc:
+  server:
+    address: localhost
+    port: 50052

@@ -7,9 +7,7 @@ import com.nhaarman.mockitokotlin2.timeout
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.willReturn
 import library.enrichment.core.BookAddedEvent
-import library.enrichment.gateways.library.LibraryClient
-import library.enrichment.gateways.library.UpdateAuthors
-import library.enrichment.gateways.library.UpdateNumberOfPages
+import library.enrichment.gateways.grpc.LibraryClient
 import library.enrichment.gateways.openlibrary.OpenLibraryClient
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -23,14 +21,14 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import utils.classification.AcceptanceTest
 import utils.extensions.RabbitMqExtension
-import utils.readFile
 
+import utils.readFile
 
 @AcceptanceTest
 @ExtendWith(RabbitMqExtension::class, SpringExtension::class)
 @SpringBootTest(
-        webEnvironment = NONE,
-        properties = ["spring.rabbitmq.port=\${RABBITMQ_PORT}"]
+    webEnvironment = NONE,
+    properties = ["spring.rabbitmq.port=\${RABBITMQ_PORT}"]
 )
 @ActiveProfiles("test", "unsecured")
 internal class FunctionalAcceptanceTest {
@@ -42,28 +40,39 @@ internal class FunctionalAcceptanceTest {
         const val bookId = "175c5a7e-dd91-4d42-8c0d-6a97d8755231"
     }
 
-    @Autowired lateinit var exchange: TopicExchange
-    @Autowired lateinit var objectMapper: ObjectMapper
-    @Autowired lateinit var rabbitTemplate: RabbitTemplate
+    @Autowired
+    lateinit var exchange: TopicExchange
 
-    @MockBean lateinit var openLibraryClient: OpenLibraryClient
-    @MockBean lateinit var libraryClient: LibraryClient
+    @Autowired
+    lateinit var objectMapper: ObjectMapper
 
-    @Test fun `book added events are processed correctly`() {
+    @Autowired
+    lateinit var rabbitTemplate: RabbitTemplate
+
+    @MockBean
+    lateinit var openLibraryClient: OpenLibraryClient
+
+    @MockBean
+    lateinit var libraryClient: LibraryClient
+
+    @Test
+    fun `book added events are processed correctly`() {
         given { openLibraryClient.searchBooks("9780261102354") } willReturn {
             readFile("openlibrary/responses/200_isbn_9780261102354.json").toJson()
         }
 
-        send(BookAddedEvent(
+        send(
+            BookAddedEvent(
                 id = id,
                 bookId = bookId,
                 isbn = "9780261102354"
-        ))
+            )
+        )
 
         verify(libraryClient, timeout(TIMEOUT))
-                .updateAuthors(bookId, UpdateAuthors(listOf("J. R. R. Tolkien")))
+            .updateAuthors(bookId, listOf("J. R. R. Tolkien"))
         verify(libraryClient, timeout(TIMEOUT))
-                .updateNumberOfPages(bookId, UpdateNumberOfPages(576))
+            .updateNumberOfPages(bookId, 576)
     }
 
     fun String.toJson(): JsonNode = objectMapper.readTree(this)
