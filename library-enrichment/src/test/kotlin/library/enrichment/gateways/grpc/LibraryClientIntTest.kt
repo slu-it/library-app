@@ -44,11 +44,25 @@ class LibraryClientIntTest {
 
     @RecordLoggers(LibraryClient::class)
     @Test
-    fun `should update Book number of pages, given a exisiting book`(log: LogRecord) {
+    fun `should update Book number of pages, given an exisiting book`(log: LogRecord) {
         val expectedLogMessage =
             "successfully updated number of pages of book [175c5a7e-dd91-4d42-8c0d-6a97d8755231] to [576]"
 
         libraryClient.updateNumberOfPages("175c5a7e-dd91-4d42-8c0d-6a97d8755231", 576)
+
+        assertThat(log.messages).containsOnlyOnce(expectedLogMessage)
+    }
+
+    @RecordLoggers(LibraryClient::class)
+    @Test
+    fun `should update Book authors, given an exisiting book`(log: LogRecord) {
+        val firstAuthor = "Robert C. Martin"
+        val secondAuthor = "Dean Wampler"
+
+        val expectedLogMessage =
+            "successfully updated authors of book [175c5a7e-dd91-4d42-8c0d-6a97d8755231] to [Robert C. Martin, Dean Wampler]"
+
+        libraryClient.updateAuthors("175c5a7e-dd91-4d42-8c0d-6a97d8755231", listOf(firstAuthor, secondAuthor))
 
         assertThat(log.messages).containsOnlyOnce(expectedLogMessage)
     }

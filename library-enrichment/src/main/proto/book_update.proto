@@ -10,6 +10,8 @@ option java_outer_classname = "BookUpdateProto";
 service UpdateBook {
     rpc UpdateNumberOfPages (UpdateNumberOfPagesRequest) returns (BookResponse) {
     }
+    rpc UpdateAuthors (UpdateAuthorsRequest) returns (BookResponse) {
+    }
 }
 
 message UpdateNumberOfPagesRequest {
@@ -17,3 +19,7 @@ message UpdateNumberOfPagesRequest {
     int32 number_of_pages = 2;
 }
 
+message UpdateAuthorsRequest {
+    string book_id = 1;
+    repeated string authors = 2;
+}
