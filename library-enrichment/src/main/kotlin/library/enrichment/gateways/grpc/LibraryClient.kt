@@ -11,7 +11,10 @@ import java.io.Closeable
 import java.util.concurrent.*
 
 @Component("updateBookConsumer")
-class LibraryClient(private val channel: ManagedChannel) : Library, Closeable {
+class LibraryClient(
+    private val channel: ManagedChannel,
+    private val errorHandler: GrpcErrorHandler
+) : Library, Closeable {
     private val log = logger {}
 
     private val stub = UpdateBookGrpcKt.UpdateBookCoroutineStub(channel)
@@ -26,8 +29,9 @@ class LibraryClient(private val channel: ManagedChannel) : Library, Closeable {
             )
         }
         log.debug { "successfully updated authors of book [$bookId] to $authors" }
-    } catch (e: Exception) {
+    } catch (e: StatusException) {
         log.error(e) { "failed to update authors of book [$bookId] because of an error: ${e.message}" }
+        errorHandler.handleError(e)
     }
 
     override fun updateNumberOfPages(bookId: String, numberOfPages: Int) = try {
@@ -40,8 +44,9 @@ class LibraryClient(private val channel: ManagedChannel) : Library, Closeable {
             )
         }
         log.info { "successfully updated number of pages of book [$bookId] to [$numberOfPages]" }
-    } catch (e: StatusException) { //TODO: GRPC Proper exception handling
+    } catch (e: StatusException) {
         log.error(e) { "failed to update number of pages of book [$bookId] because of an error:" }
+        errorHandler.handleError(e)
     }
 
     override fun close() {
