@@ -55,7 +55,7 @@ class LibraryClientIntTest {
 
     @RecordLoggers(LibraryClient::class)
     @Test
-    fun `should update Book authors, given an exisiting book`(log: LogRecord) {
+    fun `should update Book authors, given an existing book`(log: LogRecord) {
         val firstAuthor = "Robert C. Martin"
         val secondAuthor = "Dean Wampler"
 
