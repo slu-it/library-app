@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "book_response.proto";
+
+option java_multiple_files = true;
+option java_package = "library.service.grpc";
+option java_outer_classname = "BookUpdateProto";
+
+// The definition of Book update service.
+service UpdateBook {
+    rpc UpdateNumberOfPages (UpdateNumberOfPagesRequest) returns (BookResponse) {
+    }
+    rpc UpdateAuthors (UpdateAuthorsRequest) returns (BookResponse) {
+    }
+}
+
+message UpdateNumberOfPagesRequest {
+    string book_id = 1;
+    int32 number_of_pages = 2;
+}
+
+message UpdateAuthorsRequest {
+    string book_id = 1;
+    repeated string authors = 2;
+}

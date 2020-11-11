@@ -38,7 +38,7 @@ a new book to `library-service`, communicating over gRPC.
 - Documentation generation with Asciidoctor (`library-service`)
 - Declarative REST Clients with Feign (`library-enrichment`)
 - Contract Testing with PACT (`library-service` and `library-enrichment`)
-- gRPC with Kotlin (`library-service` and `create-book-client`)
+- gRPC with Kotlin (`library-service` and `create-book-client`, `library-service` and `library-enrichment`)
 
 ## Software Engineering Practices
 

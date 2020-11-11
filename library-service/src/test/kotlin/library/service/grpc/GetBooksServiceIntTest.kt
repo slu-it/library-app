@@ -102,6 +102,9 @@ class GetBooksServiceIntTest {
 
         @Bean
         fun createBookService() = mockk<CreateBookService>(relaxed = true)
+
+        @Bean
+        fun updateBookService() = mockk<UpdateBookService>(relaxed = true)
     }
 
     @Test
