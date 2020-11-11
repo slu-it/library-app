@@ -11,10 +11,10 @@ import library.service.business.books.BookCollection
 import library.service.business.books.domain.BookRecord
 import library.service.business.books.domain.composites.Book
 import library.service.business.books.domain.states.Available
+import library.service.business.books.domain.types.Author
 import library.service.business.books.domain.types.BookId
 import library.service.business.books.domain.types.Isbn13
 import library.service.business.books.domain.types.Title
-import library.service.grpc.CreateBookGrpcKt.CreateBookCoroutineStub
 import library.service.security.SecurityCommons
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
@@ -35,9 +35,9 @@ import utils.classification.IntegrationTest
     ]
 )
 @Import(GrpcServer::class)
-@ContextConfiguration(classes = [CreateBookServiceIntTest.TestConfiguration::class])
+@ContextConfiguration(classes = [UpdateBookServiceIntTest.TestConfiguration::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CreateBookServiceIntTest {
+class UpdateBookServiceIntTest {
 
     @Autowired
     private lateinit var mapper: BookResponseMapper
@@ -88,22 +88,22 @@ class CreateBookServiceIntTest {
         fun createBookResponseMapper() = mockk<BookResponseMapper>()
 
         @Bean
-        fun createBookService(
+        fun updateBookService(
             collection: BookCollection, mapper: BookResponseMapper,
             securityCommons: SecurityCommons
-        ) = CreateBookService(collection, mapper, securityCommons)
+        ) = UpdateBookService(collection, mapper, securityCommons)
 
         @Bean
         fun getBookService() = mockk<GetBooksService>(relaxed = true)
 
         @Bean
-        fun updateBookService() = mockk<UpdateBookService>(relaxed = true)
+        fun createBookService() = mockk<CreateBookService>(relaxed = true)
     }
 
     @Test
-    fun `should create BookResponse given valid CreateBookRequest`() {
+    fun `should update authors given valid UpdateAuthorsRequest`() {
 
-        val clientStub = CreateBookCoroutineStub(channel)
+        val clientStub = UpdateBookGrpcKt.UpdateBookCoroutineStub(channel)
 
         val title = "HarryPotter"
         val isbn = "9783551557414"
@@ -114,24 +114,24 @@ class CreateBookServiceIntTest {
             book = Book(
                 isbn = Isbn13(isbn),
                 title = Title(title),
-                authors = emptyList(),
-                numberOfPages = null
+                authors = listOf(Author("J.K. Rowling")),
+                numberOfPages = 257
             ),
             state = Available
         )
 
-        val request = CreateBookRequest.newBuilder()
-            .setIsbn(isbn)
-            .setTitle(title)
-            .build()
+        val request = UpdateAuthorsRequest.newBuilder().apply {
+            this.addAllAuthors(listOf("J.K. Rowling"))
+            this.bookId = bookId.toString()
+        }.build()
 
         val expectedResponse = BookResponse
             .newBuilder()
             .apply {
                 this.isbn = isbn
                 this.title = title
-                this.addAllAuthors(emptyList<String>())
-                this.numberOfPages = 0
+                this.addAllAuthors(listOf("J.K. Rowling"))
+                this.numberOfPages = 257
                 this.borrowed = Borrowed.newBuilder().build()
             }
             .build()
@@ -140,7 +140,53 @@ class CreateBookServiceIntTest {
         every { mapper.toBookResponse(bookRecord) } returns expectedResponse
 
         val result = runBlocking {
-            clientStub.createBook(request)
+            clientStub.updateAuthors(request)
+        }
+
+        assertThat(result).isEqualTo(expectedResponse)
+    }
+
+    @Test
+    fun `should update number of pages given valid UpdateNumberOfPagesRequest`() {
+
+        val clientStub = UpdateBookGrpcKt.UpdateBookCoroutineStub(channel)
+
+        val title = "HarryPotter"
+        val isbn = "9783551557414"
+        val bookId = BookId.generate()
+
+        val bookRecord = BookRecord(
+            id = bookId,
+            book = Book(
+                isbn = Isbn13(isbn),
+                title = Title(title),
+                authors = listOf(Author("J.K. Rowling")),
+                numberOfPages = 257
+            ),
+            state = Available
+        )
+
+        val request = UpdateNumberOfPagesRequest.newBuilder().apply {
+            this.numberOfPages = 257
+            this.bookId = bookId.toString()
+        }.build()
+
+        val expectedResponse = BookResponse
+            .newBuilder()
+            .apply {
+                this.isbn = isbn
+                this.title = title
+                this.addAllAuthors(listOf("J.K. Rowling"))
+                this.numberOfPages = 257
+                this.borrowed = Borrowed.newBuilder().build()
+            }
+            .build()
+
+        every { securityCommons.executeOperationAsCurator(capture(captureCallback)) } answers { bookRecord }
+        every { mapper.toBookResponse(bookRecord) } returns expectedResponse
+
+        val result = runBlocking {
+            clientStub.updateNumberOfPages(request)
         }
 
         assertThat(result).isEqualTo(expectedResponse)

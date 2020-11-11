@@ -30,7 +30,6 @@ class LibraryClient(
         }
         log.debug { "successfully updated authors of book [$bookId] to $authors" }
     } catch (e: StatusException) {
-        log.error(e) { "failed to update authors of book [$bookId] because of an error: ${e.message}" }
         errorHandler.handleError(e)
     }
 
@@ -45,7 +44,6 @@ class LibraryClient(
         }
         log.info { "successfully updated number of pages of book [$bookId] to [$numberOfPages]" }
     } catch (e: StatusException) {
-        log.error(e) { "failed to update number of pages of book [$bookId] because of an error:" }
         errorHandler.handleError(e)
     }
 
