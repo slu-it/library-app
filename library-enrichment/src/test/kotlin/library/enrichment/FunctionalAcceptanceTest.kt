@@ -7,7 +7,7 @@ import com.nhaarman.mockitokotlin2.timeout
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.willReturn
 import library.enrichment.core.BookAddedEvent
-import library.enrichment.gateways.grpc.LibraryClient
+import library.enrichment.gateways.library.grpc.LibraryClient
 import library.enrichment.gateways.openlibrary.OpenLibraryClient
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

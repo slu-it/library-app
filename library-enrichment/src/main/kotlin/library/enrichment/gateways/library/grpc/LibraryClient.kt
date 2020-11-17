@@ -1,9 +1,12 @@
-package library.enrichment.gateways.grpc
+package library.enrichment.gateways.library.grpc
 
 import io.grpc.ManagedChannel
 import io.grpc.StatusException
 import kotlinx.coroutines.runBlocking
 import library.enrichment.core.Library
+import library.enrichment.gateways.library.grpc.UpdateAuthorsRequest
+import library.enrichment.gateways.library.grpc.UpdateBookGrpcKt
+import library.enrichment.gateways.library.grpc.UpdateNumberOfPagesRequest
 
 import mu.KotlinLogging.logger
 import org.springframework.stereotype.Component
@@ -17,7 +20,8 @@ class LibraryClient(
 ) : Library, Closeable {
     private val log = logger {}
 
-    private val stub = UpdateBookGrpcKt.UpdateBookCoroutineStub(channel)
+    private val stub =
+        UpdateBookGrpcKt.UpdateBookCoroutineStub(channel)
 
     override fun updateAuthors(bookId: String, authors: List<String>) = try {
         runBlocking {

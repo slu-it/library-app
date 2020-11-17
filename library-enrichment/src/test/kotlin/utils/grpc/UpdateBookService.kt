@@ -1,9 +1,9 @@
 package utils.grpc
 
-import library.enrichment.gateways.grpc.BookResponse
-import library.enrichment.gateways.grpc.UpdateAuthorsRequest
-import library.enrichment.gateways.grpc.UpdateBookGrpcKt
-import library.enrichment.gateways.grpc.UpdateNumberOfPagesRequest
+import library.enrichment.gateways.library.grpc.BookResponse
+import library.enrichment.gateways.library.grpc.UpdateAuthorsRequest
+import library.enrichment.gateways.library.grpc.UpdateBookGrpcKt
+import library.enrichment.gateways.library.grpc.UpdateNumberOfPagesRequest
 import org.springframework.boot.test.context.TestComponent
 
 /**

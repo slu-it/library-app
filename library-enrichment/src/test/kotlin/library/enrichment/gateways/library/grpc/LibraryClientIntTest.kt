@@ -1,4 +1,4 @@
-package library.enrichment.gateways.grpc
+package library.enrichment.gateways.library.grpc
 
 import io.grpc.ManagedChannel
 import org.assertj.core.api.Assertions.assertThat

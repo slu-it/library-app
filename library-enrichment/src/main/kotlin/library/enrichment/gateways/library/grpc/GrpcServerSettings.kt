@@ -1,4 +1,4 @@
-package library.enrichment.gateways.grpc
+package library.enrichment.gateways.library.grpc
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
