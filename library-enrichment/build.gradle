@@ -38,8 +38,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}",
-            "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8",
+            "org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-actuator",
             "org.springframework.boot:spring-boot-starter-aop",
             "org.springframework.boot:spring-boot-starter-amqp",

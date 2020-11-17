@@ -27,7 +27,7 @@ infix fun RequestResponsePact.execute(test: (MockServer) -> Unit) {
 }
 
 private class TestRun(private val test: (MockServer) -> Unit) : PactTestRun {
-    override fun run(mockServer: MockServer) {
+    override fun run(mockServer: MockServer, context: PactTestExecutionContext?) {
         test(mockServer)
     }
 }
