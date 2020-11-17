@@ -1,49 +1,49 @@
 {
-    "consumer": {
-        "name": "library-enrichment"
-    },
-    "provider": {
-        "name": "library-service"
-    },
-    "messages": [
-        {
-            "description": "'The Martian' was added event",
-            "metaData": {
-                "Content-Type": "application/json; charset=UTF-8"
-            },
-            "contents": {
-                "isbn": "9780091956141",
-                "id": "aa1dc09f-7b64-4e7e-a6f6-7eb50dcd6e9d",
-                "bookId": "9bf258be-19d4-4338-b172-60a1b7ef076b"
-            },
-            "matchingRules": {
-                "body": {
-                    "$.id": {
-                        "matchers": [
-                            {
-                                "match": "type"
-                            }
-                        ],
-                        "combine": "AND"
-                    },
-                    "$.bookId": {
-                        "matchers": [
-                            {
-                                "match": "type"
-                            }
-                        ],
-                        "combine": "AND"
-                    }
-                }
-            }
+  "consumer": {
+    "name": "library-enrichment"
+  },
+  "provider": {
+    "name": "library-service"
+  },
+  "messages": [
+    {
+      "description": "\u0027The Martian\u0027 was added event",
+      "metaData": {
+        "contentType": "application/json; charset\u003dUTF-8"
+      },
+      "contents": {
+        "isbn": "9780091956141",
+        "id": "aa1dc09f-7b64-4e7e-a6f6-7eb50dcd6e9d",
+        "bookId": "9bf258be-19d4-4338-b172-60a1b7ef076b"
+      },
+      "matchingRules": {
+        "body": {
+          "$.id": {
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ],
+            "combine": "AND"
+          },
+          "$.bookId": {
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ],
+            "combine": "AND"
+          }
         }
-    ],
-    "metadata": {
-        "pact-specification": {
-            "version": "3.0.0"
-        },
-        "pact-jvm": {
-            "version": "3.5.13"
-        }
+      }
     }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "3.6.15"
+    }
+  }
 }
