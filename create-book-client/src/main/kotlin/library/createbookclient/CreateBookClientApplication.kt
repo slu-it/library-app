@@ -1,5 +1,6 @@
 package library.createbookclient
 
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import library.createbookclient.grpc.CreateBookConsumer
 import mu.KotlinLogging.logger
@@ -32,12 +33,13 @@ class CreateBookClientApplication(
             title = inputValues.first()
         )
         runBlocking {
-            createBookConsumer.sendBook(
-                isbn = bookRequest.isbn,
-                title = bookRequest.title
-            )
+            launch {
+                createBookConsumer.sendBook(
+                    isbn = bookRequest.isbn,
+                    title = bookRequest.title
+                )
+            }
         }
-
     }
 }
 

@@ -31,6 +31,8 @@ class BookResponseMapper {
         .build()
 
     fun toBooksResponse(bookRecords: List<BookRecord>): Flow<BookResponse> = flow {
-        bookRecords.map { bookRecord -> toBookResponse(bookRecord) }
+        bookRecords.map { bookRecord -> toBookResponse(bookRecord) }.forEach {
+            emit(it)
+        }
     }
 }

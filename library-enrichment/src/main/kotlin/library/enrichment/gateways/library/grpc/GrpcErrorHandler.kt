@@ -1,4 +1,4 @@
-package library.enrichment.gateways.grpc
+package library.enrichment.gateways.library.grpc
 
 import io.grpc.Status
 import io.grpc.Status.DEADLINE_EXCEEDED
