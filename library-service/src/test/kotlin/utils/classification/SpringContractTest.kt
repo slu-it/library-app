@@ -10,7 +10,7 @@ import utils.testconfiguration.ContractTestConfiguration
 /**
  * Qualifier for Contract Tests:
  *
- * - [tagged][Tag] as `contract-test`
+ * - [tagged][Tag] as `pact-contract-test`
  * - if annotated class is a Spring Boot test:
  * -- imports [BaseTestConfiguration]
  * -- imports [ContractTestConfiguration]
@@ -22,8 +22,8 @@ import utils.testconfiguration.ContractTestConfiguration
  */
 @Retention
 @Target(AnnotationTarget.CLASS)
-@Tag("contract-test")
+@Tag("pact-contract-test")
 @DirtiesContext
 @Import(BaseTestConfiguration::class, ContractTestConfiguration::class)
 @ActiveProfiles("test", "contract-test")
-annotation class ContractTest
+annotation class SpringContractTest

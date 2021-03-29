@@ -19,11 +19,11 @@ import org.junit.jupiter.api.TestTemplate
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.amqp.core.MessageProperties
 import utils.Books
-import utils.classification.ContractTest
+import utils.classification.PactContractTest
 import java.time.OffsetDateTime
 import java.util.*
 
-@ContractTest
+@PactContractTest
 @Provider("library-service")
 @PactFolder("src/test/pacts/message")
 @VerificationReports("console")

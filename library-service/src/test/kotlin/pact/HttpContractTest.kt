@@ -28,9 +28,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 import utils.Books
 import utils.ResetMocksAfterEachTest
-import utils.classification.ContractTest
+import utils.classification.PactContractTest
 
-@ContractTest
+@PactContractTest
 @ResetMocksAfterEachTest
 @Provider("library-service")
 @PactFolder("src/test/pacts/http")
@@ -46,8 +46,12 @@ class HttpContractTest(
 ) {
 
     class AdditionalBeans {
-        @Primary @Bean fun bookDataStore(): BookDataStore = mockk()
-        @Primary @Bean fun eventDispatcher(): EventDispatcher<BookEvent> = mockk(relaxed = true)
+        @Primary
+        @Bean
+        fun bookDataStore(): BookDataStore = mockk()
+        @Primary
+        @Bean
+        fun eventDispatcher(): EventDispatcher<BookEvent> = mockk(relaxed = true)
     }
 
     @BeforeEach

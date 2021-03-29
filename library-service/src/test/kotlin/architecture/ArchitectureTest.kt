@@ -54,7 +54,7 @@ internal class ArchitectureTest {
                 javaClass.isEquivalentTo(IntegrationTest::class.java) -> true
                 javaClass.isEquivalentTo(SecuredIntegrationTest::class.java) -> true
                 javaClass.isEquivalentTo(AcceptanceTest::class.java) -> true
-                javaClass.isEquivalentTo(ContractTest::class.java) -> true
+                javaClass.isEquivalentTo(PactContractTest::class.java) -> true
                 else -> false
             }
         }
