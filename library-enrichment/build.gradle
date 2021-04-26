@@ -62,6 +62,8 @@ dependencies {
             "au.com.dius:pact-jvm-consumer-junit_2.12:${pactVersion}")
     testCompile("org.testcontainers:testcontainers:1.8.1")
 
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
             "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
@@ -72,6 +74,12 @@ dependencies {
 
 springBoot {
     buildInfo()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-contract-dependencies:${springCloudContractVersion}")
+    }
 }
 
 task unitTest(type: Test) {

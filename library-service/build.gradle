@@ -25,6 +25,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'org.asciidoctor.convert'
 apply plugin: 'spring-cloud-contract'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
 compileKotlin {
@@ -142,4 +143,17 @@ contracts {
 
 contractTest {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'library.scc'
+            artifactId = 'library-service'
+            version = '1'
+            artifact verifierStubsJar {
+                classifier = 'stubs'
+            }
+        }
+    }
 }
