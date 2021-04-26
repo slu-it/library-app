@@ -1,7 +1,9 @@
+package contracts
+
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+import org.springframework.hateoas.MediaTypes.HAL_JSON
 
 contract {
-
     description = "update authors of a book"
 
     request {
@@ -27,7 +29,7 @@ contract {
         status = OK
         headers {
             header("X-Correlation-Id", "5d59f7da-f52f-46df-85c5-2d97b3b42aad")
-            contentType = APPLICATION_JSON
+            contentType = HAL_JSON
         }
     }
 }
