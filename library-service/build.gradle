@@ -78,6 +78,7 @@ dependencies {
     testImplementation("au.com.dius:pact-jvm-provider-junit5:${pactVersion}")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
     testImplementation("org.springframework.cloud:spring-cloud-contract-spec-kotlin")
+    testImplementation("org.springframework.cloud:spring-cloud-contract-pact")
 
     contractTestImplementation("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.4.32")
 
