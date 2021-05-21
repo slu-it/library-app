@@ -1,8 +1,9 @@
-package library.service
+package contractbase
 
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.module.mockmvc.RestAssuredMockMvc.standaloneSetup
+import library.service.Application
 import library.service.api.books.BookResourceAssembler
 import library.service.business.books.BookCollection
 import library.service.business.books.domain.BookRecord
@@ -14,9 +15,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
 import org.springframework.web.context.WebApplicationContext
 import utils.Books.THE_MARTIAN
@@ -28,6 +31,7 @@ private val bookCollection: BookCollection = mockk()
 @TestInstance(PER_CLASS)
 @Import(SccBaseConfiguration::class)
 @WebMvcTest(properties = ["application.secured=false"])
+@ContextConfiguration(classes = [Application::class])
 open class SccBase {
 
     @Autowired
@@ -53,6 +57,7 @@ open class SccBase {
     CorrelationIdHolder::class,
     BookResourceAssembler::class,
 )
+
 private class SccBaseConfiguration {
     @Bean
     fun bookCollection(): BookCollection = bookCollection
