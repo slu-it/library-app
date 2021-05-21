@@ -31,7 +31,6 @@ private val bookCollection: BookCollection = mockk()
 @TestInstance(PER_CLASS)
 @Import(SccBaseConfiguration::class)
 @WebMvcTest(properties = ["application.secured=false"])
-@ContextConfiguration(classes = [Application::class])
 open class SccBase {
 
     @Autowired
