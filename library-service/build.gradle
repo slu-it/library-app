@@ -142,11 +142,21 @@ contracts {
     // Base package for generated tests
     basePackageForTests = "library.service.contracts"
     packageWithBaseClasses = "contractbase"
+    contractsMode = "LOCAL"
+    contractRepository {
+        failOnNoContracts(false)
+        repositoryUrl = "git:///home/am/Documents/git/library-app/contractrepo/"
+    }
+    contractDependency {
+        stringNotation = "library-service:library-service:1"
+    }
 }
 
 contractTest {
     useJUnitPlatform()
 }
+
+publish.dependsOn("publishStubsToScm")
 
 publishing {
     publications {
