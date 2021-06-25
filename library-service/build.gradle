@@ -27,6 +27,8 @@ apply plugin: 'org.asciidoctor.convert'
 apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
 
+group = 'library-service'
+version = '1.0.0'
 sourceCompatibility = 1.8
 compileKotlin {
     kotlinOptions {
