@@ -1,4 +1,4 @@
-package contracts
+package contracts.scc
 
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
 import org.springframework.hateoas.MediaTypes.HAL_JSON

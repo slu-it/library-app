@@ -31,7 +31,7 @@ private val bookCollection: BookCollection = mockk()
 @TestInstance(PER_CLASS)
 @Import(SccBaseConfiguration::class)
 @WebMvcTest(properties = ["application.secured=false"])
-open class SccBase {
+open class HttpBase {
 
     @Autowired
     lateinit var context: WebApplicationContext

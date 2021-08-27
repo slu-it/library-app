@@ -143,17 +143,23 @@ contracts {
     testFramework = 'JUNIT5'
     // Base package for generated tests
     basePackageForTests = "library.service.contracts"
-    packageWithBaseClasses = "contractbase"
-    contractsMode = "LOCAL"
-    contractRepository {
-        failOnNoContracts(false)
-        repositoryUrl = "git:///home/am/Documents/git/library-app/contractrepo/"
-    }
-    contractDependency {
-        stringNotation = "library-service:library-service:1"
+    baseClassForTests = 'contractbase.HttpBase'
+    baseClassMappings {
+        baseClassMapping(".*\\.amqp", 'contractbase.AmqpBase')
     }
 }
+//contracts {
 
+//    // sets a fallback for any mapping misses and defines base package of generated tests
+//    setBaseClassForTests("provider.ContractTestBase")
+//    // mapping of base classes for different contracts
+//    baseClassMappings {
+//        // any Spring Cloud Contract DSL-based tests should use a base class with callback methods
+//        baseClassMapping(""".*\.scc""", "provider.SpringCloudContractTestBase")
+//        // any PACT-based tests should use a base class with default users for security
+//        baseClassMapping(""".*\.pact""", "provider.PactContractTestBase")
+//    }
+//}
 contractTest {
     useJUnitPlatform()
 }

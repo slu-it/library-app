@@ -30,6 +30,16 @@ sealed class BookEvent(
 
 }
 
+
+
+//{
+//    "id": "88b88f1a-a76c-4d9b-93a1-d256773fed88",
+//    "timestamp": "2021-07-02T12:34:56Z",
+//    "type": "book-added",
+//    "bookId": "ebd332fe-86c9-443e-ae5e-3202d4e9af73",
+//    "isbn": "9780132350884",
+//    "title": "Clean Code: A Handbook of Agile Software Craftsmanship"
+//}"
 /** A new book was added to the library. */
 class BookAdded(
         id: UUID = UUID.randomUUID(),
